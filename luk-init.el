@@ -123,8 +123,7 @@
 (require 'luk-magit) (luk-magit-status-set-key [f12])
 
 ;;; Mode for editing .gitignore-files
-;; https://github.com/magit/git-modes
-(require 'gitignore-mode)
+(require 'gitignore-mode) ; https://github.com/magit/git-modes
 (add-to-list 'auto-mode-alist '("\\.gitignore$" . gitignore-mode))
 
 ;; Open Windows file-browser in folder of current file on "C-."
