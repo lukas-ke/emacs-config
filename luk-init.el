@@ -182,6 +182,8 @@
 
 (require 'luk-elisp) (luk-elisp-setup)
 
+(require 'luk-c++) (luk-c++-setup)
+
 (require 'luk-markdown) (luk-markdown-setup)
 
 (require 'luk-swap-keys) (luk-swap-keys-enable)
