@@ -75,6 +75,9 @@
 (customize-set-variable 'tool-bar-mode nil)
 (customize-set-variable 'scroll-bar-mode nil)
 
+;; No initial content (i.e. lisp-comment) in scratch-buffer
+(setq initial-scratch-message nil)
+
 (setq
  ;; Preserve text from Windows clipboard before modifying kill-ring
  ;; Without this, it is very easy to lose what you were about to
@@ -179,11 +182,29 @@
 
 (require 'luk-elisp) (luk-elisp-setup)
 
+(require 'luk-markdown) (luk-markdown-setup)
+
 (require 'luk-swap-keys) (luk-swap-keys-enable)
 
 (add-hook
  'calendar-load-hook
  (lambda ()
    (calendar-set-date-style 'european)))
+
+;; When saving a file in a directory that doesn't exist, offer to
+;; (recursively) create the file's parent directories."
+(add-hook
+ 'before-save-hook
+ (lambda ()
+   (when buffer-file-name
+     (let ((dir (file-name-directory buffer-file-name)))
+       (when (and (not (file-exists-p dir))
+                  (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+         (make-directory dir t))))))
+
+;; English weekdays in the time stamps of Org mode
+;; files and in the agenda.
+;; TODO: Not needed?
+(setq system-time-locale "C")
 
 (toggle-frame-fullscreen) ; Start in fullscreen

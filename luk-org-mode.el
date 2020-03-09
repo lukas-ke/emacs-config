@@ -27,6 +27,19 @@
       (call-interactively 'prettify-symbols-mode))
     (org-restart-font-lock)))
 
+(defun luk-org--mode-hook ()
+  ;; Use prettify-symbols to get "nicer" checkboxes
+  (push '("[ ]" . "☐") prettify-symbols-alist)
+  (push '("[X]" . "☑" ) prettify-symbols-alist)
+  (push '("[-]" . "❍" ) prettify-symbols-alist)
+  (prettify-symbols-mode)
+
+  ;; unicode bullets for org-titles instead of asterisks
+  (org-bullets-mode 1)
+
+  ;; Use readable links initially
+  (luk-org--descriptive-links nil))
+
 (defun luk-org-mode-setup ()
   (with-eval-after-load 'org
 
@@ -35,23 +48,10 @@
     (define-key org-mode-map (kbd "C-c a") 'org-agenda)
     (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
 
-    ;;; Symbol-replacements
-
-    ;; unicode bullets for org-titles instead of asterisks
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
     ;; Use "↴" after folded headings instead of "..."
     (setq org-ellipsis " ↴")
 
-    ;; Use prettify-symbols to get "nicer" checkboxes
-    (add-hook
-     'org-mode-hook
-     (lambda ()
-       "Beautify Org Checkbox Symbol"
-       (push '("[ ]" . "☐") prettify-symbols-alist)
-       (push '("[X]" . "☑" ) prettify-symbols-alist)
-       (push '("[-]" . "❍" ) prettify-symbols-alist)
-       (prettify-symbols-mode)))
+    (add-hook 'org-mode-hook 'luk-org--mode-hook)
 
     ;; Bigger check-boxes
     (set-face-attribute 'org-checkbox nil :height 1.5)
