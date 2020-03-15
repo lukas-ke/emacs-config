@@ -16,6 +16,8 @@ also flash the mode-line"
     (sit-for 0.3)
     (set-face-background 'mode-line mode-line-color)))
 
+(defun luk--in-flymake-mode () nil) ;; Hack
+
 (defun luk-next-error-cycle (&optional arg reset)
   "Go to the next error, cycle to first if at the end.
 
