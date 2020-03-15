@@ -9,7 +9,7 @@
 (defun luk-markdown--line-wrap-off () (setq truncate-lines t))
 
 (defun luk-markdown-setup ()
-  (add-to-list 'auto-mode-alist '("\.md" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
   ;; Lines can get long (e.g. tables)
   (add-hook 'markdown-mode-hook 'luk-markdown--line-wrap-off))
