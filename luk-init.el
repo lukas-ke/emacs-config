@@ -149,9 +149,6 @@
 ;;   "\(foo|bar\)"
 (customize-set-variable 'reb-re-syntax 'read)
 
-;;; Open .h files in C++-mode, not c
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
 ;;; Autoload for xah-find-functions (find in files)
 ;; https://github.com/xahlee/xah-find
 (autoload 'xah-find-text "xah-find" "find replace" t)
