@@ -182,21 +182,17 @@
 
 (require 'luk-swap-keys) (luk-swap-keys-enable)
 
-(add-hook
- 'calendar-load-hook
- (lambda ()
-   (calendar-set-date-style 'european)))
+(defun luk-european-calendar () (calendar-set-date-style 'european))
+(add-hook 'calendar-load-hook 'luk-european-calendar)
 
-;; When saving a file in a directory that doesn't exist, offer to
-;; (recursively) create the file's parent directories."
-(add-hook
- 'before-save-hook
- (lambda ()
-   (when buffer-file-name
-     (let ((dir (file-name-directory buffer-file-name)))
-       (when (and (not (file-exists-p dir))
-                  (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
-         (make-directory dir t))))))
+(defun luk-ask-create-dir ()
+  "Ask to create the folder for the current file if it doesn't exist"
+  (when buffer-file-name
+    (let ((dir (file-name-directory buffer-file-name)))
+      (when (and (not (file-exists-p dir))
+                 (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+        (make-directory dir t)))))
+(add-hook 'before-save-hook 'luk-ask-create-dir)
 
 ;; English weekdays in the time stamps of Org mode
 ;; files and in the agenda.
