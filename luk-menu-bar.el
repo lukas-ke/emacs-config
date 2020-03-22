@@ -75,7 +75,7 @@ return true if any returns true."
   (eval `(or ,@(mapcar 'funcall luk-menu-bar-predicates))))
 
 (defun luk-menu-bar-show-hide-for-buffer ()
-  """Show/hide the menu-bar depending on current buffer"""
+  "Show/hide the menu-bar depending on current buffer"
   (interactive)
   (if (luk-menu-bar-any-predicate)
       (menu-bar-mode)
@@ -123,8 +123,8 @@ activated so that the menu-bar is shown or hidden according to
   (remove-hook 'buffer-list-update-hook 'luk-menu-bar-show-hide-demoted))
 
 (defun luk-menu-bar--test-predicates ()
-  """Outputs a message with the result of evaluating the predicate-list.
-Used for testing new predicates."""
+  "Outputs a message with the result of evaluating the predicate-list.
+Used for testing new predicates."
   (interactive)
   (message "Any: %s" (luk-menu-bar-any-predicate)))
 

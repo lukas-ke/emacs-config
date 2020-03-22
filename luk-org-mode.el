@@ -16,7 +16,7 @@
       (setq org-descriptive-links nil))))
 
 (defun luk-org-toggle-display ()
-  """Toggle display of emphasis markers, descriptive links etc."""
+  "Toggle display of emphasis markers, descriptive links etc."
   (interactive)
   (let ((show-markers? (not org-hide-emphasis-markers)))
     (if show-markers? (message "Descriptive links, hide emphasis-markers")
