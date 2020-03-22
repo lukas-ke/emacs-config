@@ -162,12 +162,9 @@
 ;; (TODO: What?)
 (push '("\\*compilation\\*" . (nil (reusable-frames . t))) display-buffer-alist)
 
-;; Delete trailing whitespace on save (except in markdown where two
-;; trailing spaces mean linebreak).
-(defun maybe-delete-trailing-whitespace()
-  (if (not (string= major-mode "markdown-mode"))
-      (delete-trailing-whitespace)))
-(add-hook 'before-save-hook 'maybe-delete-trailing-whitespace)
+;; Trim some whitespace depending on mode
+(require 'luk-whitespace)
+(add-hook 'before-save-hook 'luk-maybe-trim-whitespace)
 
 (global-set-key[(meta f4)] 'save-buffers-kill-emacs)
 
