@@ -5,6 +5,7 @@
 (defun luk-squash-consecutive-blank-lines ()
   "Turn consecutive blank lines into a single blank line"
   (save-excursion
+    (beginning-of-buffer)
     (while (re-search-forward
             "^\^j\^j+"
             nil ; unbounded
