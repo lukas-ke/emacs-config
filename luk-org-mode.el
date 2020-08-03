@@ -25,6 +25,7 @@
     (luk-org--descriptive-links (not show-markers?))
     (when (eq (not show-markers?) prettify-symbols-mode)
       (call-interactively 'prettify-symbols-mode))
+    (if show-markers? (org-display-inline-images) (org-remove-inline-images))
     (org-restart-font-lock)))
 
 (defun luk-org--mode-hook ()
