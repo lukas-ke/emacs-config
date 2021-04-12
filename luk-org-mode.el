@@ -6,7 +6,13 @@
 (provide 'luk-org-mode)
 
 (defun luk-org--descriptive-links (enable)
-  "See `org-toggle-link-display'"
+  "See `org-toggle-link-display'
+
+This home-brewn variant takes an argument to better support
+`luk-org-toggle-display'
+
+Switches between pretty links (enable=true) and full
+source (enable=false)."
   (if enable
       (progn
         (org-remove-from-invisibility-spec '(org-link))
@@ -14,6 +20,21 @@
     (progn
       (add-to-invisibility-spec '(org-link))
       (setq org-descriptive-links nil))))
+
+(defun luk-org--pretty-entities (enable)
+  "See `org-toggle-pretty-entities'
+
+This home-brewn variant takes an argument to better support
+`luk-org-toggle-display'
+
+This includes e.g. subscript and superscript and some LaTeX names,
+call `org-entities-help for the org documentation."
+  (when (not (eq enable org-pretty-entities))
+    (setq-local org-pretty-entities enable)
+    (when (not org-pretty-entities)
+      (save-restriction
+        (widen)
+        (decompose-region (point-min) (point-max))))))
 
 (defun luk-org-toggle-display ()
   "Toggle display of emphasis markers, descriptive links etc."
@@ -25,6 +46,7 @@
     (luk-org--descriptive-links (not pretty-display?))
     (when (eq (not pretty-display?) prettify-symbols-mode)
       (call-interactively 'prettify-symbols-mode))
+    (luk-org--pretty-entities pretty-display?)
     (if pretty-display? (org-display-inline-images) (org-remove-inline-images))
     (org-restart-font-lock)))
 
