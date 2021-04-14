@@ -199,4 +199,7 @@
 ;; TODO: Not needed?
 (setq system-time-locale "C")
 
+(require 'iy-go-to-char)
+(global-set-key (kbd "M-m") 'iy-go-to-char)
+
 (toggle-frame-fullscreen) ; Start in fullscreen
