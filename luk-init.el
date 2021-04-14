@@ -202,4 +202,7 @@
 (require 'iy-go-to-char)
 (global-set-key (kbd "M-m") 'iy-go-to-char)
 
+(require 'luk-mode-line)
+(luk-mode-line-setup)
+
 (toggle-frame-fullscreen) ; Start in fullscreen

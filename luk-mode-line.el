@@ -11,6 +11,8 @@ TODO: Work in progress."
   (set-fontset-font "fontset-default" #x2bc1 "segoe ui symbol") ;; Diamond: ⯁
   (set-fontset-font t '(?😊 . ?😎) "Segoe UI Emoji") ;; Some emoji range)
 
+  ;; github-octicons installed via all-the-icons
+  (set-fontset-font t #xf020 "github-octicons") ;;  Git branch
 
   ;; Remove the minimum field width from the default buffer
   ;; identification format.
