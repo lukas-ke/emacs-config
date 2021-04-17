@@ -205,4 +205,6 @@
 (require 'luk-mode-line)
 (luk-mode-line-setup)
 
+(require 'luk-list-files)
+
 (toggle-frame-fullscreen) ; Start in fullscreen
