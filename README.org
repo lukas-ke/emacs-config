@@ -1,0 +1,8 @@
+* emacs-config
+The least embarrassing parts of my Emacs configuration.
+
+** Dependencies
+ - [[http://github.com/re5et/find-file-in-git-repo][find-file-in-git-repo]]
+ - [[https://github.com/magit/git-modes][gitignore-mode]]
+ - [[https://github.com/sabof/org-bullets][org-bullets]]
+ - [[https://github.com/xahlee/xah-find][xah-find]]
