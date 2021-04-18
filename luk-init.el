@@ -149,14 +149,6 @@
 ;;   "\(foo|bar\)"
 (customize-set-variable 'reb-re-syntax 'read)
 
-;;; Autoload for xah-find-functions (find in files)
-;; https://github.com/xahlee/xah-find
-(autoload 'xah-find-text "xah-find" "find replace" t)
-(autoload 'xah-find-text-regex "xah-find" "find replace" t)
-(autoload 'xah-find-replace-text "xah-find" "find replace" t)
-(autoload 'xah-find-replace-text-regex "xah-find" "find replace" t)
-(autoload 'xah-find-count "xah-find" "find replace" t)
-
 ;;; Make *compilation*-frame reusable, so that compile is reused in its
 ;; current frame not a new window in the active frame.
 ;; (TODO: What?)
