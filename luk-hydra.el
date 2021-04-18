@@ -102,7 +102,7 @@ Read the new name from mini-buffer."
 ^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼────────
 _t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _c t_ capture todo
 _e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c l_ view captures
-_r_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │
+_r_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit
 _D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │
 _C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │
 
@@ -140,4 +140,5 @@ _q_: %s"
 
   ;; Misc
   ("c t" (org-capture nil "t") :exit t)
-  ("c l" org-capture-goto-last-stored :exit t))
+  ("c l" org-capture-goto-last-stored :exit t)
+  ("g" magit-status))
