@@ -2,6 +2,7 @@
 ;; The function `luk-list-files' and the related mode
 
 (provide 'luk-list-files)
+(require 'luk-hydra)
 
 (defun luk--link-to-file-action (button)
   (let ((target-file (button-get button 'target-file))
@@ -60,6 +61,7 @@
           (luk-list-files-mode)
           (setq-local LFP PATTERN LFD DIR)
           (setq buffer-read-only t)
+          (goto-line 4)
           (message nil))))))
 
 ;; Mode setup
@@ -88,12 +90,26 @@ list, to allow skimming multiple files."
     (when file-name
       (find-file-other-window file-name))))
 
+(defun luk--list-files-open-file-other-window ()
+  "Open the file at the current line in other window and focus it."
+  (interactive)
+  (let ((file-name (luk--list-files-current-file-path)))
+    (when file-name
+      (find-file-other-window file-name))))
+
+
+(defun luk--list-files-open-file-other-window-no-focus ()
+  "Open the file at the current line in other window, but keep
+focus in the file list"
+  (interactive)
+  (save-selected-window
+    (luk--list-files-open-file-other-window)))
 
 (defun luk-list-file-names-src-target ()
     (let ((SRC nil) (DST nil))
       (setq SRC (luk--list-files-current-file-path))
       (when (not SRC) (error "No SRC file at point"))
-      (setq DST (read-string "New name" SRC))
+      (setq DST (read-string "New name: " SRC))
       (list SRC DST)))
 
 
@@ -120,14 +136,35 @@ list, to allow skimming multiple files."
   (interactive)
   (describe-mode))
 
-(defun luk-list-files-quit ()
-  (interactive)
-  (kill-current-buffer))
+(defhydra luk-list-files-hydra (:hint nil)
+  (format "\
+%s             %s
+^─^───────────────────────────────────────
+_n_:     Next line
+_r_:     Rename file
+_g_:     Update
+RET:^^   Open file
+C-RET:^^ Open and focus
 
+_q_:     Quit"
+          (luk-caption "List files")
+          (luk-caption "[.] for main menu"))
+  ("." (luk-hydra-push 'luk-list-files-summon-hydra "list-files") :exit t)
+  ("n" forward-line)
+  ("<return>" luk--list-files-open-file-other-window-no-focus)
+  ("<C-return>" luk--list-files-open-file-other-window :exit t)
+  ("r" luk-list-files-rename)
+  ("g" luk-list-files-repeat-search :exit t)
+  ("q" kill-current-buffer :exit t))
+
+(defun luk-list-files-summon-hydra ()
+  (interactive)
+  (luk-list-files-hydra/body))
 
 (define-key luk-list-files-mode-map (kbd "n") #'forward-line)
 (define-key luk-list-files-mode-map (kbd "?") #'luk--list-files-help)
 (define-key luk-list-files-mode-map (kbd "r") #'luk-list-files-rename)
 (define-key luk-list-files-mode-map (kbd "g") #'luk-list-files-repeat-search)
-(define-key luk-list-files-mode-map (kbd "q") #'luk-list-files-quit)
-(define-key luk-list-files-mode-map (kbd "<C-return>") #'luk--list-files-open-file-other-window)
+(define-key luk-list-files-mode-map (kbd "q") #'kill-current-buffer)
+(define-key luk-list-files-mode-map (kbd "<C-return>") #'luk--list-files-open-file-other-window-no-focus)
+(define-key luk-list-files-mode-map (kbd "M-.") #'luk-list-files-summon-hydra)
