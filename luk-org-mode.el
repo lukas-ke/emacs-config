@@ -2,7 +2,7 @@
 
 (require 'org-bullets) ; https://github.com/sabof/org-bullets
 (require 'org)
-
+(require 'luk-hydra)
 (provide 'luk-org-mode)
 
 (defun luk-org--descriptive-links (enable)
@@ -63,6 +63,28 @@ call `org-entities-help for the org documentation."
   ;; Use readable links initially
   (luk-org--descriptive-links nil))
 
+(defhydra luk-org-hydra (:hint nil)
+  (format "\
+%s^^^       %s
+^─^──────────────────────────
+_p_: toggle raw/pretty
+_a_: archive subtree
+_l_: org-lint
+_q_: quit"
+          (luk-caption "Org")
+          (luk-caption "[.] for main menu"))
+  ("." (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
+  ("p" luk-org-toggle-display)
+  ("a" org-archive-subtree-default-with-confirmation)
+  ("l" org-lint)
+  ("q" nil :exit t))
+
+(defun luk-org-summon-hydra ()
+  (interactive)
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    ;; E.g. disabling pretty doesn't work well in capture buffer
+    (luk-org-hydra/body)))
+
 (defun luk-org-mode-setup ()
   (with-eval-after-load 'org
 
@@ -70,6 +92,10 @@ call `org-entities-help for the org documentation."
     (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
     (define-key org-mode-map (kbd "C-c a") 'org-agenda)
     (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
+    (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
+
+    ;; Indent on newline
+    (define-key org-mode-map (kbd "RET") 'org-return-indent)
 
     ;; Use "↴" after folded headings instead of "..."
     (setq org-ellipsis " ↴")
