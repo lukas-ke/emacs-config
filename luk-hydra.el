@@ -102,7 +102,7 @@ Read the new name from mini-buffer."
 ^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼────────
 _t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _c t_ capture todo
 _e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c l_ view captures
-_r_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit
+_r_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit status
 _D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │
 _C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │
 
@@ -142,3 +142,31 @@ _q_: %s"
   ("c t" (org-capture nil "t") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
   ("g" magit-status))
+
+
+(defhydra luk-hydra-window (:hint nil :exit nil)
+  "
+Navigate with arrows, 0 to delete window, 1 to delete other windows.
+Split: 2=below, 3=right.
+"
+  ("<up>" windmove-up)
+  ("w" windmove-up)
+  ("<right>" windmove-right)
+  ("d" windmove-right)
+  ("<down>" windmove-down)
+  ("s" windmove-down)
+  ("<left>" windmove-left)
+  ("a" windmove-left)
+
+  ("0" delete-window)
+  ("1" delete-other-windows)
+  ("2" split-window-below)
+  ("3" split-window-right)
+  ("<S-down>" (progn (split-window-below) (windmove-down))) ("S" (progn (split-window-below) (windmove-down)))
+  ("<S-right>" (progn (split-window-right) (windmove-right))) ("D" (progn (split-window-right) (windmove-right)))
+  ("b" switch-to-buffer)
+  ("o" other-window)
+  ("O" (other-window -1))
+  ("i" (other-window -1)))
+
+(global-set-key (kbd "M-,") 'luk-hydra-window/body)
