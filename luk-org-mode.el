@@ -2,6 +2,7 @@
 
 (require 'org-bullets) ; https://github.com/sabof/org-bullets
 (require 'org)
+(require 'org-id)
 (require 'luk-hydra)
 (provide 'luk-org-mode)
 
@@ -93,6 +94,7 @@ _q_: quit"
     (define-key org-mode-map (kbd "C-c a") 'org-agenda)
     (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
     (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
+    (define-key org-mode-map (kbd "C-c l") 'org-store-link)
 
     ;; Indent on newline
     (define-key org-mode-map (kbd "RET") 'org-return-indent)
@@ -114,6 +116,8 @@ _q_: quit"
 
     ;; https://stackoverflow.com/questions/40332479/org-mode-folding-considers-whitespace-as-content
     (setq org-cycle-separator-lines -1)
+
+    (setq org-id-link-to-org-use-id 'create-if-interactive)
 
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
