@@ -119,5 +119,13 @@ _q_: quit"
 
     (setq org-id-link-to-org-use-id 'create-if-interactive)
 
+    ;; Require braces after underscore for interpreting as subscript,
+    ;; to avoid that "world" shoudl be a subscript in "hello_world"
+    ;; (e.g. with org-pretty-entities).
+    ;;
+    ;; The syntax to actually use subscript becomes instead:
+    ;; "hello_{world}"
+    (setq org-use-sub-superscripts 1)
+
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
