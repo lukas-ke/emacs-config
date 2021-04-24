@@ -13,8 +13,15 @@
   "Open my 'luk-init.el'-script in a buffer"
   (interactive) (find-file luk-init-path))
 
+(when (not (boundp 'luk-early-init-performed))
+  (message "Loading luk-early-init late :)")
+  (load "luk-early-init.el"))
+
 ;; Don't beep
 (customize-set-variable 'visible-bell t)
+
+;; Start in fullscreen
+(modify-frame-parameters nil `((fullscreen . fullboth) (t . t)))
 
 ;; Allow short y/n for all yes-no prompts
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -48,6 +55,7 @@
 ;; Do not save any buffers before compiling
 (customize-set-variable 'compilation-save-buffers-predicate 'ignore)
 
+;; Always insert spaces as indentation
 (setq-default indent-tabs-mode nil)
 
 ;; Cursor settings
@@ -70,11 +78,6 @@
 (customize-set-variable 'inhibit-startup-message t)
 (customize-set-variable 'inhibit-startup-screen t)
 
-;; Disable menu-bar, tool-bar and scroll-bar to get some more space
-(customize-set-variable 'menu-bar-mode nil)
-(customize-set-variable 'tool-bar-mode nil)
-(customize-set-variable 'scroll-bar-mode nil)
-
 ;; No initial content (i.e. lisp-comment) in scratch-buffer
 (setq initial-scratch-message nil)
 
@@ -94,6 +97,10 @@
  inhibit-compacting-font-caches t)
 
 ;; Default font
+;;
+;; TODO: For some reason I get some unreadable symbol font if DejaVu
+;; Sans Mono is not installed. Did I configure a weird fallback font
+;; somewhere?
 (set-face-attribute
  'default
  nil
@@ -163,8 +170,9 @@
 (require 'luk-next-error-cycle)
 (global-set-key [(control +)] 'luk-next-error-cycle)
 
-;; Elpy mode for all .py-buffers
-(when (require 'elpy nil 'noerror) (require 'luk-elpy) (luk-elpy-setup))
+;; Enable elpy for all .py-buffers
+(when (require 'elpy nil 'noerror)
+  (require 'luk-elpy) (luk-elpy-setup))
 
 (require 'luk-elisp) (luk-elisp-setup)
 
@@ -200,6 +208,4 @@
 (require 'luk-mode-line)
 (luk-mode-line-setup)
 
-(require 'luk-list-files)
-
-(toggle-frame-fullscreen) ; Start in fullscreen
+(autoload 'luk-list-files "luk-list-files" nil t)
