@@ -96,14 +96,25 @@ Read the new name from mini-buffer."
   (require 'ag)
   (call-interactively 'ag))
 
+(if (require 'expand-region nil t)
+    (defhydra luk-hydra-region (:hint nil :columns 1)
+      ("c" er/contract-region "Contract")
+      ("e" er/expand-region "Expand")
+      ("r" replace-rectangle "Replace rectangle")
+      ("q" nil "quit" :exit t))
+  (defun luk-hydra-region/body ()
+    (interactive)
+    (message "Package %s not installed.\nInstall with \"M-x package-install expand-region\"."
+             (propertize "expand-region" 'face 'bold))))
+
 (defhydra luk-hydra (:hint nil)
   (format "\
 %s^^^^^^^^^^^^      │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^^^
 ^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼────────
 _t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _c t_ capture todo
 _e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c l_ view captures
-_r_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit status
-_D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │
+_R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit status
+_D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _r_ region
 _C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │
 
 _q_: %s"
@@ -118,7 +129,7 @@ _q_: %s"
   ;; Current
   ("t" treemacs :exit t)
   ("e" luk-explore :exit t)
-  ("r" luk-rename-buffer-and-file :exit t)
+  ("R" luk-rename-buffer-and-file :exit t)
   ("D" luk-delete-file :exit t)
   ("C" luk-copy-file-path :exit t)
 
@@ -141,7 +152,8 @@ _q_: %s"
   ;; Misc
   ("c t" (org-capture nil "t") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
-  ("g" magit-status))
+  ("g" magit-status)
+  ("r" luk-hydra-region/body :exit t))
 
 
 (defhydra luk-hydra-window (:hint nil :exit nil)
