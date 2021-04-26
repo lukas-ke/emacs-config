@@ -20,6 +20,13 @@ current line."
       (if mark-active
           (indent-region (region-beginning)
                          (region-end))
-        (if (looking-at "\\_>")
-            (dabbrev-expand nil)
-          (indent-for-tab-command))))))
+        (if (looking-at "\\_>") ;; At of word
+            (if (and (eq major-mode 'org-mode)
+                     (= ?* (char-before)))
+                ;; Don't tab complete after * in org, it gets weird.
+                ;; Better let org-cycle do its thing.
+                (org-cycle)
+              (dabbrev-expand nil))
+          (if (eq major-mode 'org-mode)
+              (org-cycle)
+            (indent-for-tab-command)))))))

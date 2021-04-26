@@ -96,6 +96,8 @@ _q_: quit"
     (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
     (define-key org-mode-map (kbd "C-c l") 'org-store-link)
 
+    (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
+
     ;; Indent on newline
     (define-key org-mode-map (kbd "RET") 'org-return-indent)
 
