@@ -145,7 +145,10 @@
 ;; Tab-complete everywhere
 ;; TODO: Might interfere with e.g. autocomplete or company mode
 (require 'luk-tab-complete)
-(global-set-key [(tab)] 'luk-tab-complete-smart-tab)
+;; Bind both <tab> and TAB, see
+;; https://emacs.stackexchange.com/questions/9631/what-is-the-difference-between-tab-and-tab
+(global-set-key (kbd "<tab>") 'luk-tab-complete-smart-tab)
+(global-set-key (kbd "TAB") 'luk-tab-complete-smart-tab)
 
 ;; Set syntax for `re-builder' to `read', which requires
 ;; double-escaping, to build regexps compatible with elisp-code e.g.:
