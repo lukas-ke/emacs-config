@@ -185,6 +185,9 @@
 (defun luk-european-calendar () (calendar-set-date-style 'european))
 (add-hook 'calendar-load-hook 'luk-european-calendar)
 
+;; Enable the function narrow-to-region without confirmation
+(put 'narrow-to-region 'disabled nil)
+
 (defun luk-ask-create-dir ()
   "Ask to create the folder for the current file if it doesn't exist"
   (when buffer-file-name
