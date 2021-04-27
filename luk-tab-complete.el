@@ -10,7 +10,13 @@
 This smart tab is minibuffer compliant: it acts as usual in the
 minibuffer. Else, if mark is active, indents region. Else if
 point is at the end of a symbol, expands it. Else indents the
-current line."
+current line.
+
+Warning: This function may be bound to <tab> but not TAB when
+used with org-mode. Binding it to TAB risks infinite recursion
+due to forwarding to org-cycle and org-cycle falling back to the
+TAB-bind. See the documentation for `org-cycle' and
+‘org-cycle-emulate-tab’."
   (interactive)
   (cond
    ;; TODO: hack. Can I instead make magit override my otherwise
@@ -44,6 +50,8 @@ current line."
 
    ((eq major-mode 'org-mode)
     ;; Not at end of word in org-mode -> org cycle
+    ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
+    ;; is bound to TAB instead of <tab>.
     (org-cycle))
 
    (t
