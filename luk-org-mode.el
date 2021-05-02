@@ -155,6 +155,8 @@ TODO: I would like this to work with regular `yank' in org-mode,
   ;; Use readable links initially
   (luk-org--descriptive-links nil))
 
+;; Note: Extra blank lines in caption to use same height
+;; as luk-hydra
 (defhydra luk-org-hydra (:hint nil)
   (format "\
 Main ➤ %s      _._: up
@@ -163,13 +165,17 @@ _p_: toggle raw/pretty
 _a_: archive subtree
 _l_: org-lint
 _P_: Paste image attachment
+
+
 _q_: quit"
           (luk-caption "Org"))
   ("." (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
+  ("M-<up>" (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("p" luk-org-toggle-display)
   ("P" luk-org-paste-image :exit t)
   ("a" org-archive-subtree-default-with-confirmation)
   ("l" org-lint)
+
   ("q" nil :exit t))
 
 (defun luk-org-summon-hydra ()
@@ -222,10 +228,15 @@ _q_: quit"
     ;; Use yellow for STARTED task-states
     (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
 
-
     (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
                                   ("describe-function" . "elisp:(describe-function '%h)")
                                   ("describe-variable" . "elisp:(describe-variable '%h)")))
+
+    ;; Don't try to put tags in a column, just space them one step
+    ;; from the heading Mostly because I don't like that the ellipsis
+    ;; symbol for collapsed headings goes after the tags, which gets
+    ;; very far to the right for such headings.
+    (setq org-tags-column 0)
 
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
