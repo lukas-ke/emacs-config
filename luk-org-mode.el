@@ -129,5 +129,8 @@ _q_: quit"
     ;; "hello_{world}"
     (setq org-use-sub-superscripts 1)
 
+    ;; Use yellow for STARTED task-states
+    (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
+
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
