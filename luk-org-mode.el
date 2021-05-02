@@ -55,6 +55,8 @@ call `org-entities-help for the org documentation."
 (defun luk-org-toggle-display ()
   "Toggle display of emphasis markers, descriptive links etc."
   (interactive)
+  (when (and (boundp 'org-capture-mode) org-capture-mode)
+    (user-error "Can't toggle in indirect capture buffer"))
   (let ((pretty-display? (not org-hide-emphasis-markers)))
     (if pretty-display? (message "Descriptive links, hide emphasis-markers")
       (message "Raw links, show emphasis-markers"))
@@ -224,6 +226,7 @@ _q_: quit"
 
 
     (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
+                                  ("describe-function" . "elisp:(describe-function '%h)")
                                   ("describe-variable" . "elisp:(describe-variable '%h)")))
 
     ;; Open "file:"-links in dired instead of os-application
