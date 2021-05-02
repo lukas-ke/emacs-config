@@ -55,7 +55,7 @@ call `org-entities-help for the org documentation."
 (defun luk-org-toggle-display ()
   "Toggle display of emphasis markers, descriptive links etc."
   (interactive)
-  (when (and (boundp 'org-capture-mode) org-capture-mode)
+  (when (bound-and-true-p org-capture-mode)
     (user-error "Can't toggle in indirect capture buffer"))
   (let ((pretty-display? (not org-hide-emphasis-markers)))
     (if pretty-display? (message "Descriptive links, hide emphasis-markers")
@@ -174,9 +174,7 @@ _q_: quit"
 
 (defun luk-org-summon-hydra ()
   (interactive)
-  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
-    ;; E.g. disabling pretty doesn't work well in capture buffer
-    (luk-org-hydra/body)))
+  (luk-org-hydra/body))
 
 (defun luk-org-mode-setup ()
   (with-eval-after-load 'org
@@ -193,16 +191,16 @@ _q_: quit"
     ;; Indent on newline
     (define-key org-mode-map (kbd "RET") 'org-return-indent)
 
-    ;; Use "↴" after folded headings instead of "..."
-    (setq org-ellipsis " ↴")
+    ;; Use "➤" after folded headings instead of "..."
+    (setq org-ellipsis " ➤")
+
+    ;; No underline for ➤
+    (set-face-attribute 'org-ellipsis nil :underline nil :foreground "#ffffff")
 
     (add-hook 'org-mode-hook 'luk-org--mode-hook)
 
     ;; Bigger check-boxes
     (set-face-attribute 'org-checkbox nil :height 1.5)
-
-    ;; No underline for ↴
-    (set-face-attribute 'org-ellipsis nil :underline nil)
 
     ;; By default, hide emphasis markers like the = and * for
     ;; =verbatim= and *bold* (Toggle with f6)
