@@ -2,9 +2,24 @@
 
 (require 'org-bullets) ; https://github.com/sabof/org-bullets
 (require 'org)
+(require 'org-attach)
 (require 'org-id)
 (require 'luk-hydra)
 (provide 'luk-org-mode)
+
+(defgroup luk-org nil "Variables for luk-org")
+
+(setq luk-org--clipboard-to-file-dir
+      (concat (file-name-directory (or load-file-name buffer-file-name)) "clipboard-to-file"))
+
+(defcustom luk-org-python-command
+  nil
+  "Python executable path (for org-mode python utility functions)"
+  :type 'string
+  :group 'luk-org)
+
+(when (require 'luk nil t)
+  (luk-add-group 'luk-org))
 
 (defun luk-org--descriptive-links (enable)
   "See `org-toggle-link-display'
@@ -51,6 +66,77 @@ call `org-entities-help for the org documentation."
     (if pretty-display? (org-display-inline-images) (org-remove-inline-images))
     (org-restart-font-lock)))
 
+(defun luk-org-run-clipboard-script (DIR)
+  ;; Run clipboard_to_file.py for `luk-org-paste-image'
+  (let ((RESULT (call-process
+                 luk-org-python-command
+                 nil
+                 (get-buffer-create "*clipboard-to-file*")
+                 nil
+                 (concat luk-org--clipboard-to-file-dir "/clipboard_to_file.py")
+                 DIR)))
+    ;; Signal errors, if any
+    (cond
+     ((= RESULT 0) t) ;; Success
+     ((= RESULT 1) (error "No folder argument passed to clipboard_to_file.py"))
+     ((= RESULT 2) (error "Folder \"%s\" does not exist" DIR))
+     ((= RESULT 3) (user-error "No image in clipboard"))
+     (t (error "Unknown error %d from clipboard_to_file.py" RESULT)))))
+
+(defun luk-org-paste-image ()
+  "Add an image from the clipboard as an org attachment and insert a link to it.
+
+Prompts for a filename after displaying the image in the buffer.
+
+Uses the Python script “clipboard_to_file.py” to retrieve the image
+from the clipboard and the variable `luk-org-python-command' to
+find the Python interpreter for running the script.
+
+TODO: I would like this to work with regular `yank' in org-mode,
+      but that seems risky. Maybe by using
+      `interprogram-paste-function' I could get that to work.
+      Perhaps then generating a file-name would be best, and
+      offering a practical function to rename a linked image?"
+  (interactive)
+  (when (not luk-org-python-command)
+    (user-error "luk-org-python-command not set"))
+  (when (not (eq major-mode 'org-mode))
+    (user-error "Not in org-mode"))
+
+  ;; Create an org-attachment folder for the current node
+  (let* ((DIR (org-attach-dir-get-create))
+         (FILE-PATH (concat DIR "/paste.png"))
+         ;; Start and end of initial link path
+         (START nil)
+         (END nil))
+    (when (not DIR)
+      (error "Failed to get/create org attachment dir"))
+
+    ;; Get image from clipboard
+    (luk-org-run-clipboard-script DIR)
+
+    ;; Insert a link to display the image with using the temporary
+    ;; name "paste.png"
+    (setq START (point))
+    (insert (concat "[[file:" (file-relative-name FILE-PATH) "]]"))
+    (setq END (point))
+    (org-redisplay-inline-images)
+
+    ;; Read a filename in minibuffer, rename the file and redisplay
+    ;; the image with the new name
+    ;;
+    ;; TODO: Displaying the image is so dramatic that it is easy to
+    ;; not notice the minibuffer. Maybe need a better way to do this,
+    ;; but I also want to show the image before requesting a name.
+    (let* ((NEW-NAME (read-string "Name: " "paste.png"))
+           (NEW-PATH (concat DIR "/" NEW-NAME)))
+      (when (not (string= NEW-NAME "paste.png"))
+        (rename-file FILE-PATH NEW-PATH)
+        (delete-region START END)
+        (goto-char START)
+        (insert (concat "[[file:" (file-relative-name NEW-PATH) "]]"))
+        (org-redisplay-inline-images)))))
+
 (defun luk-org--mode-hook ()
   ;; Use prettify-symbols to get "nicer" checkboxes
   (push '("[ ]" . "☐") prettify-symbols-alist)
@@ -66,16 +152,17 @@ call `org-entities-help for the org documentation."
 
 (defhydra luk-org-hydra (:hint nil)
   (format "\
-%s^^^       %s
+Main ➤ %s      _._: up
 ^─^──────────────────────────
 _p_: toggle raw/pretty
 _a_: archive subtree
 _l_: org-lint
+_P_: Paste image attachment
 _q_: quit"
-          (luk-caption "Org")
-          (luk-caption "[.] for main menu"))
+          (luk-caption "Org"))
   ("." (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("p" luk-org-toggle-display)
+  ("P" luk-org-paste-image :exit t)
   ("a" org-archive-subtree-default-with-confirmation)
   ("l" org-lint)
   ("q" nil :exit t))
