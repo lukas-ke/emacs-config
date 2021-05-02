@@ -155,6 +155,11 @@ _q_: %s"
   ("g" magit-status)
   ("r" luk-hydra-region/body :exit t))
 
+(defun luk-hydra-summon ()
+  (interactive)
+  ;; Clear old pushed hydras, e.g. if the hydra was closed with C-g
+  (luk-hydra-pop)
+  (luk-hydra/body))
 
 (defhydra luk-hydra-window (:hint nil :exit nil)
   "

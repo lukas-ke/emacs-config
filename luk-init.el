@@ -210,7 +210,7 @@
 (global-set-key (kbd "M-m") 'iy-go-to-char)
 
 (require 'luk-hydra)
-(global-set-key (kbd "M-.") 'luk-hydra/body)
+(global-set-key (kbd "M-.") 'luk-hydra-summon)
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
