@@ -219,5 +219,9 @@ _q_: quit"
     ;; Use yellow for STARTED task-states
     (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
 
+
+    (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
+                                  ("describe-variable" . "elisp:(describe-variable '%h)")))
+
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
