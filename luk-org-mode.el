@@ -118,12 +118,15 @@ TODO: I would like this to work with regular `yank' in org-mode,
     ;; Insert a link to display the image with using the temporary
     ;; name "paste.png"
     (setq START (point))
-    (insert (concat "[[file:" (file-relative-name FILE-PATH) "]]"))
+    (insert (concat "[[attachment:paste.png]]"))
     (setq END (point))
     (org-redisplay-inline-images)
 
-    ;; Read a filename in minibuffer, rename the file and redisplay
-    ;; the image with the new name
+    ;; Set the :ATTACHMENT: tag to the node
+    (org-attach-tag)
+
+    ;; Read a filename in minibuffer, rename the attached file from
+    ;; paste.png, and redisplay the image with the new name
     ;;
     ;; TODO: Displaying the image is so dramatic that it is easy to
     ;; not notice the minibuffer. Maybe need a better way to do this,
@@ -134,7 +137,7 @@ TODO: I would like this to work with regular `yank' in org-mode,
         (rename-file FILE-PATH NEW-PATH)
         (delete-region START END)
         (goto-char START)
-        (insert (concat "[[file:" (file-relative-name NEW-PATH) "]]"))
+        (insert (concat "[[attachment:" NEW-NAME "]]"))
         (org-redisplay-inline-images)))))
 
 (defun luk-org--mode-hook ()
