@@ -117,15 +117,16 @@ TODO: I would like this to work with regular `yank' in org-mode,
     ;; Get image from clipboard
     (luk-org-run-clipboard-script DIR)
 
+    ;; Set the :ATTACHMENT: tag to the node
+    (org-attach-tag)
+
     ;; Insert a link to display the image with using the temporary
     ;; name "paste.png"
     (setq START (point))
     (insert (concat "[[attachment:paste.png]]"))
     (setq END (point))
-    (org-redisplay-inline-images)
 
-    ;; Set the :ATTACHMENT: tag to the node
-    (org-attach-tag)
+    (org-redisplay-inline-images)
 
     ;; Read a filename in minibuffer, rename the attached file from
     ;; paste.png, and redisplay the image with the new name
