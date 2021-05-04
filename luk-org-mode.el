@@ -216,6 +216,10 @@ _q_: quit"
     ;; https://stackoverflow.com/questions/40332479/org-mode-folding-considers-whitespace-as-content
     (setq org-cycle-separator-lines -1)
 
+    ;; Set ids for interactive link-store actions (e.g. C-c l), but
+    ;; not when used in scripts, like for capture to avoid getting
+    ;; unnecessary ids for nodes that I just happened to be at when
+    ;; starting an org-capture.
     (setq org-id-link-to-org-use-id 'create-if-interactive)
 
     ;; Require braces after underscore for interpreting as subscript,
@@ -238,6 +242,9 @@ _q_: quit"
     ;; symbol for collapsed headings goes after the tags, which gets
     ;; very far to the right for such headings.
     (setq org-tags-column 0)
+
+    ;; Use image width attributes, if available, for inlined images
+    (setq org-image-actual-width nil)
 
     ;; Open "file:"-links in dired instead of os-application
     (add-to-list 'org-file-apps '(directory . emacs))))
