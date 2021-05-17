@@ -110,12 +110,12 @@ Read the new name from mini-buffer."
 (defhydra luk-hydra (:hint nil)
   (format "\
 %s^^^^^^^^^^^^      │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^^^
-^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼────────
+^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼───────────────────────
 _t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _c t_ capture todo
-_e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c l_ view captures
-_R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _g_ magit status
-_D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _r_ region
-_C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │
+_e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c b_         bookmark
+_R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _c l_ view captures
+_D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _g_ magit status
+_C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region
 
 _q_: %s"
           (luk-caption "Current File")
@@ -151,6 +151,7 @@ _q_: %s"
 
   ;; Misc
   ("c t" (org-capture nil "t") :exit t)
+  ("c b" (org-capture nil "b") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
   ("g" magit-status)
   ("r" luk-hydra-region/body :exit t))
