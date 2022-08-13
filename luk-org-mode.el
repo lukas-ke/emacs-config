@@ -197,6 +197,8 @@ _q_: quit"
 
     ;; Indent on newline
     (define-key org-mode-map (kbd "RET") 'org-return-indent)
+    ;; Allow following links with enter, not only C-x o
+    (setq org-return-follows-link  t)
 
     ;; Use "➤" after folded headings instead of "..."
     (setq org-ellipsis " ➤")
