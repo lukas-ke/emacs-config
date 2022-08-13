@@ -196,7 +196,8 @@ _q_: quit"
     (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
 
     ;; Indent on newline
-    (define-key org-mode-map (kbd "RET") 'org-return-indent)
+    (define-key org-mode-map (kbd "RET") 'org-return-indent) ;; TODO: Maybe not needed with auto-indent?
+
     ;; Allow following links with enter, not only C-x o
     (setq org-return-follows-link  t)
 
