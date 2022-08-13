@@ -8,6 +8,8 @@
 ;; `luk-init-path' when this file is loaded
 ;; Note: This won't happen on plain eval.
 (when load-file-name (setq luk-init-path load-file-name))
+(add-to-list 'load-path (concat (file-name-directory luk-init-path) "/others"))
+
 
 (defun luk-edit-init ()
   "Open my 'luk-init.el'-script in a buffer"
@@ -214,5 +216,11 @@
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
+
+
+(require 'perfect-margin)
+(setq perfect-margin-hide-fringes nil)
+(setq perfect-margin-visible-width 120)
+(perfect-margin-mode 1)
 
 (autoload 'luk-list-files "luk-list-files" nil t)
