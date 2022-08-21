@@ -192,8 +192,11 @@ _q_: quit"
     (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
     (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
     (define-key org-mode-map (kbd "C-c l") 'org-store-link)
-
     (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
+
+    ;; Bind org-store-link globally, to allow copying links in non-org
+    ;; files and linking to them in an org-file.
+    (global-set-key (kbd "C-c l") 'org-store-link)
 
     ;; Indent on newline
     (define-key org-mode-map (kbd "RET") 'org-return-indent) ;; TODO: Maybe not needed with auto-indent?
@@ -226,7 +229,7 @@ _q_: quit"
     (setq org-id-link-to-org-use-id 'create-if-interactive)
 
     ;; Require braces after underscore for interpreting as subscript,
-    ;; to avoid that "world" shoudl be a subscript in "hello_world"
+    ;; to avoid that "world" should be a subscript in "hello_world"
     ;; (e.g. with org-pretty-entities).
     ;;
     ;; The syntax to actually use subscript becomes instead:
@@ -238,7 +241,9 @@ _q_: quit"
 
     (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
                                   ("describe-function" . "elisp:(describe-function '%h)")
-                                  ("describe-variable" . "elisp:(describe-variable '%h)")))
+                                  ("describe-variable" . "elisp:(describe-variable '%h)")
+                                  ("describe-package" . "elisp:(describe-package '%h)")
+                                  ("commit" . "elisp:(magit-show-commit \"%h\")")))
 
     ;; Don't try to put tags in a column, just space them one step
     ;; from the heading Mostly because I don't like that the ellipsis
