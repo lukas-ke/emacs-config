@@ -199,7 +199,7 @@ _q_: quit"
     (global-set-key (kbd "C-c l") 'org-store-link)
 
     ;; Indent on newline
-    (define-key org-mode-map (kbd "RET") 'org-return-indent) ;; TODO: Maybe not needed with auto-indent?
+    (define-key org-mode-map (kbd "RET") 'org-return-and-maybe-indent)
 
     ;; Allow following links with enter, not only C-x o
     (setq org-return-follows-link  t)
