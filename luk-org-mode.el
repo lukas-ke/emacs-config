@@ -184,75 +184,73 @@ _q_: quit"
   (luk-org-hydra/body))
 
 (defun luk-org-mode-setup ()
-  (with-eval-after-load 'org
+  ;;; Keys
+  (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
+  (define-key org-mode-map (kbd "C-c a") 'org-agenda)
+  (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
+  (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
+  (define-key org-mode-map (kbd "C-c l") 'org-store-link)
+  (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
 
-    ;;; Keys
-    (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
-    (define-key org-mode-map (kbd "C-c a") 'org-agenda)
-    (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
-    (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
-    (define-key org-mode-map (kbd "C-c l") 'org-store-link)
-    (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
+  ;; Bind org-store-link globally, to allow copying links in non-org
+  ;; files and linking to them in an org-file.
+  (global-set-key (kbd "C-c l") 'org-store-link)
 
-    ;; Bind org-store-link globally, to allow copying links in non-org
-    ;; files and linking to them in an org-file.
-    (global-set-key (kbd "C-c l") 'org-store-link)
+  ;; Indent on newline
+  (define-key org-mode-map (kbd "RET") 'org-return-and-maybe-indent)
 
-    ;; Indent on newline
-    (define-key org-mode-map (kbd "RET") 'org-return-and-maybe-indent)
+  ;; Allow following links with enter, not only C-x o
+  (setq org-return-follows-link  t)
 
-    ;; Allow following links with enter, not only C-x o
-    (setq org-return-follows-link  t)
+  ;; Use "➤" after folded headings instead of "..."
+  (setq org-ellipsis " ➤")
 
-    ;; Use "➤" after folded headings instead of "..."
-    (setq org-ellipsis " ➤")
+  ;; No underline for ➤
+  (set-face-attribute 'org-ellipsis nil :underline nil :foreground "#ffffff")
 
-    ;; No underline for ➤
-    (set-face-attribute 'org-ellipsis nil :underline nil :foreground "#ffffff")
+  (add-hook 'org-mode-hook 'luk-org--mode-hook)
 
-    (add-hook 'org-mode-hook 'luk-org--mode-hook)
+  ;; Bigger check-boxes
+  (set-face-attribute 'org-checkbox nil :height 1.5)
 
-    ;; Bigger check-boxes
-    (set-face-attribute 'org-checkbox nil :height 1.5)
+  ;; By default, hide emphasis markers like the = and * for
+  ;; =verbatim= and *bold* (Toggle with f6)
+  (setq org-hide-emphasis-markers t)
 
-    ;; By default, hide emphasis markers like the = and * for
-    ;; =verbatim= and *bold* (Toggle with f6)
-    (setq org-hide-emphasis-markers t)
+  ;; https://stackoverflow.com/questions/40332479/org-mode-folding-considers-whitespace-as-content
+  (setq org-cycle-separator-lines -1)
 
-    ;; https://stackoverflow.com/questions/40332479/org-mode-folding-considers-whitespace-as-content
-    (setq org-cycle-separator-lines -1)
+  ;; Set ids for interactive link-store actions (e.g. C-c l), but
+  ;; not when used in scripts, like for capture to avoid getting
+  ;; unnecessary ids for nodes that I just happened to be at when
+  ;; starting an org-capture.
+  (setq org-id-link-to-org-use-id 'create-if-interactive)
 
-    ;; Set ids for interactive link-store actions (e.g. C-c l), but
-    ;; not when used in scripts, like for capture to avoid getting
-    ;; unnecessary ids for nodes that I just happened to be at when
-    ;; starting an org-capture.
-    (setq org-id-link-to-org-use-id 'create-if-interactive)
+  ;; Require braces after underscore for interpreting as subscript,
+  ;; to avoid that "world" should be a subscript in "hello_world"
+  ;; (e.g. with org-pretty-entities).
+  ;;
+  ;; The syntax to actually use subscript becomes instead:
+  ;; "hello_{world}"
+  (setq org-use-sub-superscripts 1)
 
-    ;; Require braces after underscore for interpreting as subscript,
-    ;; to avoid that "world" should be a subscript in "hello_world"
-    ;; (e.g. with org-pretty-entities).
-    ;;
-    ;; The syntax to actually use subscript becomes instead:
-    ;; "hello_{world}"
-    (setq org-use-sub-superscripts 1)
+  ;; Use yellow for STARTED task-states
+  (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
 
-    ;; Use yellow for STARTED task-states
-    (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
+  (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
+                                ("describe-function" . "elisp:(describe-function '%h)")
+                                ("describe-variable" . "elisp:(describe-variable '%h)")
+                                ("describe-package" . "elisp:(describe-package '%h)")
+                                ("commit" . "elisp:(magit-show-commit \"%h\")")))
 
-    (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
-                                  ("describe-function" . "elisp:(describe-function '%h)")
-                                  ("describe-variable" . "elisp:(describe-variable '%h)")
-                                  ("describe-package" . "elisp:(describe-package '%h)")
-                                  ("commit" . "elisp:(magit-show-commit \"%h\")")))
+  ;; Don't try to put tags in a column, just space them one step
+  ;; from the heading Mostly because I don't like that the ellipsis
+  ;; symbol for collapsed headings goes after the tags, which gets
+  ;; very far to the right for such headings.
+  (setq org-tags-column 0)
 
-    ;; Don't try to put tags in a column, just space them one step
-    ;; from the heading Mostly because I don't like that the ellipsis
-    ;; symbol for collapsed headings goes after the tags, which gets
-    ;; very far to the right for such headings.
-    (setq org-tags-column 0)
+  ;; Use image width attributes, if available, for inlined images
+  (setq org-image-actual-width nil)
 
-    ;; Use image width attributes, if available, for inlined images
-    (setq org-image-actual-width nil)
-
-    ;; Open "file:"-links in dired instead of os-application
-    (add-to-list 'org-file-apps '(directory . emacs))))
+  ;; Open "file:"-links in dired instead of os-application
+  (add-to-list 'org-file-apps '(directory . emacs)))
