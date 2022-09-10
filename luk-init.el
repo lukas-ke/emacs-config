@@ -218,9 +218,15 @@
 (luk-mode-line-setup)
 
 
+;; Auto-center the content by adjusting margins when using a single
+;; emacs-window.
 (require 'perfect-margin)
 (setq perfect-margin-hide-fringes nil)
 (setq perfect-margin-visible-width 120)
 (perfect-margin-mode 1)
 
 (autoload 'luk-list-files "luk-list-files" nil t)
+
+(when (require 'lsp-mode nil 'noerror)
+  (require 'luk-lsp-conf)
+  (luk-lsp-conf-setup))
