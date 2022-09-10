@@ -253,4 +253,11 @@ _q_: quit"
   (setq org-image-actual-width nil)
 
   ;; Open "file:"-links in dired instead of os-application
-  (add-to-list 'org-file-apps '(directory . emacs)))
+  (add-to-list 'org-file-apps '(directory . emacs))
+
+  ;; Use shift+direction as windmove in org-mode when not at a special
+  ;; location (e.g. heading or timestamp).
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right))

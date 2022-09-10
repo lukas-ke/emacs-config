@@ -185,6 +185,7 @@ Split: 2=below, 3=right.
   ("b" switch-to-buffer)
   ("o" other-window)
   ("O" (other-window -1))
-  ("i" (other-window -1)))
+  ("i" (other-window -1))
+  ("q" nil "quit" :exit t))
 
 (global-set-key (kbd "M-,") 'luk-hydra-window/body)
