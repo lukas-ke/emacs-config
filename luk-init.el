@@ -239,3 +239,9 @@
 (global-set-key (kbd "S-<down>") 'windmove-down)
 (global-set-key (kbd "S-<left>") 'windmove-left)
 (global-set-key (kbd "S-<right>") 'windmove-right)
+
+;; More convenient bind M-o (than C-x o) for cycling windows
+(global-set-key (kbd "M-o") 'other-window)
+
+;; Unset C-x o, to retrain me to use M-o
+(global-unset-key (kbd "C-x o"))
