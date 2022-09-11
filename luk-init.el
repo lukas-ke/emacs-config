@@ -225,6 +225,20 @@
 (setq perfect-margin-visible-width 120)
 (perfect-margin-mode 1)
 
+(defun luk-select-window-at-mouse-position()
+  "Select the window my 'luk-init.el'-script in a buffer"
+  (interactive)
+  (let ((pos (mouse-position)))
+    (select-window (window-at (cadr pos)
+                              (cddr pos)
+                              (car pos)))))
+
+;; With perfect-margin, a lot of the window can become the margin, so
+;; let clicks in the margin select windows too, not just the editable
+;; area.
+(global-set-key (kbd "<left-margin> <mouse-1>") 'luk-select-window-at-mouse-position)
+(global-set-key (kbd "<right-margin> <mouse-1>") 'luk-select-window-at-mouse-position)
+
 (autoload 'luk-list-files "luk-list-files" nil t)
 
 (when (require 'lsp-mode nil 'noerror)
