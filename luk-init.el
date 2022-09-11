@@ -245,3 +245,10 @@
 
 ;; Unset C-x o, to retrain me to use M-o
 (global-unset-key (kbd "C-x o"))
+
+;; Use diminish package to remove some minor-modes from modeline.
+(when (require 'diminish nil 'noerror)
+  (diminish 'perfect-margin-mode)
+  (diminish 'org-indent-mode)
+  (diminish 'yas-minor-mode)
+  (diminish 'company-mode))
