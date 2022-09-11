@@ -10,6 +10,8 @@
 (when load-file-name (setq luk-init-path load-file-name))
 (add-to-list 'load-path (concat (file-name-directory luk-init-path) "/others"))
 
+;; Use specific fonts for some characters (e.g. 🔒, 😎)
+(load "luk-font.el")
 
 (defun luk-edit-init ()
   "Open my 'luk-init.el'-script in a buffer"
@@ -216,7 +218,6 @@
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
-
 
 ;; Auto-center the content by adjusting margins when using a single
 ;; emacs-window.

@@ -5,22 +5,12 @@
 
 TODO: Work in progress."
   (interactive)
-
-  ;; Font replacement to support some symbols
-  (set-fontset-font "fontset-default" #x1f512 "segoe ui symbol") ;; Padlock: 🔒
-  (set-fontset-font "fontset-default" #x2bc1 "segoe ui symbol") ;; Diamond: ⯁
-  (set-fontset-font t '(?😊 . ?😎) "Segoe UI Emoji") ;; Some emoji range)
-
-  ;; github-octicons installed via all-the-icons
-  (set-fontset-font t #xf020 "github-octicons") ;;  Git branch
-
   ;; Remove the minimum field width from the default buffer
   ;; identification format.
   ;;
   ;; TODO: The original `mode-line-buffer-identification' did
   ;; some other things too.
   (setq-default mode-line-buffer-identification '(#("%b")))
-
 
   (setq-default mode-line-format
     '("%e"
