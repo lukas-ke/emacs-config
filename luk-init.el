@@ -178,10 +178,6 @@
 (require 'luk-next-error-cycle)
 (global-set-key [(control +)] 'luk-next-error-cycle)
 
-;; Enable elpy for all .py-buffers
-(when (require 'elpy nil 'noerror)
-  (require 'luk-elpy) (luk-elpy-setup))
-
 (require 'luk-elisp) (luk-elisp-setup)
 
 (require 'luk-c++) (luk-c++-setup)
