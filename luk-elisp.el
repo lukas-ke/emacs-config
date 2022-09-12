@@ -22,4 +22,4 @@
 
   (add-hook 'emacs-lisp-mode-hook 'luk-elisp-maybe-insert-boilerplate)
 
-  (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions))
+  (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window))

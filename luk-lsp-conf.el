@@ -2,7 +2,7 @@
 (provide 'luk-lsp-conf)
 
 (defun luk-lsp-conf-setup ()
-  (define-key lsp-mode-map (kbd "C-c g") 'lsp-find-definition)
+  (define-key lsp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
 
   ;; lsp-mode requires yas-snippets for completion
   ;; (Otherwise I get $0 when completing calls with arguments, e.g.
