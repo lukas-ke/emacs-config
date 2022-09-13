@@ -1,6 +1,7 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
 (provide 'luk-dired)
+(require 'dired)
 
 (defun luk-dired--sort ()
   "Sort dired listings with directories first."
@@ -17,4 +18,7 @@
     (luk-dired--sort))
 
   ;; Only show names in dired, not sizes, permissions
-  (add-hook 'dired-before-readin-hook 'dired-hide-details-mode))
+  (add-hook 'dired-before-readin-hook 'dired-hide-details-mode)
+
+  ;; Use M-<up> to go up one dir, like in Windows explorer.
+  (define-key dired-mode-map (kbd "M-<up>") 'dired-up-directory))
