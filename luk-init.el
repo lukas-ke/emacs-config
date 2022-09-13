@@ -263,3 +263,11 @@
   (diminish 'org-indent-mode)
   (diminish 'yas-minor-mode)
   (diminish 'company-mode))
+
+;; - C-M-a goes to the beginning of a function definition,
+;; - C-M-e should go to the end of one ...
+;; ... but at least on my laptop, the key-sequence C-M-e gets replaced
+;; with the euro sign (i.e. Alt+gr e). Since I rarely type that, just
+;; bind the symbol to end-of-defun so C-M-e behaves as expected.I will
+;; undoubtedly be super-confused if I ever try to type € though.
+(global-set-key (kbd "€") 'end-of-defun)
