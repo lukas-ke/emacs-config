@@ -257,13 +257,6 @@
 ;; Unset C-x o, to retrain me to use M-o
 (global-unset-key (kbd "C-x o"))
 
-;; Use diminish package to remove some minor-modes from modeline.
-(when (require 'diminish nil 'noerror)
-  (diminish 'perfect-margin-mode)
-  (diminish 'org-indent-mode)
-  (diminish 'yas-minor-mode)
-  (diminish 'company-mode))
-
 ;; - C-M-a goes to the beginning of a function definition,
 ;; - C-M-e should go to the end of one ...
 ;; ... but at least on my laptop, the key-sequence C-M-e gets replaced
@@ -271,3 +264,17 @@
 ;; bind the symbol to end-of-defun so C-M-e behaves as expected.I will
 ;; undoubtedly be super-confused if I ever try to type € though.
 (global-set-key (kbd "€") 'end-of-defun)
+
+;; Show a horizontal line instead of ^L for page-breaks (inserted with
+;; C-q C-l)
+(require 'page-break-lines)
+(setq page-break-lines-modes '(emacs-lisp-mode))
+(global-page-break-lines-mode)
+
+;; Use diminish package to remove some minor-modes from modeline.
+(when (require 'diminish nil 'noerror)
+  (diminish 'perfect-margin-mode)
+  (diminish 'org-indent-mode)
+  (diminish 'yas-minor-mode)
+  (diminish 'company-mode)
+  (diminish 'page-break-lines-mode))
