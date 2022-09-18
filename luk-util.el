@@ -13,3 +13,7 @@
       path)
 
     (file-name-directory (directory-file-name path))))
+
+(defun luk-in-comment ()
+  "Return t if point is inside a code comment."
+  (if (nth 4 (syntax-ppss)) t nil))
