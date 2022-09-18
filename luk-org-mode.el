@@ -21,6 +21,10 @@
 (when (require 'luk nil t)
   (luk-add-group 'luk-org))
 
+
+;; Functions for switching between pretty display with hidden entities
+;; and formatted links, or a more raw format.
+
 (defun luk-org--descriptive-links (enable)
   "See `org-toggle-link-display'
 
@@ -67,6 +71,8 @@ call `org-entities-help for the org documentation."
     (luk-org--pretty-entities pretty-display?)
     (if pretty-display? (org-display-inline-images) (org-remove-inline-images))
     (org-restart-font-lock)))
+
+;; Paste image functionality
 
 (defun luk-org-run-clipboard-script (DIR)
   "Run “clipboard-to-file.py” and return the name of the image it
@@ -146,7 +152,7 @@ find the Python interpreter for running the script."
           (goto-char START)
           (insert (concat "[[attachment:" NEW-NAME "]]"))
           (org-redisplay-inline-images))))))
-
+
 (defun luk-org--mode-hook ()
   ;; Use prettify-symbols to get "nicer" checkboxes
   (push '("[ ]" . "☐") prettify-symbols-alist)
@@ -160,6 +166,9 @@ find the Python interpreter for running the script."
   ;; Use readable links initially
   (luk-org--descriptive-links nil))
 
+
+;; Functions for my org-specific hydra (see the hydra-package).
+;;
 ;; Note: Extra blank lines in caption to use same height
 ;; as luk-hydra
 (defhydra luk-org-hydra (:hint nil)
@@ -180,13 +189,13 @@ _q_: quit"
   ("P" luk-org-paste-image :exit t)
   ("a" org-archive-subtree-default-with-confirmation)
   ("l" org-lint)
-
   ("q" nil :exit t))
 
 (defun luk-org-summon-hydra ()
   (interactive)
   (luk-org-hydra/body))
 
+
 (defun luk-org-mode-setup ()
   ;;; Keys
   (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
