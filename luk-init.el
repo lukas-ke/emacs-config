@@ -265,10 +265,14 @@
 ;; undoubtedly be super-confused if I ever try to type € though.
 (global-set-key (kbd "€") 'end-of-defun)
 
+;; Easier to remember than the defaults C-c b, C-c f or l, r
+(define-key help-mode-map (kbd "b") 'help-go-back)
+(define-key help-mode-map (kbd "f") 'help-go-forward)
+
 ;; Show a horizontal line instead of ^L for page-breaks (inserted with
-;; C-q C-l)
+;; C-q C-l) in some modes
 (require 'page-break-lines)
-(setq page-break-lines-modes '(emacs-lisp-mode))
+(setq page-break-lines-modes '(emacs-lisp-mode help-mode))
 (global-page-break-lines-mode)
 
 ;; Use diminish package to remove some minor-modes from modeline.
