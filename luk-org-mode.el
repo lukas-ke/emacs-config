@@ -239,7 +239,8 @@ _q_: quit"
   (setq org-use-sub-superscripts 1)
 
   ;; Use yellow for STARTED task-states
-  (setq org-todo-keyword-faces '(("STARTED" . "#fff200")))
+  (setq org-todo-keyword-faces '(("STARTED" . "#fff200")
+                                 ("CANCELED" . "#000000")))
 
   (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
                                 ("describe-function" . "elisp:(describe-function '%h)")
