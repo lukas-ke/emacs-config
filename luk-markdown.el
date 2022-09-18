@@ -21,6 +21,7 @@ Markdown uses two spaces for a hard linebreak so this command:
       (while (re-search-forward "[ ]+$" nil t)
         (let* ((b (match-beginning 0)) (e (match-end 0)) (len (- e b)))
           (cond
+           ;; TODO: Fully trim any type of markdown heading too
            ((and (= b (line-beginning-position)) (region-modifiable-p b e)) ;; Only whitespace
             (delete-region b e))
            ((= len 2) ;; Hard linebreak
