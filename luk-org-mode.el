@@ -71,6 +71,39 @@ call `org-entities-help for the org documentation."
     (luk-org--pretty-entities pretty-display?)
     (if pretty-display? (org-display-inline-images) (org-remove-inline-images))
     (org-restart-font-lock)))
+
+
+;; Misc utils
+
+(defun luk-org-delete-trailing-whitespace ()
+  "Delete trailing whitespace except at empty org-headings.
+
+This avoids the annoyance of having yet-undescribed headings
+turned into plain asterisks due to their trailing space being
+removed."
+  (interactive)
+  (save-mark-and-excursion
+    (org-save-outline-visibility
+        (save-match-data
+          (beginning-of-buffer)
+          (while (re-search-forward "[ ]+$" nil t)
+            (let* ((b (match-beginning 0)) (e (match-end 0)) (len (- e b)))
+              (cond
+               ((string-match
+                 "^\\([*]+\\)\\([ ]+\\)$"
+                 (buffer-substring
+                  (line-beginning-position)
+                  (line-end-position)))
+                ;; At empty heading, delete any extra spaces, leaving one
+                (if (region-modifiable-p (match-beginning 2) (match-end 2))
+                    (delete-region
+                     (+ (line-beginning-position) (match-beginning 2) 1)
+                     (+ (line-beginning-position) (match-end 2)))
+                  (goto e)))
+               ((region-modifiable-p b e)
+                (delete-region b e))
+               (t (goto e)))))))))
+
 
 ;; Paste image functionality
 
@@ -164,7 +197,12 @@ find the Python interpreter for running the script."
   (org-bullets-mode 1)
 
   ;; Use readable links initially
-  (luk-org--descriptive-links nil))
+  (luk-org--descriptive-links nil)
+
+  ;; Use org-specific delete-trailing-whitespace function, which
+  ;; preserves a single space after empty org headings.
+  (setq luk-should-trim-whitespace nil)
+  (add-hook 'before-save-hook 'luk-org-delete-trailing-whitespace nil 'make-local))
 
 
 ;; Functions for my org-specific hydra (see the hydra-package).
@@ -274,4 +312,6 @@ _q_: quit"
   (add-hook 'org-shiftup-final-hook 'windmove-up)
   (add-hook 'org-shiftleft-final-hook 'windmove-left)
   (add-hook 'org-shiftdown-final-hook 'windmove-down)
-  (add-hook 'org-shiftright-final-hook 'windmove-right))
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
+
+  )
