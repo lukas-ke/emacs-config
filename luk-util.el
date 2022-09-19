@@ -3,14 +3,11 @@
 (defun -up (&optional path n)
   "Get the N-th parent folder of PATH or `buffer-file-name'."
   (or path (setq path (buffer-file-name)))
+  (or n (setq n 1))
+  (dotimes (_num n)
+    (setq path (file-name-directory (directory-file-name path))))
+  path)
 
-  (if n
-    (let ((folder path))
-      (dotimes (num n)
-        (setq path (file-name-directory (directory-file-name path))))
-      path)
-
-    (file-name-directory (directory-file-name path))))
 
 (defun luk-in-comment ()
   "Return t if point is inside a code comment."
