@@ -60,9 +60,9 @@ The above example expands to:
   ;; (excursion match-data) body)
   ;; produce: (save-excursion (save-match-data body))
   (let* ((L (list (luk--get-save-symbol (car states)))) (head L))
-    (mapcar (lambda (x)
-              (setcdr head (list (list (luk--get-save-symbol x))))
-              (setq head (car (cdr head)))) (cdr states))
+    (dolist (state (cdr states))
+      (setcdr head (list (list (luk--get-save-symbol state))))
+      (setq head (car (cdr head))))
     (setcdr head body)
     L))
 
