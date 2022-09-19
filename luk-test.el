@@ -66,6 +66,25 @@
   (should (string= (-up "c:/plopp/plupp" 1) "c:/plopp/"))
   (should (string= (-up "c:/plopp/plupp" 2) "c:/"))
   (should (string= (-up "c:/plopp/plupp.txt") "c:/plopp/")))
+
+(ert-deftest luk-capitalize-first-word ()
+  (should (string= (luk-capitalize-first-word "hello world") "Hello world"))
+  (should (string= (luk-capitalize-first-word "Hello world") "Hello world"))
+  (should (string= (luk-capitalize-first-word "4ello world") "4ello world"))
+  (should (string= (luk-capitalize-first-word "") "")))
+
+(ert-deftest luk-new-file-buffer-p ()
+  (with-current-buffer (find-file (concat luk-test-data-dir "whatever"))
+    ;; Buffer visiting a new (unwritten) file
+    (should (luk-new-file-buffer-p)))
+
+  (with-current-buffer (find-file (luk-test-file "luk-markdown-delete-trailing-whitespace"))
+    ;; Buffer visiting a file that exists
+    (should-not (luk-new-file-buffer-p)))
+
+  (with-current-buffer (get-buffer-create "*TEST luk-new-file-buffer-p*")
+    ;; Buffer not visiting a file
+    (should-not (luk-new-file-buffer-p))))
 
 ;; Tests for luk-markdown.el
 

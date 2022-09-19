@@ -11,9 +11,9 @@
     (beginning-of-buffer)
     (insert ";;; -*- coding: utf-8; lexical-binding: t -*-\n\n")))
 
-(defun luk-elisp-maybe-insert-boilerplate ()
+(defun luk-elisp--maybe-insert-boilerplate ()
   "Run luk-elisp-insert-boilerplate for new Emacs-lisp files."
-  (when (and (buffer-file-name) (not (file-exists-p (buffer-file-name))) (= (point) 1))
+  (when (luk-new-file-buffer-p)
     (luk-elisp-insert-boilerplate)
     (forward-line)
     (forward-line)))
@@ -45,7 +45,7 @@ handle minibuffer or other modes."
   (when (require 'company nil 'noerror)
     (add-hook 'emacs-lisp-mode-hook 'company-mode))
 
-  (add-hook 'emacs-lisp-mode-hook 'luk-elisp-maybe-insert-boilerplate)
+  (add-hook 'emacs-lisp-mode-hook 'luk-elisp--maybe-insert-boilerplate)
 
   (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
   (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-elisp-smart-tab))

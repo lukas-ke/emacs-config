@@ -5,7 +5,7 @@
 (require 'org-attach)
 (require 'org-id)
 (require 'luk-hydra)
-(provide 'luk-org-mode)
+(require 'luk-util)
 
 (defgroup luk-org nil "Variables for luk-org")
 
@@ -103,6 +103,18 @@ removed."
                ((region-modifiable-p b e)
                 (delete-region b e))
                (t (goto e)))))))))
+
+(defun luk-org--filename-to-title (file-name)
+  (luk-capitalize-first-word
+   (replace-regexp-in-string "-" " " (file-name-base file-name))))
+
+(defun luk-org-insert-boilerplate ()
+  "Insert some typical start content for new org-files"
+  (interactive)
+  (save-excursion
+    (beginning-of-buffer)
+    (insert "#+title: " (luk-org--filename-to-title (buffer-file-name)) "\n#+startup: indent overview\n\n* "))
+  (goto-char 10))
 
 
 ;; Paste image functionality
@@ -202,7 +214,10 @@ find the Python interpreter for running the script."
   ;; Use org-specific delete-trailing-whitespace function, which
   ;; preserves a single space after empty org headings.
   (setq luk-should-trim-whitespace nil)
-  (add-hook 'before-save-hook 'luk-org-delete-trailing-whitespace nil 'make-local))
+  (add-hook 'before-save-hook 'luk-org-delete-trailing-whitespace nil 'make-local)
+
+  (when (luk-new-file-buffer-p)
+    (luk-org-insert-boilerplate)))
 
 
 ;; Functions for my org-specific hydra (see the hydra-package).
@@ -313,5 +328,6 @@ _q_: quit"
   (add-hook 'org-shiftleft-final-hook 'windmove-left)
   (add-hook 'org-shiftdown-final-hook 'windmove-down)
   (add-hook 'org-shiftright-final-hook 'windmove-right)
-
   )
+
+(provide 'luk-org-mode)

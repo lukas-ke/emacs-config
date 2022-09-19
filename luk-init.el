@@ -7,6 +7,7 @@
 ;; Make the path to this file (luk-init.el) available as
 ;; `luk-init-path' when this file is loaded
 ;; Note: This won't happen on plain eval.
+(defvar luk-init-path nil "The path to luk-init.el")
 (when load-file-name (setq luk-init-path load-file-name))
 (add-to-list 'load-path (concat (file-name-directory luk-init-path) "/others"))
 
@@ -282,3 +283,5 @@
   (diminish 'yas-minor-mode)
   (diminish 'company-mode)
   (diminish 'page-break-lines-mode))
+
+(provide 'luk-init)

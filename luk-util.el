@@ -12,6 +12,24 @@
 (defun luk-in-comment ()
   "Return t if point is inside a code comment."
   (if (nth 4 (syntax-ppss)) t nil))
+
+(defun luk-new-file-buffer-p ()
+  "Return t if the buffer appears to be opened for a new file.
+
+The newness and file-targetting is determined by checking that
+the buffer has a file-name for a file that doesn't (yet) exist,
+and as an extra check that point is at the start.
+
+This can be used in mode-hooks to check whether the buffer has
+just been opened with e.g. `find-file' for a new file, in order
+to, say, insert suitable boilerplate for that filetype."
+  (and (buffer-file-name) (not (file-exists-p (buffer-file-name))) (= (point) 1)))
+
+(defun luk-capitalize-first-word (string)
+  (if (= (length string) 0)
+      ""
+    (let ((first (substring string nil 1)) (rest (substring string 1)))
+      (concat (capitalize first) rest))))
 
 ;; luk-save macro
 
