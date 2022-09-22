@@ -1,5 +1,7 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
+(require 'image-file)
+
 (defun -up (&optional path n)
   "Get the N-th parent folder of PATH or `buffer-file-name'."
   (or path (setq path (buffer-file-name)))
@@ -30,6 +32,10 @@ to, say, insert suitable boilerplate for that filetype."
       ""
     (let ((first (substring string nil 1)) (rest (substring string 1)))
       (concat (capitalize first) rest))))
+
+(defun luk/image-filename-p (filename)
+  (-any (lambda (ext) (string-suffix-p (concat "." ext) filename)) image-file-name-extensions))
+
 
 ;; luk-save macro
 

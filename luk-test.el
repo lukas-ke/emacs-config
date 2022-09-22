@@ -153,3 +153,8 @@
 
       ;; Restore
       (setq luk/enum-alist old-list))))
+
+(ert-deftest luk-image-filename-p ()
+  (should (luk/image-filename-p "c:/test.png"))
+  (should (luk/image-filename-p "file.jpg"))
+  (should-not (luk/image-filename-p "c:/test.txt")))

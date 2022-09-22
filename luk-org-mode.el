@@ -6,6 +6,7 @@
 (require 'org-id)
 (require 'luk-hydra)
 (require 'luk-util)
+(require 'calendar)
 
 (defgroup luk-org nil "Variables for luk-org")
 
@@ -15,6 +16,12 @@
 (defcustom luk-org-python-command
   nil
   "Python executable path (for org-mode python utility functions)"
+  :type 'string
+  :group 'luk-org)
+
+(defcustom luk-org-image-editor
+  nil
+  "External image editor for image attachments in org-mode"
   :type 'string
   :group 'luk-org)
 
@@ -44,7 +51,7 @@ source (enable=false)."
 (defun luk-org--pretty-entities (enable)
   "See `org-toggle-pretty-entities'
 
-This home-brewn variant takes an argument to better support
+This home-brewnn variant takes an argument to better support
 `luk-org-toggle-display'
 
 This includes e.g. subscript and superscript and some LaTeX names,
@@ -249,6 +256,335 @@ _q_: quit"
   (luk-org-hydra/body))
 
 
+;; Contextual hydra
+
+(defvar luk-org--context-element nil
+  "The latest context element for the `luk-org-context-hydra'.\n
+Set to `org-element-context' on hydra start.")
+
+(defun luk-org--context-key (key)
+  "Extract a key from the `luk-org--context-element'."
+  (plist-get (cadr luk-org--context-element) key))
+
+(defun luk-org-delete-context-element ()
+  "Delete the region described by `luk-org--context-element'"
+  (let ((begin (luk-org--context-key :begin))
+        (end (luk-org--context-key :end)))
+    (kill-region begin end)))
+
+(defun luk-org-link-element-edit ()
+  "Edit the link currently described by `luk-org--context-element'"
+  (let* ((current-link (luk-org--context-key :raw-link))
+         (contents-begin (luk-org--context-key :contents-begin))
+         (contents-end (luk-org--context-key :contents-end))
+         (current-title
+          (if contents-begin
+              (buffer-substring-no-properties contents-begin
+                                              contents-end)
+            ""))
+         (new-link (read-string "Link: " current-link))
+         (new-title (read-string "Title: " current-title)))
+    (delete-region (luk-org--context-key :begin)
+                   (luk-org--context-key :end))
+    (if (/= 0 (length new-title))
+        (insert "[[" new-link "][" new-title "]]")
+      (insert "[[" new-link "]]")))
+  (setq luk-org--context-element nil))
+
+(defun luk-org-link-element-copy-markdown ()
+  "Copy the link described by `luk-org--context-element' to clipboard with markdown formatting."
+  (let* ((link (luk-org--context-key :raw-link))
+         (contents-begin (luk-org--context-key :contents-begin))
+         (contents-end (luk-org--context-key :contents-end))
+         (title
+          (if contents-begin
+              (buffer-substring-no-properties contents-begin
+                                              contents-end)
+            nil)))
+    (kill-new
+     (if title
+         (concat "[" title "](" link ")")
+       link))))
+
+(defun luk-org-element-value-symbol (enum-name)
+  "Get the enum-value for ENUM-NAME corresponding to the
+org document content.
+
+That is, split the `luk-org--context-element's \":value\" string on
+spaces, and return the first enum-value symbol whose `symbol-name' is in
+that list, or \\='- if none.
+
+So when `luk-org--context-element' has been initialized from
+
+    #+startup: indent overview
+
+The invocation (luk-org-element-value-symbol 'Visibility) will
+return 'overview"
+
+  ;; todo: lower-case the list
+  (let ((value (split-string (luk-org--context-key :value) " ")))
+    (let ((symbol
+           (cl-dolist (x (luk/enum-values enum-name))
+             (when (member (symbol-name x) value)
+               (cl-return x)))))
+      (if (not symbol) '-
+        symbol))))
+
+(defun luk-org-open-in-image-editor ()
+  (when (not luk-org-image-editor)
+    (user-error "luk-org-image-editor not set."))
+  (let ((path
+         (if (string= (luk-org--context-key :type) "attachment")
+             (concat (org-attach-dir) "/" (luk-org--context-key :path))
+           (luk-org--context-key :path))))
+    (start-process "image-editor" nil luk-org-image-editor path)))
+
+(defun luk-org-set-image-width ()
+  (let ((width (read-number "Width: ")))
+    (goto-char (luk-org--context-key :begin))
+    (let ((indent (- (point) (line-beginning-position))))
+
+
+      (forward-line -1)
+      (goto-char (line-beginning-position))
+      (if (re-search-forward "^[ ]*\\(#\\+attr_org: :width.*\\)$" (line-end-position) t)
+          (replace-match (format "#+ATTR_ORG: :width %d" width) nil t nil 1)
+        (goto-char (luk-org--context-key :begin))
+        (insert (format "#+ATTR_ORG: :width %d\n" width))
+        (org-indent-line))
+      (forward-line 1)
+      (org-redisplay-inline-images))))
+
+(defhydra luk-org-link-hydra (:hint nil)
+  (format "\
+Main ➤ %s      _._: up
+^─^──────────────────────────
+_e_: edit
+_d_: delete
+_m_: copy markdown
+_q_: quit"
+          (luk-caption "Org Link"))
+  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
+  ("d" (luk-org-delete-context-element) :exit t)
+  ("e" (luk-org-link-element-edit) :exit t)
+  ("m" (luk-org-link-element-copy-markdown) :exit t)
+  ("q" nil :exit t))
+
+(defhydra luk-org-image-link-hydra (:hint nil)
+  (format "\
+Main ➤ %s      _._: up
+^─^──────────────────────────
+_e_: edit link
+_E_: edit image in external editor
+_w_: Set width
+_d_: delete
+_m_: copy markdown
+_q_: quit"
+          (luk-caption "Org Image"))
+  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
+  ("d" (luk-org-delete-context-element) :exit t)
+  ("e" (luk-org-link-element-edit) :exit t)
+  ("w" (luk-org-set-image-width) :exit t)
+  ("E" (luk-org-open-in-image-editor) :exit t)
+  ("m" (luk-org-link-element-copy-markdown) :exit t)
+  ("q" nil :exit t))
+
+(defhydra luk-org-table-hydra (:hint nil)
+  (format "\
+Main ➤ %s      _._: up
+^─^──────────────────────────
+_a_: align       _←_: Move column left   _k r_: kill row       _i r_: insert row
+_e_: edit field  _→_: Move column right  _k c_: delete column  _i c_: insert column
+_c_: convert     _↑_: Move row up        ^   ^                 _i l_: insert line
+^ ^              _↓_: Move row down      ^   ^
+_q_: quit"
+          (luk-caption "Table"))
+  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
+  ("a" (org-table-align) :exit t)
+  ("c" (org-table-convert) :exit t)
+  ("e" (call-interactively #'org-table-edit-field) :exit t)
+  ("<left>" (org-table-move-column-left) :exit nil)
+  ("<right>" (org-table-move-column-right) :exit nil)
+  ("<up>" (org-table-move-row-up) :exit nil)
+  ("<down>" (org-table-move-row-down) :exit nil)
+  ("k r" (org-table-kill-row) :exit nil)
+  ("k c" (org-table-delete-column) :exit nil)
+  ("i r" (let ((current-prefix-arg '(1))) (call-interactively #'org-table-insert-row)) :exit nil)
+  ("i c" (let ((current-prefix-arg '(1))) (call-interactively #'org-table-insert-column)) :exit nil)
+  ("i l" (org-table-insert-hline))
+  ("q" nil :exit t))
+
+(defvar luk-org--startup-old nil "The original value for the startup field.
+
+This allows restoring on cancel.")
+
+(defvar luk-org--indent nil "Enum for iterating over org indentation values.")
+(luk/def-enum Indent ('- 'indent 'noindent))
+
+(defvar luk-org--visibility nil "Enum for iterating over org visibility values.")
+(luk/def-enum Visibility ('- 'overview 'content 'showall 'show2levels 'show3levels 'show4levels 'show5levels 'showeverything))
+
+(defvar luk-org--numeration 'nil "Enum for iterating over org numeration values.")
+(luk/def-enum Numeration ('- 'num 'nonum))
+
+(defvar luk-org--timestamp-type nil "Timestamp type (TODO: worth using enum?)")
+(defvar luk-org--timestamp-date nil "")
+(defvar luk-org--temp-end nil "")
+
+(defun luk-org--update-startup ()
+  "Update the #+STARTUP element described by `luk-org--context-key.
+
+Modify the text to correspond to the currently cycled to values in the hydra."
+  (let ((old-point (point)))
+    (goto-char (luk-org--context-key :begin))
+    (delete-region (point) (line-end-position))
+    (let ((new-content
+           (concat
+            "#+startup: "
+            (string-join
+             ;; Strip empty ("-") entries to avoid getting extra
+             ;; spaces in string-join
+             (seq-filter (lambda (v) (not (string= "-" v)))
+                         (list (luk-org-enum-string luk-org--indent)
+                               (luk-org-enum-string luk-org--visibility)
+                               (luk-org-enum-string luk-org--numeration)))
+             " ")
+            )))
+      (goto-char (luk-org--context-key :begin))
+      (insert new-content))
+    (if (< old-point (line-end-position))
+        (goto-char old-point)
+      (goto-char (line-end-position)))))
+
+(defun luk-org--startup-cancel ()
+  "Cancel edits to the startup-hydra"
+  (save-excursion
+    (delete-region (luk-org--context-key :begin)
+                   luk-org--temp-end)
+
+      (goto-char (luk-org--context-key :begin))
+      (insert luk-org--startup-old)))
+
+(defun luk-org--cycle-enum (instance-name instance)
+  "Hydra-helper: Cycle the enum and update the buffer-text"
+  (set instance-name (luk/enum-next instance))
+  (luk-org--update-startup))
+
+(defun luk-org--update-timestamp ()
+  (let ((old-point (point)))
+    (delete-region (luk-org--context-key :begin) luk-org--temp-end)
+    (goto-char (luk-org--context-key :begin))
+    (insert (if (eq luk-org--timestamp-type 'active) "<" "["))
+    (insert (format "%d-%02d-%02d"
+                    (plist-get luk-org--timestamp-date :year-start)
+                    (plist-get luk-org--timestamp-date :month-start)
+                    (plist-get luk-org--timestamp-date :day-start)))
+    (insert (if (eq luk-org--timestamp-type 'active) ">" "]"))
+    ;; Insert day (e.g. "Thu") if missing
+    (org-timestamp-change 0 'day)
+    (goto-char old-point)))
+
+(defun luk-org--timestamp-select-calendar ()
+  (let ((date (split-string (org-read-date) "-")))
+    (plist-put luk-org--timestamp-date :year-start (string-to-number (car date)))
+    (plist-put luk-org--timestamp-date :month-start (string-to-number (cadr date)))
+    (plist-put luk-org--timestamp-date :day-start (string-to-number (caddr date))))
+  (luk-org--update-timestamp))
+
+(defun luk-org--timestamp-cycle-type ()
+  (setq luk-org--timestamp-type
+        (cl-case luk-org--timestamp-type
+          ('active 'inactive)
+          ('inactive 'active)))
+  (luk-org--update-timestamp))
+
+(defun luk-org--timestamp-set-today ()
+  (let ((date (calendar-current-date)))
+    (plist-put luk-org--timestamp-date :year-start (calendar-extract-year date))
+    (plist-put luk-org--timestamp-date :month-start (calendar-extract-month date))
+    (plist-put luk-org--timestamp-date :day-start (calendar-extract-day date)))
+  (luk-org--update-timestamp))
+
+(defun luk-org-enum-string (instance)
+  "Return the enum value as a string"
+  (symbol-name (luk/enum-value instance)))
+
+(defun luk-org-image-link? ()
+  (luk/image-filename-p (luk-org--context-key :path)))
+
+(defhydra luk-org-startup-hydra (:hint nil :foreign-keys warn :post (org-ctrl-c-ctrl-c))
+  (format "\
+Main ➤ %s      _._: up
+^─^──────────────────────────
+_i_: Indentation: %%s(luk-org-enum-string luk-org--indent)
+_v_: Visibility: %%s(luk-org-enum-string luk-org--visibility)
+_n_: Numeration: %%s(luk-org-enum-string luk-org--numeration)
+_R_: Restore startup visibility.
+
+_o_: Ok  _c_: Cancel"
+          (luk-caption "Org Keyword: STARTUP"))
+  ("." (luk-hydra-push 'luk-org-startup-hydra/body "org-startup") :exit t)
+  ("i" (luk-org--cycle-enum 'luk-org--indent luk-org--indent))
+  ("v" (luk-org--cycle-enum 'luk-org--visibility luk-org--visibility))
+  ("n" (luk-org--cycle-enum 'luk-org--numeration luk-org--numeration))
+  ("R" (org-mode-restart))
+  ("<return>" nil :exit t)
+  ("o" nil :exit t)
+  ("q" nil :exit t)
+  ("<escape>" (luk-org--startup-cancel) :exit t)
+  ("c" (luk-org--startup-cancel) :exit t))
+
+(defhydra luk-org-timestamp-hydra (:hint nil :foreign-keys warn)
+  (format "\
+Main ➤ %s      _._: up
+^─^──────────────────────────
+_t_: Type: %% -28`luk-org--timestamp-type
+_s_: Select in calendar
+_n_: Set to today
+_q_: Quit"
+          (luk-caption "Org Keyword: Timestamp"))
+  ("." (luk-hydra-push 'luk-org-timestamp-hydra/body "org") :exit t)
+  ("t" (luk-org--timestamp-cycle-type))
+  ("n" (luk-org--timestamp-set-today))
+  ("s" (luk-org--timestamp-select-calendar) :exit t)
+  ("RET" nil :exit t)
+  ("q" nil :exit t))
+
+(defun luk-org-context-hydra ()
+  (interactive)
+  (setq luk-org--context-element (org-element-context))
+  (setq luk-org--temp-end (luk-org--context-key :end))
+  (let ((el (car luk-org--context-element)))
+    (cond ((eq el 'link)
+
+           ;; Link
+           (if (luk-org-image-link?) (luk-org-image-link-hydra/body)
+             (luk-org-link-hydra/body)))
+
+          ;; Timestamp
+          ((and (eq el 'timestamp) (member (luk-org--context-key :type) '(inactive active))) ;; exclude ranges
+           (setq luk-org--timestamp-type (luk-org--context-key :type))
+           (setq luk-org--timestamp-date (list :year-start (luk-org--context-key :year-start)
+                                               :month-start (luk-org--context-key :month-start)
+                                               :day-start (luk-org--context-key :day-start)))
+           (luk-org-timestamp-hydra/body))
+
+          ;; #+startup-keyword
+          ((and (eq el 'keyword) (string= (luk-org--context-key :key) "STARTUP"))
+           (setq luk-org--startup-old (buffer-substring (luk-org--context-key :begin) (luk-org--context-key :end)))
+           (setq luk-org--indent (luk/enum-instance 'Indent (luk-org-element-value-symbol 'Indent)))
+           (setq luk-org--visibility (luk/enum-instance 'Visibility (luk-org-element-value-symbol 'Visibility)))
+           (setq luk-org--numeration (luk/enum-instance 'Numeration (luk-org-element-value-symbol 'Numeration)))
+           (luk-org-startup-hydra/body))
+
+          ;; Table
+          ((or (eq el 'table) (eq el 'table-cell) (eq el 'table-row))
+           ;; Todo: Also match e.g. marked up text in a table via ":parent"
+           (luk-org-table-hydra/body))
+
+          ;; No match
+          (t (message "Unknown element: %s" luk-org--context-element)))))
+
 (defun luk-org-mode-setup ()
   ;;; Keys
   (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
@@ -257,6 +593,7 @@ _q_: quit"
   (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
   (define-key org-mode-map (kbd "C-c l") 'org-store-link)
   (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
+  (define-key org-mode-map (kbd "M-,") 'luk-org-context-hydra)
 
   ;; Bind org-store-link globally, to allow copying links in non-org
   ;; files and linking to them in an org-file.
@@ -328,6 +665,6 @@ _q_: quit"
   (add-hook 'org-shiftleft-final-hook 'windmove-left)
   (add-hook 'org-shiftdown-final-hook 'windmove-down)
   (add-hook 'org-shiftright-final-hook 'windmove-right)
-  )
+  (setq org-startup-with-inline-images t))
 
 (provide 'luk-org-mode)
