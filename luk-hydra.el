@@ -163,10 +163,11 @@ _q_: %s"
   (luk-hydra-pop)
   (luk-hydra/body))
 
-(defhydra luk-hydra-window (:hint nil :exit nil)
+(defhydra luk-hydra-window (:hint nil :foreign-keys warn :exit nil)
   "
-Navigate with arrows, 0 to delete window, 1 to delete other windows.
-Split: 2=below, 3=right.
+Windows navigate with arrows. _q_ to quit              ^^│ In Window:
+Delete _0_: current window, _1_: other windows           │ _8_: Backward page
+Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
 "
   ("<up>" windmove-up)
   ("w" windmove-up)
@@ -187,6 +188,10 @@ Split: 2=below, 3=right.
   ("o" other-window)
   ("O" (other-window -1))
   ("i" (other-window -1))
-  ("q" nil "quit" :exit t))
+  ("]" (forward-page))
+  ("9" (forward-page))
+  ("[" (backward-page))
+  ("8" (backward-page))
+  ("q" nil :exit t))
 
 (global-set-key (kbd "M-,") 'luk-hydra-window/body)
