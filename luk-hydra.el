@@ -41,8 +41,7 @@ luk-hydra was started directly"
     "quit"))
 
 (defun luk-rename-buffer-and-file ()
-  "Rename buffer and file (or just the buffer)
-Read the new name from mini-buffer."
+  "Rename buffer and file (if any) to name read from minibuffer."
   (interactive)
   (let ((OLD-FILE-NAME (buffer-file-name))
         (WAS-MODIFIED (buffer-modified-p)))
@@ -54,10 +53,12 @@ Read the new name from mini-buffer."
              (OLD-EXISTED (file-exists-p OLD-FILE-NAME)))
         (if OLD-EXISTED
             (progn
+              ;; Rename file and buffer
               (rename-file OLD-FILE-NAME NEW-FILE-NAME)
+              (set-visited-file-name NEW-FILE-NAME)
               (set-buffer-modified-p WAS-MODIFIED))
+          ;; Just rename buffer, no file exists
           (set-visited-file-name NEW-FILE-NAME)
-
           (set-buffer-modified-p t)
           (message "Warning: Renamed buffer, but visited file does not exist - save buffer to create it."))))
 
