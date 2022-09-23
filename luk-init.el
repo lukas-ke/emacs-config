@@ -141,10 +141,17 @@
 (require 'gitignore-mode) ; https://github.com/magit/git-modes
 (add-to-list 'auto-mode-alist '("\\.gitignore$" . gitignore-mode))
 
-;; Open Windows file-browser in folder of current file on "C-."
-(defun luk-explore()
+(defun luk-explore ()
+  "Open Windows file-browser with current file selected"
   (interactive)
-  (start-process "luk_explorer" nil "explorer" "." ))
+  (if (buffer-file-name)
+      (w32-shell-execute
+       "open"
+       "explorer"
+       (concat "/select,\""
+               (replace-regexp-in-string "/" "\\" (buffer-file-name) nil t) "\""))
+    (w32-shell-execute "open" "explorer" ".")))
+
 (global-set-key [(control .)] 'luk-explore)
 
 ;; Tab-complete everywhere
