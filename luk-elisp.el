@@ -11,8 +11,17 @@
     (beginning-of-buffer)
     (insert ";;; -*- coding: utf-8; lexical-binding: t -*-\n\n")))
 
-(defun luk-elisp--maybe-insert-boilerplate ()
+(defun luk-elisp--hook()
   "Run luk-elisp-insert-boilerplate for new Emacs-lisp files."
+
+  (when (require 'company nil 'noerror)
+    (company-mode))
+
+  (if (require 'form-feed nil 'noerror)
+      (form-feed-mode)
+    (push '("" . "▬" ) prettify-symbols-alist)
+    (prettify-symbols-mode))
+
   (when (luk-new-file-buffer-p)
     (luk-elisp-insert-boilerplate)
     (forward-line)
@@ -42,10 +51,6 @@ handle minibuffer or other modes."
    (t (indent-for-tab-command))))
 
 (defun luk-elisp-setup ()
-  (when (require 'company nil 'noerror)
-    (add-hook 'emacs-lisp-mode-hook 'company-mode))
-
-  (add-hook 'emacs-lisp-mode-hook 'luk-elisp--maybe-insert-boilerplate)
-
+  (add-hook 'emacs-lisp-mode-hook 'luk-elisp--hook)
   (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
   (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-elisp-smart-tab))

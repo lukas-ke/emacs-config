@@ -285,12 +285,6 @@
 (define-key help-mode-map (kbd "b") 'help-go-back)
 (define-key help-mode-map (kbd "f") 'help-go-forward)
 
-;; Show a horizontal line instead of ^L for page-breaks (inserted with
-;; C-q C-l) in some modes
-(require 'page-break-lines)
-(setq page-break-lines-modes '(emacs-lisp-mode help-mode))
-(global-page-break-lines-mode)
-
 ;; Use diminish package to remove some minor-modes from modeline.
 (when (require 'diminish nil 'noerror)
   (diminish 'perfect-margin-mode)
