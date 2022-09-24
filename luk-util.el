@@ -84,4 +84,66 @@ The above example expands to:
     (setcdr head body)
     L))
 
+
+;; Enumerations
+
+(defvar luk/enum-alist nil "Association list of enumerations.
+
+Enumeration definitions created with luk/def-enum are appended to
+this list.")
+
+;; TODO: Make repeated invocations update the symbol
+(defmacro luk/def-enum (name values)
+  "Define a new enumeration with NAME and VALUES."
+  (list 'push `(list (quote ,name) ,@values) 'luk/enum-alist))
+
+(defun luk/enum-has (enum-name value)
+  "Return t if the enum ENUM-NAME has VALUE as an alternative."
+  (if (member value (cdr (assoc enum-name luk/enum-alist))) t nil))
+
+(defun luk/enum-instance-p (object)
+  "Return t if OBJECT is an enum instance"
+  (and
+   (listp object)
+   (= 2 (length object))
+   (assoc (car object) luk/enum-alist)
+   (luk/enum-has (car object) (cadr object))))
+
+(defun luk/enum-instance (enum-symbol value)
+  "Instantiate ENUM-SYMBOL with VALUE.
+
+VALUE must be a valid value for the enum denoted by ENUM-SYMBOL."
+  (cl-assert (luk/enum-has enum-symbol value) nil (format "Invalid value for enum %s: %s" enum-symbol value))
+  (list enum-symbol value))
+
+(defun luk/enum-type (instance)
+  "Return the enum-type of INSTANCE."
+  (car instance))
+
+(defun luk/enum-value (instance)
+  "Return the value of the enum INSTANCE."
+  (cadr instance))
+
+(defun luk/enum-values (enum-name)
+  "Return the possible values for ENUM-NAME."
+  (cdr (assoc enum-name luk/enum-alist)))
+
+(defun luk/enum-next (instance)
+  "Return a new instance with a value one step ahead of INSTANCE.
+
+INSTANCE should be an enum-instance, that is
+    (<enum-symbol> <enum-value>)"
+  (let ((values (cdr (assoc (car instance) luk/enum-alist))))
+    (list (car instance)
+          (nth (% (+ 1 (cl-position (luk/enum-value instance) values)) (length values))
+               values))))
+
+(defun luk/enum-next-value (enum-name value)
+  "Return the value after VALUE for the ENUM-NAME enum.
+
+VALUE should be a valid value for the specified enum."
+  (let ((values (cdr (assoc enum-name luk/enum-alist))))
+    (nth (% (+ 1 (cl-position value values)) (length values))
+         values)))
+
 (provide 'luk-util)

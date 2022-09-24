@@ -107,3 +107,49 @@
       (luk-markdown-delete-trailing-whitespace)
       (setq TRIMMED (buffer-string))
       (should (string= TRIMMED KEY)))))
+
+(ert-deftest luk-def-enum ()
+  "Test usage of `luk/def-enum' and related functions."
+  ;; For restoring luk/enum-alist after test
+  (let ((old-list luk/enum-alist))
+    (unwind-protect
+        (progn
+          (setq luk/enum-alist nil) ;; Use an empty list in test
+          (should (= (length luk/enum-alist) 0))
+
+          (luk/def-enum Fruit ('apple 'banana 'orange))
+          (luk/def-enum Car ('volvo 'toyota))
+
+          (should (luk/enum-has 'Fruit 'apple))
+          (should (not (luk/enum-has 'Fruit 'volvo)))
+
+          (should (= (length luk/enum-alist) 2)) ;; Two enums defined
+          (should (equal (assoc 'Fruit luk/enum-alist) '(Fruit apple banana orange)))
+          (should (equal (assoc 'Car luk/enum-alist) '(Car volvo toyota)))
+          (should (equal (luk/enum-instance 'Car 'volvo) '(Car volvo)))
+          (should (eq (luk/enum-type (luk/enum-instance 'Car 'volvo)) 'Car))
+          (should (eq (luk/enum-value (luk/enum-instance 'Car 'volvo)) 'volvo))
+
+          ;; Type check
+          (should (luk/enum-instance-p '(Car volvo)))
+          (should (luk/enum-instance-p '(Fruit apple)))
+          (should-not (luk/enum-instance-p '(Car wheelbarrow)))
+          (should-not (luk/enum-instance-p '(Foo apple)))
+
+          (should (eq (luk/enum-next-value 'Car 'volvo) 'toyota))
+
+          (let ((debug-on-error nil))
+            ;; TODO: If I change this to e.g. 'orange, I only get "aborted" in *ert*?
+            ;; (No other failure info)
+            (should-error (luk/enum-instance 'Car 'orange))) ;; TODO: Should fail
+
+          ;; Next value
+          (should (equal (luk/enum-next '(Car volvo)) '(Car toyota)))
+
+          (should (equal (luk/enum-values 'Car) '(volvo toyota)))
+
+          ;; Wrap around
+          (should (equal (luk/enum-next '(Car toyota)) '(Car volvo))))
+
+      ;; Restore
+      (setq luk/enum-alist old-list))))
