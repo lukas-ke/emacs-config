@@ -333,7 +333,6 @@
 (with-eval-after-load "bookmark"
   ;; Replace the “bookmark-fringe-mark-bitmap” circle defined by the
   ;; bookmark-package with a classic bookmark icon.
-  (message "leuven-modified After load of bookmark")
   (define-fringe-bitmap 'bookmark-fringe-mark
     "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xe7\xc3\x81"
     12 8 'center))
