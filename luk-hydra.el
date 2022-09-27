@@ -7,6 +7,7 @@
 
 (require 'hydra)
 (require 'cl-lib)
+(require 'luk-util)
 
 (provide 'luk-hydra)
 
@@ -193,5 +194,3 @@ Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
   ("[" (backward-page))
   ("8" (backward-page))
   ("q" nil :exit t))
-
-(global-set-key (kbd "M-,") 'luk-hydra-window/body)

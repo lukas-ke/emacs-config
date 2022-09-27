@@ -293,4 +293,11 @@
   (diminish 'company-mode)
   (diminish 'page-break-lines-mode))
 
+(with-eval-after-load 're-builder
+  (require 'luk-re-builder-hydra)
+  (add-hook
+   'reb-mode-hook
+   'luk-hydra-re-setup-shortcut))
+
+
 (provide 'luk-init)
