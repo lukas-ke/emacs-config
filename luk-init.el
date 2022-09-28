@@ -236,6 +236,9 @@
 (require 'perfect-margin)
 (setq perfect-margin-hide-fringes nil)
 (setq perfect-margin-visible-width 120)
+;; It is annoying when images are truncated by the margins, so exclude
+;; them from perfect-margin-mode.
+(add-to-list 'perfect-margin-ignore-modes 'image-mode)
 (perfect-margin-mode 1)
 
 (defun luk-select-window-at-mouse-position()
@@ -291,7 +294,9 @@
   (diminish 'org-indent-mode)
   (diminish 'yas-minor-mode)
   (diminish 'company-mode)
-  (diminish 'page-break-lines-mode))
+  (diminish 'page-break-lines-mode)
+  (diminish 'form-feed-mode)
+  )
 
 (with-eval-after-load 're-builder
   (require 'luk-re-builder-hydra)
