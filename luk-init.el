@@ -307,6 +307,17 @@
 (setq calendar-week-start-day 1) ;; Use monday as first day of week
 (setq calendar-date-style 'iso)
 
+;; calfw: Calendar framework
+;; Use unicode characters for the table
+(setq cfw:fchar-junction ?╋
+      cfw:fchar-vertical-line ?┃
+      cfw:fchar-horizontal-line ?━
+      cfw:fchar-left-junction ?┣
+      cfw:fchar-right-junction ?┫
+      cfw:fchar-top-junction ?┯
+      cfw:fchar-top-left-corner ?┏
+      cfw:fchar-top-right-corner ?┓)
+
 (with-eval-after-load "bookmark"
   ;; Replace the “bookmark-fringe-mark-bitmap” circle defined by the
   ;; bookmark-package with a classic bookmark icon.
