@@ -6,7 +6,7 @@
 
 (set-fontset-font "fontset-default" #xE117 "segoe ui symbol") ;; Refresh 
 (set-fontset-font "fontset-default" #xE1C9 "segoe ui symbol") ;; Cell phone 
-(set-fontset-font "fontset-default" #xE188 "segoe ui symbol") ;; Folder 
+(set-fontset-font "fontset-default" #xE188 "segoe ui symbol") ;; Folder  (private use area)
 (set-fontset-font "fontset-default" #xe107 "segoe ui symbol") ;; Trashcan 
 (set-fontset-font "fontset-default" #xe105 "segoe ui symbol") ;; Save 
 (set-fontset-font "fontset-default" #x1f512 "segoe ui symbol") ;; Padlock: 🔒
