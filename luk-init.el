@@ -304,5 +304,8 @@
    'reb-mode-hook
    'luk-hydra-re-setup-shortcut))
 
+;; Calendar
+(setq calendar-week-start-day 1) ;; Use monday as first day of week
+(setq calendar-date-style 'iso)
 
 (provide 'luk-init)
