@@ -109,6 +109,13 @@ luk-hydra was started directly"
     (message "Package %s not installed.\nInstall with \"M-x package-install expand-region\"."
              (propertize "expand-region" 'face 'bold))))
 
+;; Display a big calendar with the calfw-package + org if available,
+;; otherwise just use the built-in calendar.
+(defalias 'luk-show-calendar
+  (if (require 'calfw-org nil 'noerror)
+      #'cfw:open-calendar)
+  #'calendar)
+
 (defhydra luk-hydra (:hint nil)
   (format "\
 %s^^^^^^^^^^^^      │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^^^
@@ -118,7 +125,7 @@ _e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar o
 _R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _c l_ view captures
 _D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _g_ magit status
 _C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region
-
+^ ^                 │ ^ ^              │ ^   ^            │ ^ ^                   │ _v c_ view calendar
 _q_: %s"
           (luk-caption "Current File")
           (luk-caption "Files")
@@ -156,7 +163,8 @@ _q_: %s"
   ("c b" (org-capture nil "b") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
   ("g" magit-status)
-  ("r" luk-hydra-region/body :exit t))
+  ("r" luk-hydra-region/body :exit t)
+  ("v c" luk-show-calendar :exit t))
 
 (defun luk-hydra-summon ()
   (interactive)
