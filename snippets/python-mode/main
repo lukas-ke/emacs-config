@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: name == '__main__' block
+# key: @main
+# --
+if __name__ == '__main__':
+`(make-string python-indent-offset #x20)`$0

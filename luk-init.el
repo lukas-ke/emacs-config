@@ -328,4 +328,11 @@
     "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xe7\xc3\x81"
     12 8 'center))
 
+(when (require 'yasnippet nil 'noerror)
+  (setq yas-snippet-dirs (list (concat (file-name-directory luk-init-path) "snippets")))
+  ;; Use key-binds from tab-auto-complete.el instead
+  (define-key yas-minor-mode-map [(tab)] nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (yas-global-mode 1))
+
 (provide 'luk-init)

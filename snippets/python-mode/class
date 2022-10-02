@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: python class definition
+# key: @class
+# group: python
+# --
+class ${1:name}:
+"""$2"""
+def __init__(self$3):
+    ${4:pass}
+$0

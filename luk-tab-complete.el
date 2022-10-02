@@ -4,6 +4,24 @@
 
 (provide 'luk-tab-complete)
 
+(defun luk-active-snippet-keys ()
+  (mapcar (lambda (item) (yas--template-key item))
+          (yas--all-templates (yas--get-snippet-tables))))
+
+(defun luk-try-yas-expand ()
+  (and
+   (bound-and-true-p yas-minor-mode) ; ya-snippet mode available
+   (looking-back "@[[:alpha:]]+") ; on word starting with "@"
+   (if (yas-expand)
+       t ;; expanded as snippet                                        ;
+     ;; Could not expand, maybe the snippet is incomplete?
+     (when (re-search-backward "@[[:alpha:]]+")
+       (let ((completion (try-completion (match-string 0) (luk-active-snippet-keys))))
+         (when completion
+           (replace-match completion)
+           (message "Inserted snippet %s" completion)))))))
+
+
 (defun luk-tab-complete-smart-tab ()
   "Minibuffer compliant smart tab
 
@@ -46,13 +64,26 @@ TAB-bind. See the documentation for `org-cycle' and
         ;; TODO: Not perfect, if dabbrev expands "word" to "word*",
         ;; tab will instead start cycling which is surprising.
         (org-cycle)
-      (dabbrev-expand nil)))
+
+      ;; Try to yas-expand
+      (when (not (luk-try-yas-expand))
+        ;; Not a snippet, try company or dabbrev
+        (message "not a snippet")
+        (if (bound-and-true-p company-mode)
+            (company-complete)
+          (dabbrev-expand nil)))))
 
    ((eq major-mode 'org-mode)
     ;; Not at end of word in org-mode -> org cycle
     ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
     ;; is bound to TAB instead of <tab>.
     (org-cycle))
+
+   ((and (bound-and-true-p company-mode)
+         (/= (point) (line-beginning-position))
+         (= (point) (line-end-position)))
+    (company-complete))
+
 
    (t
     ;; Not at end of word, just indent-for-tab
