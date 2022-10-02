@@ -295,7 +295,9 @@
   (diminish 'yas-minor-mode)
   (diminish 'company-mode)
   (diminish 'page-break-lines-mode)
-  (diminish 'form-feed-mode))
+  (diminish 'form-feed-mode)
+  (when (require 'form-feed nil 'noerror)
+    (diminish 'form-feed-mode)))
 
 (with-eval-after-load 're-builder
   (require 'luk-re-builder-hydra)
