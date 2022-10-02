@@ -158,6 +158,16 @@
 ;; TODO: Might interfere with e.g. autocomplete or company mode
 (require 'luk-tab-complete)
 
+(with-eval-after-load "cus-edit"
+  ;; Restore tab-navigation in customize.
+  ;; luk-tab-complete eats it, due to cus-edit.el only defining TAB,
+  ;; not <tab>.
+  (define-key widget-keymap (kbd "<tab>") 'widget-forward)
+
+  ;; Also use tab for next-widget when in editable fields (like the
+  ;; search field), it seems unlikely I'd need to insert a tab.
+  (define-key custom-field-keymap (kbd "<tab>") 'widget-forward))
+
 ;; Note, only binding "<tab>", not "TAB", since org-cycle forwards to
 ;; the global TAB-bind sometimes, and luk-tab-complete-smart-tab
 ;; forwards to org-cycle which can lead to infinite recursion
