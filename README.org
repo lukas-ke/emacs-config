@@ -1,8 +1,29 @@
-* emacs-config
-The least embarrassing parts of my Emacs configuration.
+#+TITLE: emacs-config
+#+startup: indent
 
-** Dependencies
- - [[http://github.com/re5et/find-file-in-git-repo][find-file-in-git-repo]]
- - [[https://github.com/magit/git-modes][gitignore-mode]]
- - [[https://github.com/sabof/org-bullets][org-bullets]]
- - [[https://github.com/xahlee/xah-find][xah-find]]
+* emacs-config
+
+The least embarrassing parts of my Emacs configuration. Uploaded
+mainly for my own benefit, so YMMV.
+
+* Dependencies
+- [[https://github.com/Wilfred/ag.el][ag]] for searching file content with [[https://github.com/ggreer/the_silver_searcher][Ag: the silver searcher]]
+- [[https://github.com/kiwanami/emacs-calfw][calfw]] (and calfw-org) for a nice large calendar displaying dates
+  from my [[https://orgmode.org/][org]]-files
+- [[http://company-mode.github.io/][company]] for completion (e.g. with lsp-mode)
+- [[https://github.com/myrjola/diminish.el][diminish]] for less clutter in mode-line by hiding minor modes
+- [[https://github.com/magnars/expand-region.el][expand-region]] for increasing and shrinking the region
+- [[http://github.com/re5et/find-file-in-git-repo][find-file-in-git-repo]] for ido-completed =find-file= for all files in current git-repo
+- [[https://depp.brause.cc/form-feed][form-feed]] to turn the form-feed indicator =^L= into a horizontal rule
+  in emacs lisp
+- [[https://github.com/magit/git-modes][gitignore-mode]] for editing .gitignore-files
+- [[https://github.com/abo-abo/hydra][hydra]] for practical menus
+- [[https://github.com/doitian/iy-go-to-char][iy-go-to-char]] for jumping to character occurrences
+- [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] for language-server-protocol integration (code completion,
+  navigation, diagnostics)
+- [[https://magit.vc/][magit]] nice git user interface for emacs
+- [[https://jblevins.org/projects/markdown-mode/][markdown-mode]] for editing markdown
+- [[https://github.com/sabof/org-bullets][org-bullets]] for bullet-points in org-mode (Though I should maybe
+  update to org-superstar)
+- [[https://github.com/mpwang/perfect-margin][perfect-margin]] for centering lone-buffer content for better ergonomy
+- [[https://github.com/joaotavora/yasnippet][yasnippet]] for inserting code snippets and as a dependency of lsp-mode
