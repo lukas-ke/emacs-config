@@ -29,10 +29,17 @@ that points to what you should be pressing"
 
 (defun luk--insert-{ () (interactive) (insert "{"))
 (defun luk--insert-} () (interactive) (insert "}"))
-(defun luk--insert-ö () (interactive) (insert "ö"))
+
+(defun luk--insert-å () (interactive) (insert "å"))
 (defun luk--insert-ä () (interactive) (insert "ä"))
+(defun luk--insert-ö () (interactive) (insert "ö"))
+(defun luk--insert-Å () (interactive) (insert "Å"))
+
+(defun luk--insert-/ () (interactive) (insert "/"))
+(defun luk--insert-back-slash () (interactive) (insert "\\"))
 
 (defun luk-swap-keys-disable ()
+  "Undo the settings of luk-swap-keys"
   (interactive)
   (when luk-swap-keys-disable-arrows
     (global-set-key (kbd "<up>") 'previous-line)
@@ -43,16 +50,28 @@ that points to what you should be pressing"
   (when luk-swap-keys-move-braces
     (global-set-key (kbd "{") 'self-insert-command)
     (global-set-key (kbd "}") 'self-insert-command)
-    (global-set-key (kbd "ö") 'self-insert-command)
-    (global-set-key (kbd "ä") 'self-insert-command)))
+    (global-set-key (kbd "/") 'self-insert-command)
+    (global-set-key (kbd "\\") 'self-insert-command)
+    (global-set-key (kbd "å") 'self-insert-command)
+    (global-set-key (kbd "Å") 'self-insert-command)
+    (global-set-key (kbd "ä") 'self-insert-command)
+    (global-set-key (kbd "ö") 'self-insert-command)))
 
 (defun luk-swap-keys-enable ()
+  "Swap some key locations.
+
+* Use M-p, M-n to move back, forward by paragraphs.
+  The standard C-<up/down> bind moves the hands off the edit-keys, and the alternate
+  M-{ is difficult to type on a Swedish keyboard: (Alt+AltGr+7)
+
+When `luk-swap-keys-disable-arrows' is t:
+* Disable the arrow keys for navigation, and instead suggest C-p,
+  C-n et. al when they are pressed.
+
+When `luk-swap-keys-move-braces' is t:
+* move {, } to ö, ä
+* move / to å, \\ to Å."
   (interactive)
-  ;; Use Alt+P, Alt+N to move back, forward by paragraphs.
-  ;;
-  ;; The standard Ctrl+Arrow bind moves hands of edit-keys, and the
-  ;; standard key-bind M-{ is way too hard to type on a Swedish
-  ;; keyboard: "Alt+AltGr+7")
   (global-set-key (kbd "M-p") 'backward-paragraph)
   (global-set-key (kbd "M-n") 'forward-paragraph)
 
@@ -66,8 +85,14 @@ that points to what you should be pressing"
   (when luk-swap-keys-move-braces
     (luk--global-unset-with-hint (kbd "{") "ö")
     (luk--global-unset-with-hint (kbd "}") "ä")
-    (global-set-key (kbd "ö") 'luk--insert-{)
+    (luk--global-unset-with-hint (kbd "/") "å")
+    (luk--global-unset-with-hint (kbd "\\") "Å")
+    (global-set-key (kbd "å") 'luk--insert-/)
+    (global-set-key (kbd "Å") 'luk--insert-back-slash)
     (global-set-key (kbd "ä") 'luk--insert-})
+    (global-set-key (kbd "ö") 'luk--insert-{)
 
     (global-set-key (kbd "C-ö") 'luk--insert-ö)
-    (global-set-key (kbd "C-ä") 'luk--insert-ä)))
+    (global-set-key (kbd "C-ä") 'luk--insert-ä)
+    (global-set-key (kbd "C-å") 'luk--insert-å)
+    (global-set-key (kbd "C-Å") 'luk--insert-Å)))
