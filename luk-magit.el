@@ -14,3 +14,8 @@ initializing magit takes some time."
      (message "Starting magit...")
      (magit-status)
      (global-set-key key 'magit-status))))
+
+(defun luk-magit-rebase-show-rebase-heading ()
+  (setq header-line-format "Magit rebase (oldest commit first)"))
+
+(add-hook 'git-rebase-mode-hook #'luk-magit-rebase-show-rebase-heading)
