@@ -1,6 +1,11 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 (provide 'luk-lsp-conf)
 
+(defun luk-lsp-except-in-org ()
+  (when (buffer-file-name)
+    (lsp)))
+
+
 (defun luk-lsp-conf-setup ()
   (define-key lsp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
 
@@ -9,6 +14,7 @@
   ;; some_func($0)|
   (add-hook 'lsp-mode-hook 'yas-minor-mode)
   (add-hook 'python-mode-hook 'lsp)
+  (add-hook 'python-mode-hook #'luk-lsp-except-in-org)
 
   ;; Disable the File > Class > Function header.
   ;; It's a little useful, but also kinda wasteful.
