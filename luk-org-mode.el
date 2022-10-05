@@ -29,6 +29,15 @@
   (luk-add-group 'luk-org))
 
 
+;; Additional faces (e.g. for TODO-keywords)
+(defface luk-org-todo-started '((t :inherit org-todo))
+  "face for STARTED todo-state")
+
+(defface luk-org-todo-canceled '((t :inherit org-done))
+  "face for CANCELED todo-state")
+
+
+
 ;; Functions for switching between pretty display with hidden entities
 ;; and formatted links, or a more raw format.
 
@@ -638,8 +647,8 @@ _q_: Quit"
   (setq org-use-sub-superscripts 1)
 
   ;; Use yellow for STARTED task-states
-  (setq org-todo-keyword-faces '(("STARTED" . "#fff200")
-                                 ("CANCELED" . "#000000")))
+  (setq org-todo-keyword-faces '(("STARTED" . luk-org-todo-started)
+                                 ("CANCELED" . luk-org-todo-canceled)))
 
   (setq org-link-abbrev-alist '(("find-function" . "elisp:(find-function-other-window '%h)")
                                 ("describe-function" . "elisp:(describe-function '%h)")
