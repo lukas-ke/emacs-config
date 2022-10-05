@@ -83,6 +83,9 @@ luk-hydra was started directly"
         (set-buffer-modified-p t)
         (message "File deleted: \"%s\"." FILE-NAME))))))
 
+(defface luk-hydra-caption-face '((t :inherit default :weight bold))
+  "Face that can be used for captions in hydras.")
+
 (defun luk-copy-file-path ()
   "Add path to current file to kill-ring"
   (interactive)
@@ -91,7 +94,7 @@ luk-hydra was started directly"
       (kill-new FILE-NAME))))
 
 (defun luk-caption (STR)
-  (propertize STR 'face 'bold))
+  (propertize STR 'face 'luk-hydra-caption-face))
 
 (defun luk-find-in-files ()
   (interactive)
@@ -124,7 +127,7 @@ _t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar t
 _e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c b_         bookmark
 _R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _c l_ view captures
 _D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _g_ magit status
-_C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region
+_C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu
 ^ ^                 │ ^ ^              │ ^   ^            │ ^ ^                   │ _v c_ view calendar
 _q_: %s"
           (luk-caption "Current File")
