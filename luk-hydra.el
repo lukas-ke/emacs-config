@@ -119,7 +119,7 @@ luk-hydra was started directly"
       #'cfw:open-calendar)
   #'calendar)
 
-(defhydra luk-hydra (:hint nil)
+(defhydra luk-hydra (:hint nil :foreign-keys warn)
   (format "\
 %s^^^^^^^^^^^^      │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^^^
 ^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼───────────────────────
@@ -165,7 +165,7 @@ _q_: %s"
   ("c t" (org-capture nil "t") :exit t)
   ("c b" (org-capture nil "b") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
-  ("g" magit-status)
+  ("g" magit-status :exit t)
   ("r" luk-hydra-region/body :exit t)
   ("v c" luk-show-calendar :exit t))
 
