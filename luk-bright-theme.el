@@ -458,7 +458,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(org-dim ((,class (:foreground "#AAAAAA"))))
    `(org-document-info ((,class (:foreground "#484848"))))
    `(org-document-info-keyword ((,class (:weight bold :foreground "#464646"))))
-   `(org-document-title ((,class (:weight bold :foreground "black"))))
+   `(org-document-title ((,class (:weight bold :foreground ,heading-color :height 1.2))))
    `(org-done ((,class (:weight normal :box (:line-width 2 :color "#D8ABA7") :foreground "#22B14C" :background ,buffer-background-color))))
    `(org-drawer ((,class (:weight bold :foreground "#00BB00" :background "#EAFFEA"))))
    `(org-ellipsis

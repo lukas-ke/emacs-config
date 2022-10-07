@@ -11,6 +11,10 @@
 (set-fontset-font "fontset-default" #xe105 "segoe ui symbol") ;; Save 
 (set-fontset-font "fontset-default" #x1f512 "segoe ui symbol") ;; Padlock: 🔒
 (set-fontset-font "fontset-default" #x2bc1 "segoe ui symbol") ;; Diamond: ⯁
+(set-fontset-font t #xf121 "FontAwesome") ;; Code icon  (private use area)
+(set-fontset-font t #xf063 "github-octicons") ;; Quote icon  (private use area)
+(set-fontset-font t #xf0a4 "github-octicons") ;; Chevron left  (private use area)
+(set-fontset-font t #xe8b8 "Material Icons") ;; Settings  (private use area)
 (set-fontset-font t ?💩 "Segoe UI Emoji") ;; Pile of poo 💩
 (set-fontset-font t '(?😊 . ?😎) "Segoe UI Emoji") ;; Some emoji range
 

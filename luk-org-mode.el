@@ -219,6 +219,13 @@ find the Python interpreter for running the script."
   (push '("[ ]" . "☐") prettify-symbols-alist)
   (push '("[X]" . "☑" ) prettify-symbols-alist)
   (push '("[-]" . "❍" ) prettify-symbols-alist)
+  (push '("#+title: " . "") prettify-symbols-alist)
+  (push '("#+begin_src" . "") prettify-symbols-alist)
+  (push '("#+end_src" . "") prettify-symbols-alist)
+  (push '("#+begin_quote" . "") prettify-symbols-alist)
+  (push '("#+end_quote" . "") prettify-symbols-alist)
+  (push '("#+startup:" . "") prettify-symbols-alist)
+  (push '("#+RESULTS:" . "⟶") prettify-symbols-alist)
   (prettify-symbols-mode)
 
   ;; unicode bullets for org-titles instead of asterisks
@@ -618,6 +625,7 @@ _q_: Quit"
   (setq org-ellipsis " ➤")
 
   ;; No underline for ➤
+  ;; todo: Move into themes
   (set-face-attribute 'org-ellipsis nil :underline nil :foreground "#ffffff")
 
   (add-hook 'org-mode-hook 'luk-org--mode-hook)
