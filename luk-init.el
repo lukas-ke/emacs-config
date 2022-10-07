@@ -330,6 +330,10 @@
       cfw:fchar-top-left-corner ?┏
       cfw:fchar-top-right-corner ?┓)
 
+;; I enter the holidays I care for manually in an org-file
+;; (Mainly "Kanelbullens dag").
+(setq cfw:display-calendar-holidays nil)
+
 (with-eval-after-load "bookmark"
   ;; Replace the “bookmark-fringe-mark-bitmap” circle defined by the
   ;; bookmark-package with a classic bookmark icon.
