@@ -504,6 +504,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(org-verbatim ((,class (:family "courier new" :foreground "#0066CC" :background "#F7FDFF"))))
    `(org-verse ((,class (:slant italic :foreground "dim gray" :background "#EEEEEE"))))
    `(org-warning ((,class (:weight bold :foreground "black" :background "#CCE7FF"))))
+   `(org-checkbox ((,class (:height 1.0))))
 
    ;; Custom faces for my org-keywords
    `(luk-org-todo-started ((,class (:foreground "#6F3198" :background ,buffer-background-color))))

@@ -60,7 +60,7 @@ source (enable=false)."
 (defun luk-org--pretty-entities (enable)
   "See `org-toggle-pretty-entities'
 
-This home-brewnn variant takes an argument to better support
+This home-brewn variant takes an argument to better support
 `luk-org-toggle-display'
 
 This includes e.g. subscript and superscript and some LaTeX names,
@@ -216,8 +216,8 @@ find the Python interpreter for running the script."
 
 (defun luk-org--mode-hook ()
   ;; Use prettify-symbols to get "nicer" checkboxes
-  (push '("[ ]" . "☐") prettify-symbols-alist)
-  (push '("[X]" . "☑" ) prettify-symbols-alist)
+  (push '("[ ]" . "") prettify-symbols-alist)
+  (push '("[X]" . "" ) prettify-symbols-alist)
   (push '("[-]" . "❍" ) prettify-symbols-alist)
   (push '("#+title: " . "") prettify-symbols-alist)
   (push '("#+begin_src" . "") prettify-symbols-alist)
@@ -225,7 +225,9 @@ find the Python interpreter for running the script."
   (push '("#+begin_quote" . "") prettify-symbols-alist)
   (push '("#+end_quote" . "") prettify-symbols-alist)
   (push '("#+startup:" . "") prettify-symbols-alist)
+
   (push '("#+RESULTS:" . "⟶") prettify-symbols-alist)
+
   (prettify-symbols-mode)
 
   ;; unicode bullets for org-titles instead of asterisks
@@ -624,14 +626,7 @@ _q_: Quit"
   ;; Use "➤" after folded headings instead of "..."
   (setq org-ellipsis " ➤")
 
-  ;; No underline for ➤
-  ;; todo: Move into themes
-  (set-face-attribute 'org-ellipsis nil :underline nil :foreground "#ffffff")
-
   (add-hook 'org-mode-hook 'luk-org--mode-hook)
-
-  ;; Bigger check-boxes
-  (set-face-attribute 'org-checkbox nil :height 1.5)
 
   ;; By default, hide emphasis markers like the = and * for
   ;; =verbatim= and *bold* (Toggle with f6)
