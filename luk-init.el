@@ -348,4 +348,6 @@
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (yas-global-mode 1))
 
+(global-set-key (kbd "M-<up>") #'dired-jump)
+
 (provide 'luk-init)
