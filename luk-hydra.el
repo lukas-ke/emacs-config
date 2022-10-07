@@ -38,7 +38,7 @@ to allow returning to it from the main hydra"
   "Label to show for returning to the mode-hydra (or nothing if
 luk-hydra was started directly"
   (if luk-mode-hydra-name
-      (format "return to %s\n" luk-mode-hydra-name)
+      (format "return to %s" luk-mode-hydra-name)
     "quit"))
 
 (defun luk-rename-buffer-and-file ()
@@ -116,25 +116,26 @@ luk-hydra was started directly"
 ;; otherwise just use the built-in calendar.
 (defalias 'luk-show-calendar
   (if (require 'calfw-org nil 'noerror)
-      #'cfw:open-calendar)
-  #'calendar)
+      #'cfw:open-org-calendar
+    #'calendar))
 
 (defhydra luk-hydra (:hint nil :foreign-keys warn)
   (format "\
-%s^^^^^^^^^^^^      │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^^^
-^─^─────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼───────────────────────
-_t_: treemacs       │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _c t_ capture todo
-_e_: explorer here  │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _c b_         bookmark
-_R_: rename         │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _c l_ view captures
-_D_: delete         │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _g_ magit status
-_C_: copy path      │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu
-^ ^                 │ ^ ^              │ ^   ^            │ ^ ^                   │ _v c_ view calendar
+%s^^^^^^^^^^^^     │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
+^─^────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼─^───^───────────────┼─────────────────────
+_t_: treemacs      │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
+_e_: explorer here │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
+_R_: rename        │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
+_D_: delete        │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _v A_ Agenda choice │ _c w_ Waiting
+_C_: copy path     │ ^ ^              │ ^   ^            │ ^ ^                   │ _g_ magit status    │ _c l_ Goto last
+^ ^                │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
           (luk-caption "Current File")
           (luk-caption "Files")
           (luk-caption "Bookmarks")
           (luk-caption "Window")
-          (luk-caption "Misc")
+          (luk-caption "View")
+          (luk-caption "Capture")
           "%s(luk-pop-hydra-str)")
 
   ("." luk-hydra-pop :exit t)
@@ -161,13 +162,21 @@ _q_: %s"
   ("S" scroll-bar-mode :exit nil)
   ("q" luk-hydra-pop :exit t)
 
-  ;; Misc
-  ("c t" (org-capture nil "t") :exit t)
-  ("c b" (org-capture nil "b") :exit t)
-  ("c l" org-capture-goto-last-stored :exit t)
+  ;; View
   ("g" magit-status :exit t)
   ("r" luk-hydra-region/body :exit t)
-  ("v c" luk-show-calendar :exit t))
+  ("v c" (luk-show-calendar) :exit t)
+  ("v a" (org-agenda-list 'a))
+  ("v t" (org-todo-list 'a))
+  ("v A" (org-agenda 'a))
+
+  ;; Capture
+  ("c c" (org-capture) :exit t)
+  ("c t" (org-capture nil "t") :exit t)
+  ("c b" (org-capture nil "b") :exit t)
+  ("c m" (org-capture nil "m") :exit t)
+  ("c w" (org-capture nil "w") :exit t)
+  ("c l" org-capture-goto-last-stored :exit t))
 
 (defun luk-hydra-summon ()
   (interactive)
