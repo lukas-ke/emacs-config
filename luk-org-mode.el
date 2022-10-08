@@ -188,7 +188,7 @@ find the Python interpreter for running the script."
     ;; Get image from clipboard
     (let ((filename (luk-org-run-clipboard-script DIR)))
 
-      ;; Set the :ATTACHMENT: tag to the node
+      ;; Set the :ATTACH: tag to the node
       (org-attach-tag)
 
       ;; Insert a link to display the image with the temporary name
@@ -216,6 +216,7 @@ find the Python interpreter for running the script."
 
 (defun luk-org--mode-hook ()
   ;; Use prettify-symbols to get "nicer" checkboxes
+  ;; (See also luk-font.el, for mapping the code-points to fonts)
   (push '("[ ]" . "") prettify-symbols-alist)
   (push '("[X]" . "" ) prettify-symbols-alist)
   (push '("[-]" . "❍" ) prettify-symbols-alist)
@@ -225,7 +226,7 @@ find the Python interpreter for running the script."
   (push '("#+begin_quote" . "") prettify-symbols-alist)
   (push '("#+end_quote" . "") prettify-symbols-alist)
   (push '("#+startup:" . "") prettify-symbols-alist)
-
+  (push '("#+todo:" . "📝") prettify-symbols-alist)
   (push '("#+RESULTS:" . "⟶") prettify-symbols-alist)
 
   (prettify-symbols-mode)
@@ -449,6 +450,20 @@ This allows restoring on cancel.")
 (defvar luk-org--timestamp-date nil "")
 (defvar luk-org--temp-end nil "")
 
+(defun luk-org--startup-str ()
+  "Return the string for the #+startup-keyword based on enums."
+
+  (concat
+   "#+startup: "
+   (string-join
+    ;; Strip empty ("-") entries to avoid getting extra
+    ;; spaces in string-join
+    (seq-filter (lambda (v) (not (string= "-" v)))
+                (list (luk-org-enum-string luk-org--indent)
+                      (luk-org-enum-string luk-org--visibility)
+                      (luk-org-enum-string luk-org--numeration)))
+    " ")))
+
 (defun luk-org--update-startup ()
   "Update the #+STARTUP element described by `luk-org--context-key.
 
@@ -483,13 +498,18 @@ Modify the text to correspond to the currently cycled to values in the hydra."
       (goto-char (luk-org--context-key :begin))
       (insert luk-org--startup-old)))
 
+(defun luk-org--startup-ok ()
+  (when (not (string= luk-org--startup-old
+                      (concat (luk-org--startup-str) "\n"))))
+    (org-ctrl-c-ctrl-c))
+
 (defun luk-org--cycle-enum (instance-name instance)
   "Hydra-helper: Cycle the enum and update the buffer-text"
   (set instance-name (luk/enum-next instance))
   (luk-org--update-startup))
 
 (defun luk-org--update-timestamp ()
-  (let ((old-point (point)))
+  (let ((old-point (point)))
     (delete-region (luk-org--context-key :begin) luk-org--temp-end)
     (goto-char (luk-org--context-key :begin))
     (insert (if (eq luk-org--timestamp-type 'active) "<" "["))
@@ -530,7 +550,7 @@ Modify the text to correspond to the currently cycled to values in the hydra."
 (defun luk-org-image-link? ()
   (luk/image-filename-p (luk-org--context-key :path)))
 
-(defhydra luk-org-startup-hydra (:hint nil :foreign-keys warn :post (org-ctrl-c-ctrl-c))
+(defhydra luk-org-startup-hydra (:hint nil :foreign-keys warn)
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -547,7 +567,7 @@ _o_: Ok  _c_: Cancel"
   ("n" (luk-org--cycle-enum 'luk-org--numeration luk-org--numeration))
   ("R" (org-mode-restart))
   ("<return>" nil :exit t)
-  ("o" nil :exit t)
+  ("o" (luk-org--startup-ok) :exit t)
   ("q" nil :exit t)
   ("<escape>" (luk-org--startup-cancel) :exit t)
   ("c" (luk-org--startup-cancel) :exit t))
