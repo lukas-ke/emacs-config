@@ -108,6 +108,28 @@
       (setq TRIMMED (buffer-string))
       (should (string= TRIMMED KEY)))))
 
+
+(ert-deftest luk-org-delete-trailing-whitespace ()
+  "Test for function `luk-org-delete-trailing-whitespace'."
+  (let* ((TEST-NAME "luk-org-delete-trailing-whitespace")
+         (SRC (luk-test-read-src TEST-NAME))
+         (KEY (luk-test-read-key TEST-NAME))
+         (TRIMMED nil)
+         (TEST-BUFFER (luk-test-buffer TEST-NAME)))
+
+    ;; Ensure the src file hasn't been trimmed by mistake already
+    (when (string= SRC KEY) (error "Setup failed: SRC and KEY files identical?"))
+
+    ;; Put the trailing whitespace from SRC into a buffer
+    (with-current-buffer TEST-BUFFER
+      (erase-buffer)
+      (insert SRC)
+      (org-mode)
+      (luk-org-delete-trailing-whitespace)
+      (setq TRIMMED (buffer-string))
+      (should (string= TRIMMED KEY)))))
+
+
 (ert-deftest luk-def-enum ()
   "Test usage of `luk/def-enum' and related functions."
   ;; For restoring luk/enum-alist after test
