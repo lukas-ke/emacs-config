@@ -27,6 +27,8 @@
 (set-fontset-font t ?💩 "Segoe UI Emoji") ;; Pile of poo 💩
 (set-fontset-font t '(?😊 . ?😎) "Segoe UI Emoji") ;; Some emoji range
 (set-fontset-font t #x1f4dd "Segoe UI Emoji") ;; 📝 Memo
+
+;; face-smiling
 (set-fontset-font t #x1f600 "Segoe UI Emoji") ;; 😀 Grinning face
 (set-fontset-font t #x1f601 "Segoe UI Emoji") ;; beaming face with smiling eyes
 (set-fontset-font t #x1f603 "Segoe UI Emoji") ;; 😃 grinning face with big eyes
@@ -50,6 +52,7 @@
 (set-fontset-font t #x1F618 "Segoe UI Emoji")
 (set-fontset-font t #x1F617 "Segoe UI Emoji")
 ;; (set-fontset-font t #x263A  "DejaVu Sans Mono")
+(set-fontset-font t #x263A "Segoe UI Emoji")
 (set-fontset-font t #x1F61A "Segoe UI Emoji")
 (set-fontset-font t #x1F619 "Segoe UI Emoji")
 ;; (set-fontset-font t #x1F972 "Segoe UI Emoji")

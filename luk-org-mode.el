@@ -259,7 +259,10 @@ find the Python interpreter for running the script."
 ;;
 ;; Note: The text should have the same height as luk-hydra to make
 ;; switching between them look nicer.
-(defhydra luk-org-hydra (:hint nil)
+(defhydra luk-org-hydra (:hint nil
+                               :foreign-keys warn
+                               :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                               :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -384,7 +387,10 @@ return 'overview"
       (forward-line 1)
       (org-redisplay-inline-images))))
 
-(defhydra luk-org-link-hydra (:hint nil)
+(defhydra luk-org-link-hydra (:hint nil
+                                    :foreign-keys warn
+                                    :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                    :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -399,7 +405,10 @@ _q_: quit"
   ("m" (luk-org-link-element-copy-markdown) :exit t)
   ("q" nil :exit t))
 
-(defhydra luk-org-image-link-hydra (:hint nil)
+(defhydra luk-org-image-link-hydra (:hint nil
+                                          :foreign-keys warn
+                                          :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -418,7 +427,10 @@ _q_: quit"
   ("m" (luk-org-link-element-copy-markdown) :exit t)
   ("q" nil :exit t))
 
-(defhydra luk-org-table-hydra (:hint nil)
+(defhydra luk-org-table-hydra (:hint nil
+                                     :foreign-keys warn
+                                     :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                     :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -560,7 +572,10 @@ Modify the text to correspond to the currently cycled to values in the hydra."
 (defun luk-org-image-link? ()
   (luk/image-filename-p (luk-org--context-key :path)))
 
-(defhydra luk-org-startup-hydra (:hint nil :foreign-keys warn)
+(defhydra luk-org-startup-hydra (:hint nil
+                                       :foreign-keys warn
+                                       :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                       :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
@@ -582,7 +597,10 @@ _o_: Ok  _c_: Cancel"
   ("<escape>" (luk-org--startup-cancel) :exit t)
   ("c" (luk-org--startup-cancel) :exit t))
 
-(defhydra luk-org-timestamp-hydra (:hint nil :foreign-keys warn)
+(defhydra luk-org-timestamp-hydra (:hint nil
+                                         :foreign-keys warn
+                                         :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                         :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────

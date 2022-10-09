@@ -123,7 +123,10 @@ luk-hydra was started directly"
       #'cfw:open-org-calendar
     #'calendar))
 
-(defhydra luk-hydra (:hint nil :foreign-keys warn)
+(defhydra luk-hydra (:hint nil
+                           :foreign-keys warn
+                           :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                           :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 %s^^^^^^^^^^^^     │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
 ^─^────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼─^───^───────────────┼─────────────────────
@@ -188,9 +191,12 @@ _q_: %s"
   (luk-hydra-pop)
   (luk-hydra/body))
 
-(defhydra luk-hydra-window (:hint nil :foreign-keys warn :exit nil)
+(defhydra luk-hydra-window (:hint nil :exit nil
+                                  :foreign-keys warn
+                                  :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                  :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
-Windows navigate with arrows. _q_ to quit              ^^│ In Window:
+Windows Navigate with arrows. _q_ to quit              ^^│ In Window:
 Delete _0_: current window, _1_: other windows           │ _8_: Backward page
 Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
 "
