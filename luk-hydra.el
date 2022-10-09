@@ -11,6 +11,10 @@
 
 (provide 'luk-hydra)
 
+;; For restoring
+(defconst luk-hydra-amaranth-original-message hydra-amaranth-warn-message
+  "For restoring the original amaranth message on hydra close")
+
 ;;; Mode hydras:
 ;;; Allow calling the luk-hydra from a mode-specific hydra-menu
 ;;; and then return to the other menu with '.'
