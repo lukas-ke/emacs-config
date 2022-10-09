@@ -278,8 +278,8 @@ _q_: Quit"
   ("M-<up>" (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("p" luk-org-toggle-display)
   ("P" luk-org-paste-image :exit t)
-  ("a" org-archive-subtree-default-with-confirmation)
-  ("r" org-refile)
+  ("a" org-archive-subtree-default-with-confirmation :exit t)
+  ("r" org-refile :exit t)
   ("l" org-lint)
   ("q" nil :exit t))
 
