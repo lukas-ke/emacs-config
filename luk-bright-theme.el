@@ -394,8 +394,10 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(markdown-italic-face ((,class (:inherit italic))))
    `(markdown-language-keyword-face ((,class (:inherit org-block-begin-line))))
    `(markdown-link-face ((,class ,link-no-underline)))
-   `(markdown-pre-face ((,class (:inherit org-block-background))))
+   `(markdown-pre-face ((,class (:foreground "#9C5A3C" :family "courier new"))))
+   `(markdown-code-face ((,class (:foreground "#9C5A3C" :family "courier new"))))
    `(markdown-url-face ((,class ,link)))
+   `(markdown-hr-face ((,class (:inherit org-block))))
 
    ;; Basic face, used for grep matches.
    `(match ((,class ,match)))

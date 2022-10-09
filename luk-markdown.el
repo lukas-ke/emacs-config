@@ -45,4 +45,7 @@ Markdown uses two spaces for a hard linebreak so this command:
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
   ;; Lines can get long (e.g. tables)
-  (add-hook 'markdown-mode-hook 'luk-markdown-hook-func))
+  (add-hook 'markdown-mode-hook #'luk-markdown-hook-func)
+
+  (with-eval-after-load "markdown-mode"
+    (define-key markdown-mode-map (kbd "C-c g") #'markdown-follow-thing-at-point)))
