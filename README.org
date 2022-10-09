@@ -7,7 +7,9 @@ The least embarrassing parts of my Emacs configuration. Uploaded
 mainly for my own benefit, so YMMV.
 
 * Dependencies
+*Packages*
 - [[https://github.com/Wilfred/ag.el][ag]] for searching file content with [[https://github.com/ggreer/the_silver_searcher][Ag: the silver searcher]]
+- [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] used for some font characters in org
 - [[https://github.com/kiwanami/emacs-calfw][calfw]] (and calfw-org) for a nice large calendar displaying dates
   from my [[https://orgmode.org/][org]]-files
 - [[http://company-mode.github.io/][company]] for completion (e.g. with lsp-mode)
@@ -27,3 +29,10 @@ mainly for my own benefit, so YMMV.
   update to org-superstar)
 - [[https://github.com/mpwang/perfect-margin][perfect-margin]] for centering lone-buffer content for better ergonomy
 - [[https://github.com/joaotavora/yasnippet][yasnippet]] for inserting code snippets and as a dependency of lsp-mode
+
+*Fonts*
+- [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]] Used for the =default= face
+- [[https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-emoji][Segoe UI Emoji]] (TODO: Windows-standard font, I need a free
+  alternative)
+- [[https://fontlibrary.org/en/font/symbola][symbola]] useful fallback font
+
