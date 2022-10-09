@@ -1,8 +1,6 @@
 #+TITLE: emacs-config
 #+startup: indent
 
-* emacs-config
-
 The least embarrassing parts of my Emacs configuration. Uploaded
 mainly for my own benefit, so YMMV.
 
