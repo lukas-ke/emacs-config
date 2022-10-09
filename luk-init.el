@@ -343,11 +343,17 @@
 
 (when (require 'yasnippet nil 'noerror)
   (setq yas-snippet-dirs (list (concat (file-name-directory luk-init-path) "snippets")))
-  ;; Use key-binds from tab-auto-complete.el instead
+  ;; I use global tab-binds for `luk-tab-complete-smart-tab' instead,
+  ;; so disable the yas-snippet binds
   (define-key yas-minor-mode-map [(tab)] nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (yas-global-mode 1))
 
+;; Go to the dired-folder for the open file on M-up
 (global-set-key (kbd "M-<up>") #'dired-jump)
+
+;; Close ([{" on "¤" (s-4 on my keyboard).
+(require 'luk-insert-closing-delimiter)
+(global-set-key (kbd "¤") #'luk-insert-closing-delimiter)
 
 (provide 'luk-init)
