@@ -237,6 +237,7 @@
 
 (require 'luk-hydra)
 (global-set-key (kbd "M-.") 'luk-hydra-summon)
+(global-set-key (kbd "M-,") 'luk-hydra-window/body)
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
