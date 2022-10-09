@@ -13,13 +13,18 @@
    (bound-and-true-p yas-minor-mode) ; ya-snippet mode available
    (looking-back "@[[:alpha:]]+") ; on word starting with "@"
    (if (yas-expand)
-       t ;; expanded as snippet                                        ;
-     ;; Could not expand, maybe the snippet is incomplete?
-     (when (re-search-backward "@[[:alpha:]]+")
-       (let ((completion (try-completion (match-string 0) (luk-active-snippet-keys))))
-         (when completion
-           (replace-match completion)
-           (message "Inserted snippet %s" completion)))))))
+       t ;; expanded as snippet
+     ;; Could not expand, maybe the snippet-name is incomplete?
+     (save-excursion
+       (when (re-search-backward "@[[:alpha:]]+" nil 'noerror)
+         ;; Try to complete to a snippet name
+         (let ((completion (try-completion (match-string 0) (luk-active-snippet-keys))))
+           (if completion
+               (progn
+                 (replace-match completion)
+                 (message "Inserted snippet name: %s" completion)
+                 t)
+             nil)))))))
 
 
 (defun luk-tab-complete-smart-tab ()
