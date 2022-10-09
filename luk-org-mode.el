@@ -245,6 +245,15 @@ find the Python interpreter for running the script."
   (when (luk-new-file-buffer-p)
     (luk-org-insert-boilerplate)))
 
+(defun luk-org--capture-hook ()
+  "Hook for configuring org-capture windows"
+
+  ;; Try to make it harder to lose a capture buffer.
+  ;; (Probably not bullet-proof, but worth a try).
+  (let ((w (get-buffer-window (current-buffer))))
+    ;; Prevent deleting a capture window on C-x 1 in other windows
+    (set-window-parameter w 'no-delete-other-windows t)
+    (set-window-dedicated-p w t)))
 
 ;; Functions for my org-specific hydra (see the hydra-package).
 ;;
@@ -624,6 +633,11 @@ _q_: Quit"
           ;; No match
           (t (message "Unknown element: %s" luk-org--context-element)))))
 
+
+(defun luk-org--say-abort-instead ()
+  (interactive)
+  (user-error "Abort instead with C-c C-k"))
+
 (defun luk-org-mode-setup ()
   ;;; Keys
   (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
@@ -633,6 +647,17 @@ _q_: Quit"
   (define-key org-mode-map (kbd "C-c l") 'org-store-link)
   (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
   (define-key org-mode-map (kbd "M-,") 'luk-org-context-hydra)
+
+  ;; Prevent killing a capture buffer with C-x k (possibly leaving a
+  ;; half-written-capture in the target file)
+  (define-key org-capture-mode-map (kbd "C-x k") #'luk-org--say-abort-instead)
+
+  ;; Prevent killing the window holding the capture buffer
+  ;; causing me to forget to complete the capture.
+  ;;
+  ;; TODO: Maybe I should shrink it instead though, there could be a reason
+  ;; to hide it.
+  (define-key org-capture-mode-map (kbd "C-x 0") #'luk-org--say-abort-instead)
 
   ;; Bind org-store-link globally, to allow copying links in non-org
   ;; files and linking to them in an org-file.
@@ -648,6 +673,8 @@ _q_: Quit"
   (setq org-ellipsis " ➤")
 
   (add-hook 'org-mode-hook 'luk-org--mode-hook)
+
+  (add-hook 'org-capture-mode-hook 'luk-org--capture-hook)
 
   ;; By default, hide emphasis markers like the = and * for
   ;; =verbatim= and *bold* (Toggle with f6)
