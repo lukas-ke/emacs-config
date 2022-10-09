@@ -181,6 +181,9 @@
 (with-eval-after-load "ido"
   (define-key ido-common-completion-map (kbd "<tab>") #'ido-complete))
 
+(require 'ido)
+(ido-everywhere)
+
 ;; Set syntax for `re-builder' to `read', which requires
 ;; double-escaping, to build regexps compatible with elisp-code e.g.:
 ;;   "\\(foo\\|bar\\)"
