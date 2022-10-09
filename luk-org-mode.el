@@ -248,25 +248,26 @@ find the Python interpreter for running the script."
 
 ;; Functions for my org-specific hydra (see the hydra-package).
 ;;
-;; Note: Extra blank lines in caption to use same height
-;; as luk-hydra
+;; Note: The text should have the same height as luk-hydra to make
+;; switching between them look nicer.
 (defhydra luk-org-hydra (:hint nil)
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
-_p_: toggle raw/pretty
-_a_: archive subtree
-_l_: org-lint
+_p_: Toggle raw/pretty
+_a_: Archive subtree
+_r_: Refile
+_l_: Lint
 _P_: Paste image attachment
 
-
-_q_: quit"
+_q_: Quit"
           (luk-caption "Org"))
   ("." (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("M-<up>" (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("p" luk-org-toggle-display)
   ("P" luk-org-paste-image :exit t)
   ("a" org-archive-subtree-default-with-confirmation)
+  ("r" org-refile)
   ("l" org-lint)
   ("q" nil :exit t))
 
