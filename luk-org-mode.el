@@ -8,21 +8,21 @@
 (require 'luk-util)
 (require 'calendar)
 
-(defgroup luk-org nil "Variables for luk-org")
+(defgroup luk-org nil "Variables for luk-org.")
 
 (setq luk-org--clipboard-to-file-dir
       (concat (file-name-directory (or load-file-name buffer-file-name)) "clipboard-to-file"))
 
 (defcustom luk-org-python-command
   nil
-  "Python executable path (for org-mode python utility functions)"
+  "Python executable path (for `org-mode' python utility functions)."
   :type 'string
   :group 'luk-org)
 
 (defcustom luk-org-image-editor
   nil
-  "External image editor for image attachments in org-mode"
-  :type 'string
+  "External image editor for image attachments in `org-mode'."
+  :type 'file
   :group 'luk-org)
 
 (when (require 'luk nil t)
@@ -31,10 +31,10 @@
 
 ;; Additional faces (e.g. for TODO-keywords)
 (defface luk-org-todo-started '((t :inherit org-todo))
-  "face for STARTED todo-state")
+  "Face for STARTED todo-state.")
 
 (defface luk-org-todo-canceled '((t :inherit org-done))
-  "face for CANCELED todo-state")
+  "Face for CANCELED todo-state.")
 
 
 
@@ -42,13 +42,13 @@
 ;; and formatted links, or a more raw format.
 
 (defun luk-org--descriptive-links (enable)
-  "See `org-toggle-link-display'
+  "See `org-toggle-link-display'.
 
 This home-brewn variant takes an argument to better support
 `luk-org-toggle-display'
 
-Switches between pretty links (enable=true) and full
-source (enable=false)."
+Switches between pretty links (ENABLE=t) and full
+source (ENABLE=nil)."
   (if enable
       (progn
         (org-remove-from-invisibility-spec '(org-link))
@@ -58,10 +58,10 @@ source (enable=false)."
       (setq org-descriptive-links nil))))
 
 (defun luk-org--pretty-entities (enable)
-  "See `org-toggle-pretty-entities'
+  "See `org-toggle-pretty-entities'.
 
-This home-brewn variant takes an argument to better support
-`luk-org-toggle-display'
+This home-brewn variant takes an argument, ENABLE, to better
+support `luk-org-toggle-display'
 
 This includes e.g. subscript and superscript and some LaTeX names,
 call `org-entities-help for the org documentation."
@@ -101,7 +101,7 @@ removed."
   (save-mark-and-excursion
     (org-save-outline-visibility
         (save-match-data
-          (beginning-of-buffer)
+          (goto-char (point-min))
           (while (re-search-forward "[ ]+$" nil t)
             (let* ((b (match-beginning 0)) (e (match-end 0)) (len (- e b)))
               (cond
@@ -121,14 +121,15 @@ removed."
                (t (goto e)))))))))
 
 (defun luk-org--filename-to-title (file-name)
+  "Return a title based on FILE-NAME."
   (luk-capitalize-first-word
    (replace-regexp-in-string "-" " " (file-name-base file-name))))
 
 (defun luk-org-insert-boilerplate ()
-  "Insert some typical start content for new org-files"
+  "Insert some typical start content for new org-files."
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (insert "#+title: " (luk-org--filename-to-title (buffer-file-name)) "\n#+startup: indent overview\n\n* "))
   (goto-char 10))
 
@@ -136,8 +137,9 @@ removed."
 ;; Paste image functionality
 
 (defun luk-org-run-clipboard-script (DIR)
-  "Run “clipboard-to-file.py” and return the name of the image it
-wrote to DIR.
+  "Run “clipboard-to-file.py” and return a file name.
+
+Returns the name of the image that was written to DIR.
 
 DIR should exist prior to calling the function.
 
@@ -172,9 +174,9 @@ from the clipboard and the variable ‘luk-org-python-command’ to
 find the Python interpreter for running the script."
   (interactive)
   (when (not luk-org-python-command)
-    (user-error "luk-org-python-command not set"))
+    (user-error "Error: luk-org-python-command not set!"))
   (when (not (eq major-mode 'org-mode))
-    (user-error "Not in org-mode"))
+    (user-error "Error: This function can only be used in org-mode!"))
 
   ;; Create an org-attachment folder for the current node
   (let* ((DIR (org-attach-dir-get-create))
@@ -215,6 +217,8 @@ find the Python interpreter for running the script."
           (org-redisplay-inline-images))))))
 
 (defun luk-org--mode-hook ()
+  "Hook for `org-mode'."
+
   ;; Use prettify-symbols to get "nicer" checkboxes
   ;; (See also luk-font.el, for mapping the code-points to fonts)
   (push '("[ ]" . "") prettify-symbols-alist)
@@ -246,7 +250,7 @@ find the Python interpreter for running the script."
     (luk-org-insert-boilerplate)))
 
 (defun luk-org--capture-hook ()
-  "Hook for configuring org-capture windows"
+  "Hook for configuring `org-capture' windows."
 
   ;; Try to make it harder to lose a capture buffer.
   ;; (Probably not bullet-proof, but worth a try).
@@ -283,29 +287,26 @@ _q_: Quit"
   ("l" org-lint)
   ("q" nil :exit t))
 
-(defun luk-org-summon-hydra ()
-  (interactive)
-  (luk-org-hydra/body))
-
 
 ;; Contextual hydra
 
 (defvar luk-org--context-element nil
-  "The latest context element for the `luk-org-context-hydra'.\n
+  "The latest context element for the `luk-org-context-hydra'.
+
 Set to `org-element-context' on hydra start.")
 
 (defun luk-org--context-key (key)
-  "Extract a key from the `luk-org--context-element'."
+  "Extract value of KEY from `luk-org--context-element'."
   (plist-get (cadr luk-org--context-element) key))
 
 (defun luk-org-delete-context-element ()
-  "Delete the region described by `luk-org--context-element'"
+  "Delete the region described by `luk-org--context-element'."
   (let ((begin (luk-org--context-key :begin))
         (end (luk-org--context-key :end)))
     (kill-region begin end)))
 
 (defun luk-org-link-element-edit ()
-  "Edit the link currently described by `luk-org--context-element'"
+  "Edit the link currently described by `luk-org--context-element'."
   (let* ((current-link (luk-org--context-key :raw-link))
          (contents-begin (luk-org--context-key :contents-begin))
          (contents-end (luk-org--context-key :contents-end))
@@ -339,8 +340,7 @@ Set to `org-element-context' on hydra start.")
        link))))
 
 (defun luk-org-element-value-symbol (enum-name)
-  "Get the enum-value for ENUM-NAME corresponding to the
-org document content.
+  "Get the enum-value for ENUM-NAME from `luk-org--context-key'.
 
 That is, split the `luk-org--context-element's \":value\" string on
 spaces, and return the first enum-value symbol whose `symbol-name' is in
@@ -351,7 +351,7 @@ So when `luk-org--context-element' has been initialized from
     #+startup: indent overview
 
 The invocation (luk-org-element-value-symbol 'Visibility) will
-return 'overview"
+return 'overview."
 
   ;; todo: lower-case the list
   (let ((value (split-string (luk-org--context-key :value) " ")))
@@ -363,8 +363,9 @@ return 'overview"
         symbol))))
 
 (defun luk-org-open-in-image-editor ()
+  "Open linked image at point in external editor."
   (when (not luk-org-image-editor)
-    (user-error "luk-org-image-editor not set."))
+    (user-error "Error: luk-org-image-editor not set!"))
   (let ((path
          (if (string= (luk-org--context-key :type) "attachment")
              (concat (org-attach-dir) "/" (luk-org--context-key :path))
@@ -372,6 +373,7 @@ return 'overview"
     (start-process "image-editor" nil luk-org-image-editor path)))
 
 (defun luk-org-set-image-width ()
+  "Insert a width-attribute for an image."
   (let ((width (read-number "Width: ")))
     (goto-char (luk-org--context-key :begin))
     (let ((indent (- (point) (line-beginning-position))))
@@ -468,9 +470,10 @@ This allows restoring on cancel.")
 (defvar luk-org--numeration 'nil "Enum for iterating over org numeration values.")
 (luk/def-enum Numeration ('- 'num 'nonum))
 
-(defvar luk-org--timestamp-type nil "Timestamp type (TODO: worth using enum?)")
-(defvar luk-org--timestamp-date nil "")
-(defvar luk-org--temp-end nil "")
+;; TODO: These docs and probably variables are a bit dumb
+(defvar luk-org--timestamp-type nil "Timestamp type (TODO: worth using enum?).")
+(defvar luk-org--timestamp-date nil "Property list for date.")
+(defvar luk-org--temp-end nil "End position for deletion.")
 
 (defun luk-org--startup-str ()
   "Return the string for the #+startup-keyword based on enums."
@@ -512,7 +515,7 @@ Modify the text to correspond to the currently cycled to values in the hydra."
       (goto-char (line-end-position)))))
 
 (defun luk-org--startup-cancel ()
-  "Cancel edits to the startup-hydra"
+  "Reverts edits done in the startup-hydra."
   (save-excursion
     (delete-region (luk-org--context-key :begin)
                    luk-org--temp-end)
@@ -521,16 +524,22 @@ Modify the text to correspond to the currently cycled to values in the hydra."
       (insert luk-org--startup-old)))
 
 (defun luk-org--startup-ok ()
+  "Perform org-refresh when “#+startup”-modified."
   (when (not (string= luk-org--startup-old
                       (concat (luk-org--startup-str) "\n"))))
     (org-ctrl-c-ctrl-c))
 
 (defun luk-org--cycle-enum (instance-name instance)
-  "Hydra-helper: Cycle the enum and update the buffer-text"
+  "Hydra-helper: Cycle the enum then update the buffer-text.
+
+INSTANCE-NAME is the same as INSTANCE, but quoted."
+  ;; TODO: It ought to be possible to do this without passing the
+  ;; symbol both quoted and unquoted
   (set instance-name (luk/enum-next instance))
   (luk-org--update-startup))
 
 (defun luk-org--update-timestamp ()
+  "Update the timestamp in the buffer from `luk-org--timestamp-date'."
   (let ((old-point (point)))
     (delete-region (luk-org--context-key :begin) luk-org--temp-end)
     (goto-char (luk-org--context-key :begin))
@@ -545,6 +554,9 @@ Modify the text to correspond to the currently cycled to values in the hydra."
     (goto-char old-point)))
 
 (defun luk-org--timestamp-select-calendar ()
+  "Select a date in calendar using org-read-date.
+
+Used for modifying a timestamp via the hydra."
   (let ((date (split-string (org-read-date) "-")))
     (plist-put luk-org--timestamp-date :year-start (string-to-number (car date)))
     (plist-put luk-org--timestamp-date :month-start (string-to-number (cadr date)))
@@ -552,6 +564,7 @@ Modify the text to correspond to the currently cycled to values in the hydra."
   (luk-org--update-timestamp))
 
 (defun luk-org--timestamp-cycle-type ()
+  "Cycle timestamp at point between active and inactive."
   (setq luk-org--timestamp-type
         (cl-case luk-org--timestamp-type
           ('active 'inactive)
@@ -559,6 +572,7 @@ Modify the text to correspond to the currently cycled to values in the hydra."
   (luk-org--update-timestamp))
 
 (defun luk-org--timestamp-set-today ()
+  "Set timestamp at point to today's date."
   (let ((date (calendar-current-date)))
     (plist-put luk-org--timestamp-date :year-start (calendar-extract-year date))
     (plist-put luk-org--timestamp-date :month-start (calendar-extract-month date))
@@ -566,10 +580,16 @@ Modify the text to correspond to the currently cycled to values in the hydra."
   (luk-org--update-timestamp))
 
 (defun luk-org-enum-string (instance)
-  "Return the enum value as a string"
+  "Return the enum value as a string.
+
+This function is used for showing enum symbols as string values
+in hydra documentation.
+
+INSTANCE should be an unquoted enum-instance."
   (symbol-name (luk/enum-value instance)))
 
 (defun luk-org-image-link? ()
+  "True if `luk-org--context-key' appears to be an image link."
   (luk/image-filename-p (luk-org--context-key :path)))
 
 (defhydra luk-org-startup-hydra (:hint nil
@@ -617,6 +637,12 @@ _q_: Quit"
   ("q" nil :exit t))
 
 (defun luk-org-context-hydra ()
+  "Show a context-specific hydra.
+
+Which of the hydras gets shown depends on the context around
+point, retrieved using `org-element-context' which gets stored in
+`luk-org--context-element' so that hydra functions can use the
+information."
   (interactive)
   (setq luk-org--context-element (org-element-context))
   (setq luk-org--temp-end (luk-org--context-key :end))
@@ -653,15 +679,17 @@ _q_: Quit"
 
 
 (defun luk-org--say-abort-instead ()
+  "\\<org-capture-mode-map>Suggest to user to use \\[org-capture-kill] instead."
   (interactive)
-  (user-error "Abort instead with C-c C-k"))
+  (message (substitute-command-keys "Abort instead with \\<org-capture-mode-map>\\[org-capture-kill].")))
 
 (defun luk-org-mode-setup ()
+  "Setup `org-mode' keys, hooks et. al."
   ;;; Keys
   (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
   (define-key org-mode-map (kbd "C-c a") 'org-agenda)
   (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
-  (define-key org-mode-map (kbd "M-.") 'luk-org-summon-hydra)
+  (define-key org-mode-map (kbd "M-.") #'luk-org-hydra/body)
   (define-key org-mode-map (kbd "C-c l") 'org-store-link)
   (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
   (define-key org-mode-map (kbd "M-,") 'luk-org-context-hydra)
