@@ -123,6 +123,7 @@ luk-hydra was started directly"
       #'cfw:open-org-calendar
     #'calendar))
 
+
 (defhydra luk-hydra (:hint nil
                            :foreign-keys warn
                            :pre (setq hydra-amaranth-warn-message "Invalid key.")
@@ -133,7 +134,7 @@ luk-hydra was started directly"
 _t_: treemacs      │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
 _e_: explorer here │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
 _R_: rename        │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
-_D_: delete        │ ^ ^              │ _b J_ jump other │ ^ ^                   │ _v A_ Agenda choice │ _c w_ Waiting
+_D_: delete        │ ^ ^              │ _b J_ jump other │ _T_ select theme      │ _v A_ Agenda choice │ _c w_ Waiting
 _C_: copy path     │ ^ ^              │ ^   ^            │ ^ ^                   │ _g_ magit status    │ _c l_ Goto last
 ^ ^                │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
@@ -167,7 +168,7 @@ _q_: %s"
   ("M" menu-bar-mode :exit nil)
   ("m" menu-bar-open :exit t)
   ("S" scroll-bar-mode :exit nil)
-  ("q" luk-hydra-pop :exit t)
+  ("T" luk-hydra-theme/body :exit t)
 
   ;; View
   ("g" magit-status :exit t)
@@ -183,7 +184,9 @@ _q_: %s"
   ("c b" (org-capture nil "b") :exit t)
   ("c m" (org-capture nil "m") :exit t)
   ("c w" (org-capture nil "w") :exit t)
-  ("c l" org-capture-goto-last-stored :exit t))
+  ("c l" org-capture-goto-last-stored :exit t)
+
+  ("q" luk-hydra-pop :exit t))
 
 (defun luk-hydra-summon ()
   (interactive)
