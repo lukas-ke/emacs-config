@@ -5,15 +5,16 @@
 
 (provide 'luk-next-error-cycle)
 
-(defvar luk-modeline-flash-color "#af00d7")
+(defface luk-modeline-flash-face '((t :inherit mode-line))
+  "Face background used for annoyingly flashing the modeline for attention")
 
 (defun luk-indicate-error-nav-wrapped (direction)
   "Display a message in minibuffer indicating that we wrapped
 also flash the mode-line"
   (let ((mode-line-color (face-background 'mode-line)))
-    (message "Wrapped %s error" (symbol-name direction))
-    (set-face-background 'mode-line luk-modeline-flash-color)
-    (sit-for 0.3)
+    (message "Wrapped %s-error" (symbol-name direction))
+    (set-face-background 'mode-line (face-background 'luk-modeline-flash-face))
+    (sit-for 0.2)
     (set-face-background 'mode-line mode-line-color)))
 
 (defun luk--in-flymake-mode () nil) ;; Hack

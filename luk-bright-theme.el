@@ -515,6 +515,8 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    ;; My hydra-faces
    `(luk-hydra-caption-face ((,class (:weight bold :foreground ,heading-color))))
 
+   `(luk-modeline-flash-face ((,class (:background "#CCA157"))))
+
    ;; outline-mode (built-in)
    `(outline-1 ((,class ,ol1)))
    `(outline-2 ((,class ,ol2)))
