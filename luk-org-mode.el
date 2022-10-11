@@ -257,7 +257,11 @@ find the Python interpreter for running the script."
   (let ((w (get-buffer-window (current-buffer))))
     ;; Prevent deleting a capture window on C-x 1 in other windows
     (set-window-parameter w 'no-delete-other-windows t)
-    (set-window-dedicated-p w t)))
+    (set-window-dedicated-p w t))
+
+  ;; Collapse drawers in the capture-buffer. Somehow this
+  ;; doesn't affect the target buffer.
+  (org-hide-drawer-all))
 
 ;; Functions for my org-specific hydra (see the hydra-package).
 ;;
@@ -683,6 +687,20 @@ information."
   (interactive)
   (message (substitute-command-keys "Abort instead with \\<org-capture-mode-map>\\[org-capture-kill].")))
 
+(defun luk-org--capture-return ()
+  "In capture buffers, move past property drawers on return at heading"
+  (interactive)
+  (let ((start (point)))
+    (if (not (org-at-heading-p))
+        (org-return-and-maybe-indent)
+      (if (= (forward-line) 1)
+          ;; Could not move forward, insert new line
+          (org-return-and-maybe-indent)
+        (if (org-at-drawer-p)
+            (progn
+              (org-forward-element)
+              (org-return-and-maybe-indent)))))))
+
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."
   ;;; Keys
@@ -697,6 +715,8 @@ information."
   ;; Prevent killing a capture buffer with C-x k (possibly leaving a
   ;; half-written-capture in the target file)
   (define-key org-capture-mode-map (kbd "C-x k") #'luk-org--say-abort-instead)
+
+  (define-key org-capture-mode-map (kbd "<return>") #'luk-org--capture-return)
 
   ;; Prevent killing the window holding the capture buffer
   ;; causing me to forget to complete the capture.
