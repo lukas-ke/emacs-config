@@ -157,7 +157,7 @@ excluded."
       (cond
        ((= RESULT 0) ;; Success
         ;; Read filename from output
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (buffer-substring (line-beginning-position) (line-end-position)))
        ((= RESULT 1) (error "No folder argument passed to clipboard_to_file.py"))
        ((= RESULT 2) (error "Folder \"%s\" does not exist" DIR))

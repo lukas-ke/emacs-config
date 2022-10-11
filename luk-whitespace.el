@@ -14,7 +14,7 @@ be set to nil in the mode-hook for that mode.")
   "Turn consecutive blank lines into a single blank line."
   (save-match-data
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (re-search-forward
               "^\^j\^j+"
               nil ; unbounded

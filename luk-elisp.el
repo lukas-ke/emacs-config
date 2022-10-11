@@ -9,7 +9,7 @@
   "Insert magic comment for utf-8-coding and lexical binding"
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (insert ";;; -*- coding: utf-8; lexical-binding: t -*-\n\n")))
 
 (defun luk-elisp--hook()

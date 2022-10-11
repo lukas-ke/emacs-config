@@ -17,7 +17,7 @@ Markdown uses two spaces for a hard linebreak so this command:
   (interactive)
   (save-match-data
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (re-search-forward "[ ]+$" nil t)
         (let* ((b (match-beginning 0)) (e (match-end 0)) (len (- e b)))
           (cond

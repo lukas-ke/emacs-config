@@ -43,7 +43,6 @@
     (switch-to-buffer (luk-test-buffer "luk-save"))
     (erase-buffer)
     (insert "100\n200\naaa\n300\n400\n500\naaa\n600\n")
-    (beginning-of-buffer)
     (goto-char (point-min))
     (forward-line 4)
     (re-search-forward "aaa") ;; Create match data to preserve
