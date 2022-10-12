@@ -267,6 +267,14 @@ find the Python interpreter for running the script."
 ;;
 ;; Note: The text should have the same height as luk-hydra to make
 ;; switching between them look nicer.
+
+(defun luk-org--raw-pretty-str ()
+  "Return fontified raw/pretty for luk-org-hydra."
+  (concat
+   (if org-hide-emphasis-markers "Raw" (propertize "Raw" 'face 'luk-hydra-caption-face))
+   " | "
+   (if org-hide-emphasis-markers (propertize "Pretty" 'face 'luk-hydra-caption-face) "Pretty")))
+
 (defhydra luk-org-hydra (:hint nil
                                :foreign-keys warn
                                :pre (setq hydra-amaranth-warn-message "Invalid key.")
@@ -274,7 +282,7 @@ find the Python interpreter for running the script."
   (format "\
 Main ➤ %s      _._: up
 ^─^──────────────────────────
-_p_: Toggle raw/pretty
+_p_: Display: %%s(luk-org--raw-pretty-str)
 _a_: Archive subtree
 _r_: Refile
 _l_: Lint
@@ -288,7 +296,7 @@ _q_: Quit"
   ("P" luk-org-paste-image :exit t)
   ("a" org-archive-subtree-default-with-confirmation :exit t)
   ("r" org-refile :exit t)
-  ("l" org-lint)
+  ("l" org-lint :exit t)
   ("q" nil :exit t))
 
 
