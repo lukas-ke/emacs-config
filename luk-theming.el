@@ -66,9 +66,16 @@ theme-symbol, with prefix \"luk-post\", for example
   (custom-set-faces
    ;; TODO: Better code-face (e.g. for org-keywords, verbatim)
    ;;       (Maybe I should customize some specific font instead though?)
-   ;; without `org-mode-restart'?
+
+   ;; Ensure no surrounding font-effects spill over on the
+   ;; org-ellipsis
    '(org-ellipsis ((t (:underline nil :slant normal))))
-   `(org-checkbox ((t (:box nil :background ,(face-background 'default)))))))
+
+   ;; Remove box around checkboxes, since I use prettify-symbols
+   `(org-checkbox ((t (:box nil :background ,(face-background 'default)))))
+
+   ;; Weaker color for inactive mode-line
+   '(mode-line-inactive ((t (:background "#3F3F3F"))))))
 
 
 ;; Theme-selection hydra
