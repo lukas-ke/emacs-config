@@ -30,6 +30,13 @@ theme-symbol, with prefix \"luk-post\", for example
   (luk--reset-themes)
   (load-theme theme t)
 
+  ;; Update font-lock in org-buffers to hide-leading stars, per
+  ;; `org-hide-leading-stars' documentation.
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (derived-mode-p 'org-mode)
+        (font-lock-update))))
+
   ;; Call "luk-post/<theme-name>" function if it is defined, then show
   ;; a message informing that theme loaded OK, and whether the
   ;; post-config function existed or not.
