@@ -66,9 +66,9 @@ theme-symbol, with prefix \"luk-post\", for example
   (custom-set-faces
    ;; TODO: Better code-face (e.g. for org-keywords, verbatim)
    ;;       (Maybe I should customize some specific font instead though?)
-   ;; TODO: Can I fix org-mode so that stars get hidden immediately
    ;; without `org-mode-restart'?
-   '(org-ellipsis ((t (:underline nil :slant normal))))))
+   '(org-ellipsis ((t (:underline nil :slant normal))))
+   `(org-checkbox ((t (:box nil :background ,(face-background 'default)))))))
 
 
 ;; Theme-selection hydra
