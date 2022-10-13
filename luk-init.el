@@ -311,6 +311,9 @@
 (define-key help-mode-map (kbd "b") 'help-go-back)
 (define-key help-mode-map (kbd "f") 'help-go-forward)
 
+(if (require 'form-feed nil 'noerror)
+    ;; Display lines instead of "^L" for page-break in help-buffers
+    (add-hook 'help-mode-hook 'form-feed-mode))
 
 (with-eval-after-load 're-builder
   (require 'luk-re-builder-hydra)
