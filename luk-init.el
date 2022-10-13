@@ -183,7 +183,8 @@
 ;; this for key \t, but it seems my global bind for (kbd "<tab>")
 ;; takes precedence, so explicitly bind (kbd "<tab>") for ido
 (with-eval-after-load "ido"
-  (define-key ido-common-completion-map (kbd "<tab>") #'ido-complete))
+  (define-key ido-common-completion-map (kbd "<tab>") #'ido-complete)
+  (add-to-list 'ido-ignore-files "\\`__pycache__/"))
 
 (require 'ido)
 (ido-everywhere)
