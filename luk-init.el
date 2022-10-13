@@ -296,6 +296,9 @@
 ;; Unset C-x o, to retrain me to use M-o
 (global-unset-key (kbd "C-x o"))
 
+(with-eval-after-load 'ibuffer
+  (define-key ibuffer-mode-map (kbd "M-o") 'other-window))
+
 ;; - C-M-a goes to the beginning of a function definition,
 ;; - C-M-e should go to the end of one ...
 ;; ... but at least on my laptop, the key-sequence C-M-e gets replaced
