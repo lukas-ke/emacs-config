@@ -1,4 +1,19 @@
+;;; -*- coding: utf-8; lexical-binding: t; -*-
+
 (provide 'luk-mode-line)
+
+(defvar luk--mode-line-anzu nil "Whether anzu is available")
+
+(when (require 'anzu nil 'noerror)
+  (setq luk--mode-line-anzu t))
+
+;; Magnifying glass indicator for prefixing anzu-search counts in mode-line
+(setq luk--mode-line-search (propertize "" 'font-lock-face `(:inherit anzu-mode-line :family "FontAwesome" :height 1)))
+
+(defun luk-anzu-modeline ()
+  (if luk--mode-line-anzu
+      (when anzu--state (concat luk--mode-line-search (anzu--update-mode-line)))
+    ""))
 
 (defun luk-mode-line-setup()
   "Mode-line adjustments
@@ -50,4 +65,5 @@ TODO: Work in progress."
       " "
       mode-line-modes
       mode-line-misc-info
+      (:eval (luk-anzu-modeline))
       mode-line-end-spaces)))

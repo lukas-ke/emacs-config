@@ -359,6 +359,11 @@
 (require 'luk-insert-closing-delimiter)
 (global-set-key (kbd "¤") #'luk-insert-closing-delimiter)
 
+(when (require 'anzu nil 'noerror)
+  (setq anzu-cons-mode-line-p nil)
+  (setq anzu-mode-lighter "")
+  (global-anzu-mode +1))
+
 ;; Use diminish package to remove some minor-modes from modeline.
 (when (require 'diminish nil 'noerror)
   (with-eval-after-load "perfect-margin" (diminish 'perfect-margin-mode))
