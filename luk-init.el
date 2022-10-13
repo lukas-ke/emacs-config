@@ -166,7 +166,11 @@
 
   ;; Also use tab for next-widget when in editable fields (like the
   ;; search field), it seems unlikely I'd need to insert a tab.
-  (define-key custom-field-keymap (kbd "<tab>") 'widget-forward))
+  (define-key custom-field-keymap (kbd "<tab>") 'widget-forward)
+
+  ;; The default keybind, M-tab, isn't usable on windows for
+  ;; auto-completing customization widgets.
+  (define-key widget-global-map (kbd "C-<tab>") 'widget-complete))
 
 ;; Note, only binding "<tab>", not "TAB", since org-cycle forwards to
 ;; the global TAB-bind sometimes, and luk-tab-complete-smart-tab
