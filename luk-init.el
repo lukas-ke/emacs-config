@@ -311,16 +311,6 @@
 (define-key help-mode-map (kbd "b") 'help-go-back)
 (define-key help-mode-map (kbd "f") 'help-go-forward)
 
-;; Use diminish package to remove some minor-modes from modeline.
-(when (require 'diminish nil 'noerror)
-  (diminish 'perfect-margin-mode)
-  (diminish 'org-indent-mode)
-  (diminish 'yas-minor-mode)
-  (diminish 'company-mode)
-  (diminish 'page-break-lines-mode)
-  (diminish 'form-feed-mode)
-  (when (require 'form-feed nil 'noerror)
-    (diminish 'form-feed-mode)))
 
 (with-eval-after-load 're-builder
   (require 'luk-re-builder-hydra)
@@ -368,5 +358,21 @@
 ;; Close ([{" on "¤" (s-4 on my keyboard).
 (require 'luk-insert-closing-delimiter)
 (global-set-key (kbd "¤") #'luk-insert-closing-delimiter)
+
+;; Use diminish package to remove some minor-modes from modeline.
+(when (require 'diminish nil 'noerror)
+  (with-eval-after-load "perfect-margin" (diminish 'perfect-margin-mode))
+  (with-eval-after-load "yasnippet" (diminish 'yas-minor-mode))
+  (with-eval-after-load "isearch" (diminish 'isearch-mode))
+  (with-eval-after-load "company" (diminish 'company-mode))
+  (with-eval-after-load "eldoc" (diminish 'eldoc-mode))
+  (with-eval-after-load "lsp-lens" (diminish 'lsp-lens-mode))
+  (with-eval-after-load "flycheck" (diminish 'flycheck-mode))
+  (with-eval-after-load "lsp-mode" (diminish 'lsp-mode "lsp"))
+  (with-eval-after-load "autorevert" (diminish 'auto-revert-mode))
+  (with-eval-after-load "form-feed" (diminish 'form-feed-mode))
+  (with-eval-after-load "org-indent" (diminish 'org-indent-mode))
+  (with-eval-after-load "org-capture" (diminish 'org-capture-mode)
+  (with-eval-after-load "company"(diminish 'company-mode))))
 
 (provide 'luk-init)
