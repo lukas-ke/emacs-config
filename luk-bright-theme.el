@@ -90,8 +90,8 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(minibuffer-prompt ((,class (:weight bold :foreground "black" :background "gold"))))
    `(minibuffer-noticeable-prompt ((,class (:weight bold :foreground "black" :background "gold"))))
    `(escape-glyph ((,class (:foreground "#008ED1"))))
-   `(error ((,class (:foreground "red"))))
-   `(warning ((,class (:weight bold :foreground "orange" :background "#ffffff"))))
+   `(error ((,class (:weight bold :foreground "#C74051"))))
+   `(warning ((,class (:foreground "#BFA307"))))
    `(success ((,class (:foreground "#1A893B"))))
 
    ;; Font lock faces.
@@ -604,6 +604,10 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
 
    ;; Face for the bookmark-package fringe indicator
    `(bookmark-face ((,class (:foreground "#335EA8" :background ,fringe-background-color))))
+
+   ;; Anzu package (current match/num-matches in mode-line for
+   ;; isearch)
+   `(anzu-mode-line ((,class (:foreground "yellow"))))
 
    ;; re-builder (built-in)
    ;;
