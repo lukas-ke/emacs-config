@@ -9,8 +9,6 @@
 (require 'cl-lib)
 (require 'luk-util)
 
-(provide 'luk-hydra)
-
 ;; For restoring
 (defconst luk-hydra-amaranth-original-message hydra-amaranth-warn-message
   "For restoring the original amaranth message on hydra close")
@@ -134,8 +132,8 @@ luk-hydra was started directly"
 _t_: treemacs      │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
 _e_: explorer here │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
 _R_: rename        │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
-_D_: delete        │ ^ ^              │ _b J_ jump other │ _T_ select theme      │ _v A_ Agenda choice │ _c w_ Waiting
-_C_: copy path     │ ^ ^              │ ^   ^            │ ^ ^                   │ _g_ magit status    │ _c l_ Goto last
+_D_: delete        │ ^ ^              │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
+_C_: copy path     │ ^ ^              │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
 ^ ^                │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
           (luk-caption "Current File")
@@ -169,6 +167,7 @@ _q_: %s"
   ("m" menu-bar-open :exit t)
   ("S" scroll-bar-mode :exit nil)
   ("T" luk-hydra-theme/body :exit t)
+  ("o" luk-mode-line-hydra/body :exit t)
 
   ;; View
   ("g" magit-status :exit t)
@@ -227,3 +226,5 @@ Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
   ("[" (backward-page))
   ("8" (backward-page))
   ("q" nil :exit t))
+
+(provide 'luk-hydra)
