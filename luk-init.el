@@ -371,4 +371,7 @@
 (require 'luk-diminish)
 (luk-diminish)
 
+;; Lower tooltip delay from the default (0.7)
+(setq tooltip-delay 0.1)
+
 (provide 'luk-init)
