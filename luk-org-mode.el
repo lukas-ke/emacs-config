@@ -91,6 +91,12 @@ call `org-entities-help for the org documentation."
 
 ;; Misc utils
 
+(defun luk-org-refresh-appointments ()
+  "Reinitialize `appt-time-msg-list' from agenda"
+  (interactive)
+  (setq appt-time-msg-list nil)
+  (org-agenda-to-appt))
+
 (defun luk-org-delete-trailing-whitespace ()
   "Delete trailing whitespace except at empty org-headings.
 

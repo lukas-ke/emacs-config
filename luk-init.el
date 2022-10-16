@@ -379,4 +379,8 @@
   (truncate-string-to-width str 25 nil nil ".."))
 (setq which-func-cleanup-function #'luk-which-func-cleanup)
 
+(when (require 'minibuffer-line nil 'noerror)
+  (require 'luk-idle-minibuffer-line)
+  (luk-idle-minibuffer-line-enable))
+
 (provide 'luk-init)
