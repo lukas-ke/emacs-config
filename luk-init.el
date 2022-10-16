@@ -374,4 +374,9 @@
 ;; Lower tooltip delay from the default (0.7)
 (setq tooltip-delay 0.1)
 
+;; which-function-mode can put super-long stuff on mode-line
+(defun luk-which-func-cleanup (str)
+  (truncate-string-to-width str 25 nil nil ".."))
+(setq which-func-cleanup-function #'luk-which-func-cleanup)
+
 (provide 'luk-init)
