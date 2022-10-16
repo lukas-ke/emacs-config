@@ -97,7 +97,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    ;; Font lock faces.
    `(font-lock-builtin-face ((,class (:foreground "#006FE0"))))
    `(font-lock-comment-delimiter-face ((,class (:foreground "#707070"))))
-   `(font-lock-comment-face ((,class (:foreground "#707070"))))
+   `(font-lock-comment-face ((,class (:foreground "#505050"))))
    `(font-lock-constant-face ((,class (:foreground "#D0372D"))))
    `(font-lock-doc-face ((,class (:foreground "#036A07"))))
    `(font-lock-function-name-face ((,class (:weight normal :foreground "#006699"))))
@@ -462,7 +462,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(org-document-info-keyword ((,class (:weight bold :foreground "#464646"))))
    `(org-document-title ((,class (:weight bold :foreground ,heading-color :height 1.2))))
    `(org-done ((,class (:weight normal :box (:line-width 2 :color "#D8ABA7") :foreground "#22B14C" :background ,buffer-background-color))))
-   `(org-drawer ((,class (:weight bold :foreground "#00BB00" :background "#EAFFEA"))))
+   `(org-drawer ((,class (:weight bold :foreground "#787878" :background "#EAFFEA"))))
    `(org-ellipsis
      ;; Set as many properties as possible to avoid the collapsed
      ;; outline indicator taking on the style of elements around it.
@@ -516,6 +516,8 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(luk-hydra-caption-face ((,class (:weight bold :foreground ,heading-color))))
 
    `(luk-modeline-flash-face ((,class (:background "#CCA157"))))
+
+   `(luk-mode-line-modified ((,class (:foreground "#F25E63"))))
 
    ;; outline-mode (built-in)
    `(outline-1 ((,class ,ol1)))
@@ -589,6 +591,10 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
 
    ;; `which-key'-package (displays possible follow-up keys for a keypress after a delay)
    `(which-key-local-map-description-face ((,class (:weight bold :background "#F3F7FC" :inherit which-key-command-description-face))))
+
+   ;; which-function-mode (built-in, shows the function, or say
+   ;; org-heading, point is inside on mode-line)
+   `(which-func ((,class (:foreground "#99D9EA"))))
 
    ;; widget (built-in, see wid-edit.el)
    `(widget-button ((,class ,link)))
