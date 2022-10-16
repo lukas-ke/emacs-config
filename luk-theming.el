@@ -1,21 +1,47 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 (require 'luk-hydra)
-
-;; Theme enable-functionality
-(defun luk--reset-themes ()
-  (interactive)
-  (progn
-    (mapc #'disable-theme custom-enabled-themes)
 
-    (set-face-attribute
-     'default
-     nil
-     :family "DejaVu Sans Mono" ; https://dejavu-fonts.github.io/
-     :foundry "outline"
-     :slant 'normal
-     :weight 'normal
-     :height 102
-     :width 'normal)))
+
+;; General theme functions
+
+(defvar luk-customized-faces nil
+  "Faces changed through `luk-custom-set-faces'.
+
+This will normally be the faces modified by the last
+\"post-theme\" function after calling `luk-enable-theme'.
+
+It is used by `luk--reset-themes' to undo the user-customizations
+of the current theme before switching to a different theme.")
+
+(defun luk-custom-set-faces (&rest args)
+  "Store the face names, then forward to `custom-set-faces'
+
+Store the modified face names in `luk-customized-faces', so that
+the customizations can be reverted by `luk--reset-themes'."
+  (setq luk-customized-faces (mapcar #'car args))
+  (apply #'custom-set-faces args))
+
+(defun luk--reset-themes ()
+  "Disable all themes and undo additional face changes.
+
+This function will:
+- disable all `custom-enabled-themes'
+- undoe the customizations to faces in `luk-customized-faces'.
+- clear `luk-customized-faces'"
+  (mapc #'disable-theme custom-enabled-themes)
+  (set-face-attribute
+   'default
+   nil
+   :family "DejaVu Sans Mono" ; https://dejavu-fonts.github.io/
+   :foundry "outline"
+   :slant 'normal
+   :weight 'normal
+   :height 102
+   :width 'normal)
+
+  (dolist (face luk-customized-faces)
+    (custom-push-theme 'theme-face face 'user 'reset))
+  (setq luk-customized-faces nil))
 
 (defun luk-enable-theme (theme)
   "Enables the theme THEME, runs post-configuration if available.
@@ -55,32 +81,36 @@ theme-symbol, with prefix \"luk-post\", for example
                        (format
                         "Post configuration function undefined: %s"
                         (symbol-name post-func)))))))
-
 
 ;; Post configuration functions
+
 (defun luk-post/luk-bright ()
   "Does nothing (I can just modify the theme directly in lukl-bright.el).")
 
 (defun luk-post/zenburn ()
   "Adjust some zenburn theme settings."
-  (custom-set-faces
+  (luk-custom-set-faces
    ;; TODO: Better code-face (e.g. for org-keywords, verbatim)
    ;;       (Maybe I should customize some specific font instead though?)
 
    ;; Ensure no surrounding font-effects spill over on the
    ;; org-ellipsis
-   '(org-ellipsis ((t (:underline nil :slant normal))))
+   `(org-ellipsis
+     ((t (:underline nil :slant normal :background ,(face-background 'default)))))
 
    ;; Remove box around checkboxes, since I use prettify-symbols
    `(org-checkbox ((t (:box nil :background ,(face-background 'default)))))
 
    ;; Weaker color for inactive mode-line
-   '(mode-line-inactive ((t (:background "#3F3F3F"))))))
+   '(mode-line-inactive ((t (:background "#3F3F3F"))))
+
+   '(luk-mode-line-modified ((t (:foreground "#ff0000"))))))
 
 
 ;; Theme-selection hydra
 ;; TODO: Consider moving to luk-hydra or elsewhere,
-;;       (I should be able to access `luk-enable-theme' before loading hydra or other packages)
+;;       (I should be able to access `luk-enable-theme' before loading
+;;       hydra or other packages)
 ;; TODO: Consider using a list of themes and building the hydra,
 ;;       (possibly with option for all installed themes)
 (defhydra luk-hydra-theme
