@@ -7,6 +7,7 @@
 (require 'luk-hydra)
 (require 'luk-util)
 (require 'calendar)
+(require 'appt)
 
 (defgroup luk-org nil "Variables for luk-org.")
 
@@ -95,7 +96,8 @@ call `org-entities-help for the org documentation."
   "Reinitialize `appt-time-msg-list' from agenda"
   (interactive)
   (setq appt-time-msg-list nil)
-  (org-agenda-to-appt))
+  (org-agenda-to-appt)
+  (appt-activate 1))
 
 (defun luk-org-delete-trailing-whitespace ()
   "Delete trailing whitespace except at empty org-headings.

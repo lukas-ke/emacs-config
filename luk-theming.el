@@ -104,6 +104,7 @@ theme-symbol, with prefix \"luk-post\", for example
    ;; Weaker color for inactive mode-line
    '(mode-line-inactive ((t (:background "#3F3F3F"))))
 
+   '(luk-appt-popup ((t (:background "#383838"))))
    '(luk-mode-line-modified ((t (:foreground "#ff0000"))))
    (let ((fg (cdr (assoc-string "zenburn-blue-2" zenburn-default-colors-alist)))
          (bg (face-background 'fringe)))
