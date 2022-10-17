@@ -383,4 +383,39 @@
   (require 'luk-idle-minibuffer-line)
   (luk-idle-minibuffer-line-enable))
 
+
+;; Make built in elisp files read-only, to avoid mistaken modification
+
+(defun luk-built-in-lisp-dir ()
+  "Find the lisp/ directory in the emacs installation.
+
+Done by finding the 'emacs-version file (surely there's a better
+way?)."
+  (let* ((buf (car (find-definition-noselect 'emacs-version nil)))
+         (lisp-dir (directory-file-name (file-name-directory
+                               (buffer-file-name buf)))))
+    (kill-buffer buf)
+    ;; TODO: Maybe add sanity check that this is the correct lisp/-dir?
+    lisp-dir))
+
+(defun luk-make-built-in-read-only ()
+  "Make built-in emacs-lisp files read-only."
+
+  ;; Create 'read-only "directory class"
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Apply the class to a list of directories.
+  (dolist (dir
+           (list
+            ;; TODO: Consider adding ~/.emacs.d/elpa/ folder, but
+            ;;   then it needs to be made readable on package install etc.
+            ;;   (and maybe in other situations, for example might
+            ;;   some packages store data there?
+            (luk-built-in-lisp-dir)))
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+(luk-make-built-in-read-only)
+
+
 (provide 'luk-init)
