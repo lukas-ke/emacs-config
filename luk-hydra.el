@@ -13,6 +13,9 @@
 (defconst luk-hydra-amaranth-original-message hydra-amaranth-warn-message
   "For restoring the original amaranth message on hydra close")
 
+(defun luk-hydra-checkbox (value)
+  (if value "[x]" "[ ]"))
+
 ;;; Mode hydras:
 ;;; Allow calling the luk-hydra from a mode-specific hydra-menu
 ;;; and then return to the other menu with '.'
@@ -134,7 +137,7 @@ _e_: explorer here │ _f_: .. in files │ _b l_ list       │ _m_ menu bar op
 _R_: rename        │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
 _D_: delete        │ ^ ^              │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
 _C_: copy path     │ ^ ^              │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
-^ ^                │ ^ ^              │ ^   ^            │ ^ ^                   │ _r_ region menu     │ _c c_ Pick template
+^ ^                │ ^ ^              │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
           (luk-caption "Current File")
           (luk-caption "Files")
@@ -168,6 +171,7 @@ _q_: %s"
   ("S" scroll-bar-mode :exit nil)
   ("T" luk-hydra-theme/body :exit t)
   ("o" luk-mode-line-hydra/body :exit t)
+  ("a" luk-appt-hydra/body :exit t)
 
   ;; View
   ("g" magit-status :exit t)

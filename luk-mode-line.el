@@ -257,9 +257,6 @@ TODO: Work in progress."
 
 
 ;; Hydra
-(defun luk-mode-line-checkbox (value)
-  (if value "[x]" "[ ]"))
-
 (defhydra luk-mode-line-hydra
   (:hint nil
          :foreign-keys warn
@@ -267,12 +264,12 @@ TODO: Work in progress."
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message)
          :exit nil)
   (format "%s
-%%s(luk-mode-line-checkbox luk-mode-line-show-minor-modes) _m_ Minor modes          %%s(luk-mode-line-checkbox luk-diminished) _d_ Diminish
-%%s(luk-mode-line-checkbox luk-mode-line-show-major-mode) _M_ Major mode
-%%s(luk-mode-line-checkbox luk-mode-line-show-buffer-position) _p_ Buffer position
-%%s(luk-mode-line-checkbox line-number-mode) _l_ Line number
-%%s(luk-mode-line-checkbox column-number-mode) _c_ Column numer
-%%s(luk-mode-line-checkbox luk-mode-line-show-vc-info) _v_ Version control info
+%%s(luk-hydra-checkbox luk-mode-line-show-minor-modes) _m_ Minor modes          %%s(luk-hydra-checkbox luk-diminished) _d_ Diminish
+%%s(luk-hydra-checkbox luk-mode-line-show-major-mode) _M_ Major mode
+%%s(luk-hydra-checkbox luk-mode-line-show-buffer-position) _p_ Buffer position
+%%s(luk-hydra-checkbox line-number-mode) _l_ Line number
+%%s(luk-hydra-checkbox column-number-mode) _c_ Column numer
+%%s(luk-hydra-checkbox luk-mode-line-show-vc-info) _v_ Version control info
 _q_ exit"
           (luk-caption "Show (Mode line)"))
   ("d" (luk-toggle-diminish))

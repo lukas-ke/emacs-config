@@ -615,6 +615,9 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    ;; isearch)
    `(anzu-mode-line ((,class (:foreground "yellow"))))
 
+   `(luk-appt-popup ((,class (:foreground "black" :background "#F5E49C"))))
+   `(luk-appt-popup-border ((,class (:foreground "black" :background "#787878"))))
+
    ;; re-builder (built-in)
    ;;
    ;; Match groups using distinct (rather than tasteful-) colors:
