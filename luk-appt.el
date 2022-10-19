@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 (require 'appt)
-(require 'hydra)
+(require 'luk-hydra)
 
 (defface luk-appt-popup '((t :inherit default))
   "Face for the child-frame background used for appt.")
@@ -138,10 +138,10 @@ persists even if the appointments are recreated, for example with
     (luk-filter-appt)))
 
 (defun luk-appt-next-str () ;; Todo almost duplicates luk-idle-minibuffer-line
-  (let ((next-appt (car appt-time-msg-list)))
-    (if (not next-appt)
-        ""
-      (substring-no-properties (car (cdr next-appt)) nil 27))))
+  (let ((next-appt (cadr (cadr appt-time-msg-list))))
+    (if next-appt
+        (substring-no-properties next-appt nil (min 27 (length next-appt)))
+      "")))
 
 (defun luk-appt-ignore-some ()
   "Ignore some appointments."
@@ -210,7 +210,7 @@ _c_ Check now
 _C_ Unignore all
 
 _q_ Quit"
-          (luk-caption "Appointments"))q
+          (luk-caption "Appointments"))
   ("a" #'luk-appt-toggle :exit nil)
   ("n" (luk-appt-ignore-next) :exit t)
   ("s" (luk-appt-ignore-some) :exit t)

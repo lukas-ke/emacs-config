@@ -243,6 +243,9 @@
 (require 'iy-go-to-char)
 (global-set-key (kbd "M-m") 'iy-go-to-char)
 
+(require 'luk-appt)
+(luk-appt-setup)
+
 (require 'luk-hydra)
 (require 'luk-theming) ;; TODO: Needed for luk-hydra to find theme-hydra
 (global-set-key (kbd "M-.") 'luk-hydra-summon)
