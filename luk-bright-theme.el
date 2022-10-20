@@ -14,7 +14,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
      (heading-color "#335EA8")
      (code-inline '(:foreground "#006400" :background "#FDFFF7"))
      (column '(:height 1.0 :weight normal :slant normal :underline nil :strike-through nil :foreground "#E6AD4F" :background "#FFF2DE"))
-     (completion-inline '(:weight normal :foreground "#C0C0C0" :inherit hl-line))
+     (completion-inline '(:weight normal :foreground "#000000" :inherit hl-line))
      (diff-added '(:background "#DDFFDD"))
      (diff-changed '(:foreground "#0000FF" :background "#DDDDFF"))
      (diff-header '(:weight bold :foreground "#800000" :background "#FFFFAF"))
@@ -318,7 +318,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(highlight-changes-delete ((,class (:strike-through nil :foreground nil :underline t))))
 
    ;; hl-line (built-in, highlight current line)
-   `(hl-line ((,class (:background "#F6FECD")))) ; Highlight current line.
+   `(hl-line ((,class (:box (:line-width -1 :color "#99D1FF") :background "#CCE8FF")))) ; Highlight current line.
    `(hl-tags-face ((,class (:background "#E8E8FF"))))
    `(holiday-face ((,class (:foreground "#777777" :background "#E4EBFE"))))
    `(html-helper-bold-face ((,class (:weight bold :foreground "black"))))
