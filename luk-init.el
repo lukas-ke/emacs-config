@@ -400,6 +400,9 @@
   (require 'luk-idle-minibuffer-line)
   (luk-idle-minibuffer-line-enable))
 
+;; Hide the extra-help in the completions buffer
+(setq completion-show-help nil)
+
 
 ;; Make built in elisp files read-only, to avoid mistaken modification
 
