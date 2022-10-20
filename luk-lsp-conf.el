@@ -31,15 +31,14 @@ _q_: Exit
          :pre (setq hydra-amaranth-warn-message "Invalid key (luk-lsp-file-hydra)")
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
-Show^^                     Toggle
-_o_: File symbols          _h_: Symbol highlight: %s`lsp-enable-symbol-highlighting
-_e_: Flycheck errors       _b_: Breadcrumb:       %s(luk-lsp-headerline-breadcrumb-mode)
-_S_: LSP Session           _c_: Doc for point:    %s`lsp-ui-doc-show-with-cursor
-^ ^                        _s_: Sideline info:    %s`lsp-ui-sideline-mode
+Show^^                   Toggle                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^Treemacs
+_o_: File symbols        _h_: Symbol highlight: %-3s`lsp-enable-symbol-highlighting^^^^^  _t e_: errors
+_e_: Flycheck errors     _b_: Breadcrumb:       %-3s(luk-lsp-headerline-breadcrumb-mode)  _t s_: symbols
+_S_: LSP Session         _c_: Doc for point:    %-3s`lsp-ui-doc-show-with-cursor^^^^^^^^  _t r_: references
+^ ^                      _s_: Sideline info:    %-3s`lsp-ui-sideline-mode
 _f_: Focus doc frame
 
-_q_: Exit
-"
+_q_: Exit"
   ("." (luk-hydra-push #'luk-lsp-file-hydra/body "lsp") :exit t)
   ("o" lsp-ui-imenu :exit t)
   ("e" flycheck-list-errors :exit t)
@@ -49,9 +48,13 @@ _q_: Exit
   ("b" (lsp-headerline-breadcrumb-mode 'toggle))
   ("c" (progn (setq lsp-ui-doc-show-with-cursor (not lsp-ui-doc-show-with-cursor)) (when (not lsp-ui-doc-show-with-cursor) (lsp-ui-doc-hide))))
   ("s" (lsp-ui-sideline-mode 'toggle))
+  ("t s" (lsp-treemacs-symbols) :exit t)
+  ("t e" (lsp-treemacs-errors-list) :exit t)
+  ("t r"
+   (let ((current-prefix-arg '(1)))
+     (call-interactively #'lsp-treemacs-references))
+   :exit t)
   ("q" nil :exit t))
-
-
 
 (defun luk-lsp-hook ()
   'yas-minor-mode
