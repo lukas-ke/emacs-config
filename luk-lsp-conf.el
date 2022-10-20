@@ -24,7 +24,12 @@ _q_: Exit
   ;; function lsp-headerline-breadcrumb-mode is invoked by the hydra.
   (and (boundp 'lsp-headerline-breadcrumb-mode) lsp-headerline-breadcrumb-mode))
 
-(defhydra luk-lsp-file-hydra (:hint nil :foreign-keys warn :exit nil)
+(defhydra luk-lsp-file-hydra
+  (:hint nil
+         :foreign-keys warn
+         :exit nil
+         :pre (setq hydra-amaranth-warn-message "Invalid key (luk-lsp-file-hydra)")
+         :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
 Show^^                     Toggle
 _o_: File symbols          _h_: Symbol highlight: %s`lsp-enable-symbol-highlighting
@@ -44,7 +49,6 @@ _q_: Exit
   ("b" (lsp-headerline-breadcrumb-mode 'toggle))
   ("c" (progn (setq lsp-ui-doc-show-with-cursor (not lsp-ui-doc-show-with-cursor)) (when (not lsp-ui-doc-show-with-cursor) (lsp-ui-doc-hide))))
   ("s" (lsp-ui-sideline-mode 'toggle))
-
   ("q" nil :exit t))
 
 
