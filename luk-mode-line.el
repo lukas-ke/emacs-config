@@ -103,15 +103,15 @@ mouse-3: Toggle minor modes"
 			   'mouse-2 #'mode-line-widen))
 
    `(:propertize ""
-                 font-lock-face '(:family "github-octicons" :height 1.2)
-                 'help-echo "Hide major mode"
-                 'mouse-face 'mode-line-highlight
+                 font-lock-face (:family "github-octicons" :height 1.2)
+                 help-echo "Hide major mode"
+                 mouse-face mode-line-highlight
                  local-map ,(make-mode-line-mouse-map
 			     'mouse-1 #'luk-mode-line-collapse-modes))
    `(:propertize ""
-                 font-lock-face '(:family "github-octicons" :height 1.2)
-                 'help-echo "Show minor modes"
-                 'mouse-face 'mode-line-highlight
+                 font-lock-face (:family "github-octicons" :height 1.2)
+                 help-echo "Show minor modes"
+                 mouse-face mode-line-highlight
                  local-map ,(make-mode-line-mouse-map
 			     'mouse-1 #'luk-mode-line-expand-modes))))
 (put 'luk-mode-line-modes-major 'risky-local-variable t)
