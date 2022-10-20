@@ -344,6 +344,20 @@
 ;; (Mainly "Kanelbullens dag").
 (setq cfw:display-calendar-holidays nil)
 
+(defun luk-cfw-open-agenda ()
+  "Run cfw:org-open-agenda-day, then resize calendar"
+  (interactive)
+  (let ((calendar-buffer (current-buffer)))
+    (cfw:org-open-agenda-day)
+    (with-current-buffer calendar-buffer
+      (cfw:refresh-calendar-buffer nil))))
+
+(with-eval-after-load 'calfw
+  (define-key cfw:org-schedule-map (kbd "<return>") #'luk-cfw-open-agenda)
+  (define-key cfw:org-schedule-map (kbd "SPC") #'luk-cfw-open-agenda)
+  (define-key cfw:org-schedule-map (kbd "<tab>") #'cfw:navi-next-item-command)
+  (define-key cfw:org-text-keymap (kbd "<return>") #'cfw:org-onclick))
+
 (with-eval-after-load "bookmark"
   ;; Replace the “bookmark-fringe-mark-bitmap” circle defined by the
   ;; bookmark-package with a classic bookmark icon.
