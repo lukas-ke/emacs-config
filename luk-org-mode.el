@@ -779,6 +779,18 @@ information."
   ;; "hello_{world}"
   (setq org-use-sub-superscripts 1)
 
+  ;; Try to react to edits that affect hidden sections. Doesn't seem to
+  ;; work for a lot of cases though, only when the heading itself is edited?
+  ;;
+  ;; I.e. the invisible region is only from heading start to expand symbol
+  ;; It does not catch for example if I remove the bullet from a collapsed heading
+  ;; and the text below is lost.
+  (setq org-catch-invisible-edits 'show-and-error)
+
+  ;; No validation link at the end of html generated with
+  ;; org-html-export-to-html
+  (setq org-html-validation-link nil)
+
   ;; Use yellow for STARTED task-states
   (setq org-todo-keyword-faces '(("STARTED" . luk-org-todo-started)
                                  ("CANCELED" . luk-org-todo-canceled)))
