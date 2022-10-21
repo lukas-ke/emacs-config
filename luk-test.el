@@ -2,11 +2,20 @@
 
 (require 'luk-markdown)
 (require 'luk-util)
+(require 'luk-appt)
 
 
 ;; Test utilities
 
 (setq luk-test-data-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "test-data/"))
+
+(setq luk-test-out-dir (concat (file-name-directory (or load-file-name buffer-file-name)) "test-out/"))
+
+(defun luk-test-get-out-dir ()
+  (when (not (file-directory-p luk-test-out-dir))
+    (make-directory luk-test-out-dir)
+    (cl-assert (file-directory-p luk-test-out-dir)))
+  luk-test-out-dir)
 
 (defun luk-test-file (filename)
   (concat luk-test-data-dir filename))
@@ -174,8 +183,104 @@
 
       ;; Restore
       (setq luk/enum-alist old-list))))
-
+
 (ert-deftest luk-image-filename-p ()
   (should (luk/image-filename-p "c:/test.png"))
   (should (luk/image-filename-p "file.jpg"))
   (should-not (luk/image-filename-p "c:/test.txt")))
+
+
+;; luk-appt and helpers
+
+(defun luk-test-create-org-dates ()
+  (let ((test-org-file (concat (luk-test-get-out-dir) "test-dates.org")))
+    (find-file test-org-file)
+    (cl-assert (string= (buffer-file-name) test-org-file))
+    (erase-buffer)
+    (let* ((now (decode-time))
+           (prev-hour (copy-sequence now))
+           (next-hour (copy-sequence now))
+           (next-hour-plus-five (copy-sequence now))
+           (in-ten (copy-sequence now))
+           (tomorrow (copy-sequence now)))
+      ;; TODO Check if this type of time manipulation handles wrap
+      (cl-decf (decoded-time-hour prev-hour) 1)
+      (cl-incf (decoded-time-hour next-hour) 1)
+      (cl-incf (decoded-time-hour next-hour-plus-five) 1)
+      (cl-incf (decoded-time-minute next-hour-plus-five) 5)
+      (cl-incf (decoded-time-minute in-ten) 10)
+      (cl-incf (decoded-time-day tomorrow) 1)
+      (insert (format-time-string "Generated %Y-%m-%d %H:%M\n" (encode-time now)))
+      (insert (format-time-string "* <%Y-%m-%d %H:%M> Appointment in the past\n" (encode-time prev-hour)))
+      (insert (format-time-string "* <%Y-%m-%d %H:%M> Appointment soon\n" (encode-time next-hour)))
+      (insert (format-time-string "* <%Y-%m-%d %H:%M> Appointment tomorrow\n" (encode-time tomorrow)))
+      (insert (format-time-string "* <%Y-%m-%d %H:%M> Appointment in 1h 5m\n" (encode-time next-hour-plus-five)))
+
+      ;; Inactive timestamps are not exported to appt
+      (insert (format-time-string "* [%Y-%m-%d %H:%M] (Not an) appointment in 10m\n" (encode-time next-hour-plus-five)))
+
+      ;; Timestamps without clock time are not exported to appt
+      (insert (format-time-string "* <%Y-%m-%d> (Not an) appointment in 10m\n" (encode-time next-hour-plus-five))))
+    (save-buffer)
+    test-org-file))
+
+(ert-deftest luk-appt ()
+  "Test the ignore and export features of luk-appt."
+
+  ;; For restoring values after test
+  (let ((original-org-agenda-files org-agenda-files)
+        (original-appt-time-msg-list appt-time-msg-list)
+        (original-luk-appt-ignored luk-appt-ignored)
+        (original-luk-appt-manually-added luk-appt-manually-added)
+
+        ;; Generate an org-file with dates for exporting to appt
+        (test-org-file (luk-test-create-org-dates)))
+
+    (cl-flet
+        ;; For verifying entries in the time-msg-list by text-content.
+        ;; Uses a regex for the time, and the exact string of the
+        ;; message content.
+        ((match-meeting (time-msg text)
+                        (string-match-p
+                         (concat "[0-2][0-9][:][0-5][0-9] " text)
+                         (cadr time-msg))))
+      (unwind-protect
+          (progn
+            ;; Clear non-test values
+            (setq luk-appt-ignored nil)
+            (setq luk-appt-manually-added nil)
+            (setq appt-time-msg-list nil)
+
+            ;; Use a generated test file with dates
+            (setq org-agenda-files (list test-org-file))
+            (luk-export-agenda-filtered)
+
+            ;; Two meetings today
+            (should (= (length appt-time-msg-list) 2))
+            (should (= (length luk-appt-ignored) 0))
+            (should (match-meeting (nth 0 appt-time-msg-list) "Appointment soon"))
+            (should (match-meeting (nth 1 appt-time-msg-list) "Appointment in 1h 5m"))
+
+            ;; Ignore the next meeting
+            (luk-appt-ignore-next)
+            (should (= (length appt-time-msg-list) 1))
+            (should (= (length luk-appt-ignored) 1))
+            (should (match-meeting (nth 0 appt-time-msg-list) "Appointment in 1h 5m"))
+
+            (let* ((now (decode-time))
+                   (soon (copy-sequence now)))
+              (cl-incf (decoded-time-minute soon) 20)
+              (luk-appt-add-manually (format-time-string "%H:%M" (encode-time soon)) "Manually added"))
+
+            ;; Re-export
+            (luk-export-agenda-filtered)
+            (should (= (length luk-appt-ignored) 1)) ;; Unmodified
+            (should (= (length appt-time-msg-list) 2)) ;; One meeting was filtered
+            (should (match-meeting (nth 0 appt-time-msg-list) "Manually added"))
+            (should (match-meeting (nth 1 appt-time-msg-list) "Appointment in 1h 5m"))
+
+        ;; Restore
+        (setq org-agenda-files original-org-agenda-files)
+        (setq appt-time-msg-list original-appt-time-msg-list)
+        (setq luk-appt-ignored original-luk-appt-ignored)
+        (setq luk-appt-manually-added original-luk-appt-manually-added))))))

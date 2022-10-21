@@ -2,6 +2,8 @@
 (require 'appt)
 (require 'luk-hydra)
 
+;; TODO: Add ert-test
+
 (defface luk-appt-popup '((t :inherit default))
   "Face for the child-frame background used for appt.")
 
@@ -91,23 +93,31 @@ Modified from built-in `select-frame-by-name'."
       (luk-show-frame text (round (* 2 (+ (length meeting-str) (length additional-str))))))))
 
 
-;; appt ignore functions, for ignoring meetings across. subsequent
+;; appt ignore functions, for ignoring meetings across subsequent
 ;; exports with e.g. org-agenda-to-appt
 
-(defvar luk-ignored-appts nil
+(defvar luk-appt-ignored nil
   "Ignored entries from appt-time-msg-list.
 
 The entries are kept in this variable so that the ignored state
 persists even if the appointments are recreated, for example with
 `org-agenda-to-appt'.")
 
+(defvar luk-appt-manually-added nil
+  "Entries added with `luk-appt-add-manually'.
+
+The entries are kept in this variable so that they can be
+reinsterted after the `appt-time-msg-list' is recreated (by for
+example `org-agenda-to-appt'")
+
 (defun luk-appt-unignore-all ()
   "Clear the list of ignored apps"
   (interactive)
-  (setq luk-ignored-appts nil)
+  (setq luk-appt-ignored nil)
   (message (concat "Ignore list cleared. Note: re-export to restore appointments.")))
 
-(defun luk-appt-list ()
+;; TODO: Generalize the luk-appt-list functions
+(defun luk-appt-list-pending ()
   (interactive)
   (message (concat (luk-caption "Appointments")
                    (if (= 0 (length appt-time-msg-list)) " None"
@@ -120,12 +130,25 @@ persists even if the appointments are recreated, for example with
   (message
    (concat
     (luk-caption "Ignored appointments")
-    (if (= 0 (length luk-ignored-appts))
+    (if (= 0 (length luk-appt-ignored))
         " None"
       (concat
-       (if (= 1 (length luk-ignored-appts)) " " "\n")
+       (if (= 1 (length luk-appt-ignored)) " " "\n")
        (string-join
-        (mapcar (lambda (x) (substring-no-properties (cadr x))) luk-ignored-appts)
+        (mapcar (lambda (x) (substring-no-properties (cadr x))) luk-appt-ignored)
+        "\n"))))))
+
+(defun luk-appt-list-manually-added ()
+  (interactive)
+  (message
+   (concat
+    (luk-caption "Manually added appointments")
+    (if (= 0 (length luk-appt-manually-added))
+        " None"
+      (concat
+       (if (= 1 (length luk-appt-manually-added)) " " "\n")
+       (string-join
+        (mapcar (lambda (x) (substring-no-properties (cadr x))) luk-appt-manually-added)
         "\n"))))))
 
 (defun luk-appt-ignore-next ()
@@ -134,7 +157,8 @@ persists even if the appointments are recreated, for example with
   (let ((element (car appt-time-msg-list)))
     (when (not element)
       (user-error "No next appointment to ignore"))
-    (add-to-list 'luk-ignored-appts (car appt-time-msg-list))
+    (add-to-list 'luk-appt-ignored (car appt-time-msg-list))
+    (setq luk-appt-ignored (appt-sort-list luk-appt-ignored))
     (luk-filter-appt)))
 
 (defun luk-appt-next-str () ;; Todo almost duplicates luk-idle-minibuffer-line
@@ -143,6 +167,7 @@ persists even if the appointments are recreated, for example with
         (substring-no-properties next-appt nil (min 27 (length next-appt)))
       "")))
 
+;; TODO: Sort ignored (appt-sort-list)
 (defun luk-appt-ignore-some ()
   "Ignore some appointments."
   (interactive)
@@ -157,20 +182,30 @@ persists even if the appointments are recreated, for example with
                             "? "))
         ;; TODO: Need a better check, to not add twice
         ;; eq doesn't work
-        (add-to-list 'luk-ignored-appts element)
+        (add-to-list 'luk-appt-ignored element)
         (setq num-ignored (+ num-ignored 1))))
     (luk-filter-appt)
     (appt-check)
     (message "Ignored %d appointments." num-ignored)))
 
 (defun luk-appt-is-ignored (appt)
-  (dolist (el luk-ignored-appts)
+  (dolist (el luk-appt-ignored)
     (when (= (caar el) (caar appt))
       (cl-return t))))
 
 (defun luk-filter-appt ()
   "Remove ignored appointments from `appt-time-msg-list'."
   (interactive)
+
+  ;; Convert current time to minutes after midnight (12:01am = 1),
+  ;; and remove ignored items that are in the past.
+  (let* ((now (decode-time))
+         (now-mins (+ (* 60 (decoded-time-hour now))
+                      (decoded-time-minute now))))
+    (while (and luk-appt-ignored
+                (< (caar (car luk-appt-ignored)) now-mins))
+      (setq luk-appt-ignored (cdr luk-appt-ignored))))
+
   (let ((n-before (length appt-time-msg-list)))
     (setq appt-time-msg-list
           (remq nil
@@ -179,13 +214,33 @@ persists even if the appointments are recreated, for example with
     (let ((n-after (length appt-time-msg-list)))
       (message "%d pending appointments (%d ignored)." n-after (- n-before n-after)))))
 
+(defun luk-appt-insert-manually-added ()
+  "Add retained manually added appointments to the `appt-time-msg-list'."
+
+  ;; Convert current time to minutes after midnight (12:01am = 1),
+  ;; and remove elements in the list that are in the past.
+  (let* ((now (decode-time))
+         (now-mins (+ (* 60 (decoded-time-hour now))
+                      (decoded-time-minute now))))
+    (while (and luk-appt-manually-added
+                (< (caar (car luk-appt-manually-added)) now-mins))
+      (setq luk-appt-manually-added (cdr luk-appt-manually-added))))
+  (dolist (time-msg luk-appt-manually-added)
+    (add-to-list 'appt-time-msg-list time-msg))
+  (setq appt-time-msg-list (appt-sort-list appt-time-msg-list)))
+
 (defun luk-export-agenda-filtered ()
   "Export agenda to appt, but filter ignored appointments."
   (interactive)
   (setq appt-time-msg-list nil)
   (appt-activate 0)
+  ;; TODO: Fishy dependency. Maybe better to put this in org, and
+  ;; depend on luk-appt, calling some plain function in luk-appt to
+  ;; filter, or passing the update function (in this case
+  ;; (org-agenda-to-appt)) as an arg
   (org-agenda-to-appt)
   (luk-filter-appt)
+  (luk-appt-insert-manually-added)
   (appt-activate 1))
 
 (defun luk-appt-toggle ()
@@ -194,28 +249,65 @@ persists even if the appointments are recreated, for example with
       (appt-activate -1)
     (appt-activate 1)))
 
+(defun luk-appt-add-manually (time msg &optional warntime)
+  "Add appointment interactively with extra retention.
+
+Add an appointment using `appt-add', and also store it in
+`luk-appt-manually-added'. This is useful to add just some quick
+reminder, without having to add it to org files or diary."
+  (interactive "sTime (hh:mm[am/pm]): \nsMessage: \n\
+sMinutes before the appointment to start warning: ")
+  (unless (string-match appt-time-regexp time)
+    (user-error "Unacceptable time-string"))
+  (and (stringp warntime)
+       (setq warntime (unless (string-equal warntime "")
+                        (string-to-number warntime))))
+  (and warntime
+       (not (integerp warntime))
+       (user-error "Argument WARNTIME must be an integer, or nil"))
+  (or appt-timer (appt-activate))
+  (let ((time-msg (list (list (appt-convert-time time))
+                        (concat time " " msg) t)))
+    (when warntime (setq time-msg (append time-msg (list warntime))))
+
+    ;; Retain manually added times in a separate list
+    (add-to-list 'luk-appt-manually-added time-msg)
+    (setq luk-appt-manually-added
+          (appt-sort-list (nconc luk-appt-manually-added (list time-msg))))
+
+    (unless (member time-msg appt-time-msg-list)
+      (setq appt-time-msg-list
+            (appt-sort-list (nconc appt-time-msg-list (list time-msg)))))))
+
 
 ;; Appt hydra
+;; TODO: Customize the face of luk-appt-next-str to make it look less
+;; like a menu option
+;; TODO: Don't insert luk-appt-next-str line if blank
 (defhydra luk-appt-hydra (:hint nil :foreign-keys warn
                                 :pre (setq hydra-amaranth-warn-message "Invalid key for luk-appt-setup.")
                                 :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 %s
-_n_ Ignore next                 _a_ %%s(luk-hydra-checkbox appt-timer) Notification
-  %%-29s(luk-appt-next-str)     Notify %%s`appt-message-warning-time minutes in advance, then every %%s`appt-display-interval minutes.
-_s_ Ignore some
-_l_ List
-_L_ List ignored
+_a_   Add appointment             _n_ %%s(luk-hydra-checkbox appt-timer) Notification
+_x_   Ignore next                 Notify %%s`appt-message-warning-time minutes in advance, then every %%s`appt-display-interval minutes.
+    %%-29s(luk-appt-next-str)
+_s_   Ignore some
+_l p_ List pending
+_l i_ List ignored
+_l m_ List manually added
 _c_ Check now
 _C_ Unignore all
 
 _q_ Quit"
           (luk-caption "Appointments"))
-  ("a" #'luk-appt-toggle :exit nil)
-  ("n" (luk-appt-ignore-next) :exit t)
+  ("n" #'luk-appt-toggle :exit nil)
+  ("x" (luk-appt-ignore-next) :exit t)
   ("s" (luk-appt-ignore-some) :exit t)
-  ("l" (luk-appt-list) :exit t)
-  ("L" (luk-appt-list-ignored) :exit t)
+  ("l p" (luk-appt-list-pending) :exit t)
+  ("l i" (luk-appt-list-ignored) :exit t)
+  ("l m" (luk-appt-list-manually-added) :exit t)
+  ("a" (call-interactively #'luk-appt-add-manually) :exit t)
   ("c" (appt-check) :exit t)
   ("C" (luk-appt-unignore-all) :exit t)
   ("q" nil :exit t))
