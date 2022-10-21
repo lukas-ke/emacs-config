@@ -116,6 +116,15 @@
  :height 102
  :width 'normal)
 
+;; For some reason this message takes a while to appear and delays
+;; command execution.
+;; TODO: I should test with -q (without my config) to figure out if
+;; this is caused by my stuff (seems likely).
+(setq suggest-key-bindings nil)
+
+;; I never manage to commit these to memory anyway.
+(setq extended-command-suggest-shorter nil)
+
 (require 'luk-menu-bar)
 (global-set-key (kbd "<f10>") 'luk-menu-toggle-and-select)
 
