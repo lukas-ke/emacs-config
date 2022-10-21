@@ -121,7 +121,7 @@ mouse-3: Toggle minor modes"
       (list
        (propertize ""
                'font-lock-face `(:family "github-octicons" :height 1.2)
-               'help-echo "Show minor modes"
+               'help-echo "Show major mode"
                'local-map (make-mode-line-mouse-map
 			   'mouse-1 #'luk-mode-line-expand-modes))
        `(:propertize ("" minor-mode-alist)
@@ -157,7 +157,6 @@ mouse-3: Toggle minor modes"
 
 (defun luk-mode-line-collapse-modes ()
   (interactive)
-  (message "collapse-modes")
   (if (not luk-mode-line-show-minor-modes)
       (when luk-mode-line-show-major-mode
         (setq luk-mode-line-show-major-mode nil)
@@ -167,9 +166,6 @@ mouse-3: Toggle minor modes"
 
 (defun luk-mode-line-toggle (symbol)
   (interactive)
-  (message "%s" 'symbol)
-  (message "%s" symbol)
-  (message "%s" (eval symbol))
   (set symbol (not (eval symbol)))
   (force-mode-line-update t))
 
