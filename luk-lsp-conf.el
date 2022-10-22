@@ -80,6 +80,7 @@ _q_: Exit"
   ;; This might drive me nuts, but I don't use the mouse.
   ;;
   ;; Maybe there's a better way to do this, e.g. some simple keypress.
-  (setq lsp-ui-doc-show-with-cursor t))
+  (setq lsp-ui-doc-show-with-cursor t)
+  (setq lsp-ui-doc-position 'at-point))
 
 (provide 'luk-lsp-conf)

@@ -16,3 +16,5 @@
 (customize-set-variable 'menu-bar-mode nil)
 (customize-set-variable 'tool-bar-mode nil)
 (customize-set-variable 'scroll-bar-mode nil)
+
+(provide 'luk-early-init)

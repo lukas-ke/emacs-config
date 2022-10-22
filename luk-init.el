@@ -64,17 +64,16 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Cursor settings
-(set-cursor-color "#ffffff")
 (blink-cursor-mode -1)
-
-;; Disable lock-files (#<filename), it seems to mostly cause problems
-;; + the files need to be ignored and might clutter folders.
-(customize-set-variable 'create-lockfiles nil)
 
 ;; Disable auto-save
 (customize-set-variable 'auto-save-interval 0) ; Disable character based backup
 (customize-set-variable 'auto-save-timeout 0) ; Disable time based backup
 (customize-set-variable 'auto-save-default nil)
+
+;; Disable lock-files (#<filename), it seems to mostly cause problems
+;; + the files need to be ignored and might clutter folders.
+(customize-set-variable 'create-lockfiles nil)
 
 ;; Disable backup-files
 (setq make-backup-files nil)
