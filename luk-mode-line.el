@@ -258,7 +258,23 @@ TODO: Work in progress."
      mode-line-end-spaces)))
 
 
-;; Hydra
+;; Mode-line hydra menu (and related functions)
+
+;; TODO: Consider also saving diminish-state (a little tricky
+;; since I track if I've diminished, not whether to diminish.
+(defun luk-mode-line-custom-save ()
+  (interactive)
+  (dolist (item '(luk-mode-line-show-minor-modes
+                  luk-mode-line-show-major-mode
+                  luk-mode-line-show-vc-info
+                  luk-mode-line-show-buffer-position
+                  line-number-mode
+                  column-number-mode
+                  luk-should-diminish))
+    (customize-set-value item (symbol-value item))
+    (customize-mark-to-save item))
+  (custom-save-all))
+
 (defhydra luk-mode-line-hydra
   (:hint nil
          :foreign-keys warn
@@ -266,13 +282,13 @@ TODO: Work in progress."
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message)
          :exit nil)
   (format "%s
-%%s(luk-hydra-checkbox luk-mode-line-show-minor-modes) _m_ Minor modes          %%s(luk-hydra-checkbox luk-diminished) _d_ Diminish
+%%s(luk-hydra-checkbox luk-mode-line-show-minor-modes) _m_ Minor modes          %%s(luk-hydra-checkbox luk-should-diminish) _d_ Diminish
 %%s(luk-hydra-checkbox luk-mode-line-show-major-mode) _M_ Major mode
 %%s(luk-hydra-checkbox luk-mode-line-show-buffer-position) _p_ Buffer position
 %%s(luk-hydra-checkbox line-number-mode) _l_ Line number
 %%s(luk-hydra-checkbox column-number-mode) _c_ Column numer
 %%s(luk-hydra-checkbox luk-mode-line-show-vc-info) _v_ Version control info
-_q_ exit"
+_q_ exit   _S_ save"
           (luk-caption "Show (Mode line)"))
   ("d" (luk-toggle-diminish))
   ("m" (luk-mode-line-toggle 'luk-mode-line-show-minor-modes))
@@ -282,6 +298,7 @@ _q_ exit"
   ("l" (progn (line-number-mode 'toggle) (force-mode-line-update t)))
   ("c" (progn (column-number-mode 'toggle) (force-mode-line-update t)))
   ("." (luk-hydra-push 'luk-mode-line-hydra/body "Mode line") :exit t)
+  ("S" (luk-mode-line-custom-save) :exit t)
   ("q" nil :exit t))
 
 (provide 'luk-mode-line)

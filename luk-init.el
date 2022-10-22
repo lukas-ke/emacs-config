@@ -395,7 +395,7 @@
   (global-anzu-mode +1))
 
 (require 'luk-diminish)
-(luk-diminish)
+(luk-maybe-diminish)
 
 ;; Lower tooltip delay from the default (0.7)
 (setq tooltip-delay 0.1)

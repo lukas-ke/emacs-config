@@ -1,10 +1,23 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
-(defvar luk-diminished nil)
+(defgroup luk-diminish nil "Diminishing options")
+
+(defcustom luk-should-diminish nil
+  "When t, minor modes should be diminished."
+  :type 'boolean
+  :group 'luk-diminish)
+
+(when (require 'luk nil 'noerror)
+  (luk-add-group 'luk-diminish))
 
 (defun luk-toggle-diminish ()
   (interactive)
-  (if luk-diminished (luk-diminish-undo) (luk-diminish)))
+  (setq luk-should-diminish (not luk-should-diminish))
+  (luk-maybe-diminish))
+
+(defun luk-maybe-diminish ()
+  "Diminish minor modes if `luk-should-diminish' is t."
+  (if luk-should-diminish (luk-diminish) (luk-diminish-undo)))
 
 (if (require 'diminish nil 'noerror)
     (progn
@@ -22,12 +35,10 @@
         (with-eval-after-load "form-feed" (diminish 'form-feed-mode))
         (with-eval-after-load "org-indent" (diminish 'org-indent-mode))
         (with-eval-after-load "org-capture" (diminish 'org-capture-mode))
-        (with-eval-after-load "company" (diminish 'company-mode))
-        (setq luk-diminished t))
+        (with-eval-after-load "company" (diminish 'company-mode)))
 
       (defun luk-diminish-undo ()
-        (diminish-undo 'diminished-modes)
-        (setq luk-diminished nil)))
+        (diminish-undo 'diminished-modes)))
 
   ;; Handle package missing
   (defun luk-diminish ()
