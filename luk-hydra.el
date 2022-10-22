@@ -9,6 +9,15 @@
 (require 'cl-lib)
 (require 'luk-util)
 
+(defgroup luk-hydra-faces nil "Faces for my hydra menus")
+
+(when (require 'luk nil 'noerror)
+  (luk-add-face-group 'luk-hydra-faces))
+
+(defface luk-hydra-caption-face '((t :inherit default :weight bold))
+  "Face that can be used for captions in hydras."
+:group 'luk-hydra-faces)
+
 ;; For restoring
 (defconst luk-hydra-amaranth-original-message hydra-amaranth-warn-message
   "For restoring the original amaranth message on hydra close")
@@ -87,9 +96,6 @@ luk-hydra was started directly"
         (delete-file FILE-NAME)
         (set-buffer-modified-p t)
         (message "File deleted: \"%s\"." FILE-NAME))))))
-
-(defface luk-hydra-caption-face '((t :inherit default :weight bold))
-  "Face that can be used for captions in hydras.")
 
 (defun luk-copy-file-path ()
   "Add path to current file to kill-ring"

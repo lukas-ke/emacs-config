@@ -3,7 +3,7 @@
 (provide 'luk-swap-keys)
 
 (defgroup luk-swap-keys nil "Options for which keys to swap out")
-(when (require 'luk nil t) (luk-add-group 'luk-swap-keys))
+(when (require 'luk nil 'noerror) (luk-add-group 'luk-swap-keys))
 
 (defcustom
   luk-swap-keys-disable-arrows

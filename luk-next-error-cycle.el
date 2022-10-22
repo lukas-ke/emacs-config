@@ -5,8 +5,14 @@
 
 (provide 'luk-next-error-cycle)
 
+(defgroup luk-next-error-cycle-faces nil "Faces for next-error cycling")
+
+(when (require 'luk nil 'noerror)
+  (luk-add-face-group 'luk-next-error-cycle-faces))
+
 (defface luk-modeline-flash-face '((t :inherit mode-line))
-  "Face background used for annoyingly flashing the modeline for attention")
+  "Face background used for annoyingly flashing the modeline for attention"
+  :group 'luk-next-error-cycle-faces)
 
 (defun luk-indicate-error-nav-wrapped (direction)
   "Display a message in minibuffer indicating that we wrapped

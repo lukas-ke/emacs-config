@@ -2,15 +2,25 @@
 (require 'appt)
 (require 'luk-hydra)
 
-;; TODO: Add ert-test
+(defgroup luk-appt nil "Appointment handling")
+
+(defgroup luk-appt-faces nil "Faces for luk-appt features."
+  :group 'luk-appt)
+
+(when (require 'luk nil 'noerror)
+  (luk-add-group 'luk-appt)
+  (luk-add-face-group 'luk-appt-faces))
 
 (defface luk-appt-popup '((t :inherit default))
-  "Face for the child-frame background used for appt.")
+  "Face for the child-frame background used for appt."
+  :group 'luk-appt-faces)
 
 (defface luk-appt-popup-border '((t :inherit default))
   "Face defining the border color of the child-frame used for appt notifications.
 
-The background attribute is used for the border.")
+The background attribute is used for the border."
+  :group 'luk-appt-faces)
+
 
 
 ;; Functions for displaying appointments in a frame

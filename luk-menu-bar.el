@@ -14,9 +14,10 @@
 ;;; when buffers are switched a lot behind the scenes
 ;;; (e.g. special buffers?)
 
-(provide 'luk-menu-bar)
-
 (defgroup luk-menu-bar nil "Extensions for the menu-bar-mode")
+
+(when (require 'luk nil 'noerror)
+  (luk-add-group 'luk-menu-bar))
 
 (defun luk-menu-toggle-and-select ()
   "Toggle menu-bar-mode, if this results in menu being shown,
@@ -130,3 +131,5 @@ Used for testing new predicates."
 
 ;; Add the customize-group to parent "luk"-group if it exists
 (when (require 'luk nil t) (luk-add-group 'luk-menu-bar))
+
+(provide 'luk-menu-bar)

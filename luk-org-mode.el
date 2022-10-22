@@ -11,8 +11,16 @@
 
 (defgroup luk-org nil "Variables for luk-org.")
 
-(setq luk-org--clipboard-to-file-dir
-      (concat (file-name-directory (or load-file-name buffer-file-name)) "clipboard-to-file"))
+(defgroup luk-org-faces nil "Faces for luk-org."
+  :group 'luk-org)
+
+(when (require 'luk nil 'noerror)
+  (luk-add-group 'luk-org)
+  (luk-add-face-group 'luk-org-faces))
+
+(defvar luk-org--clipboard-to-file
+  (concat (file-name-directory (or load-file-name buffer-file-name)) "clipboard-to-file")
+  "Path to the script used for writing images from clipboard as files for org-attachments.")
 
 (defcustom luk-org-python-command
   nil
@@ -26,17 +34,15 @@
   :type 'file
   :group 'luk-org)
 
-(when (require 'luk nil t)
-  (luk-add-group 'luk-org))
-
 
 ;; Additional faces (e.g. for TODO-keywords)
 (defface luk-org-todo-started '((t :inherit org-todo))
-  "Face for STARTED todo-state.")
+  "Face for STARTED todo-state."
+  :group 'luk-org-faces)
 
 (defface luk-org-todo-canceled '((t :inherit org-done))
-  "Face for CANCELED todo-state.")
-
+  "Face for CANCELED todo-state."
+  :group 'luk-org-faces)
 
 
 ;; Functions for switching between pretty display with hidden entities

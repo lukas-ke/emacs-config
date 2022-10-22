@@ -21,3 +21,11 @@ the `luk'-feature exists, so that the file can be used even if
   (when (require 'luk nil t)
     (luk-add-group 'some-new-group))"
   (custom-add-to-group 'luk group 'custom-group))
+
+(defgroup luk-faces nil "Faces added in my customizations"
+  :group 'luk-add-group)
+
+(defun luk-add-face-group (group)
+  (custom-add-to-group 'luk-faces group 'custom-group))
+
+(luk-add-group 'luk-faces)

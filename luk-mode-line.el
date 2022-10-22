@@ -3,10 +3,13 @@
 (require 'luk-hydra)
 (require 'luk-diminish)
 
-(when (require 'luk nil 'noerror)
-  (luk-add-group 'luk-mode-line))
-
 (defgroup luk-mode-line nil "Variables for luk-mode-line.")
+
+(defgroup luk-mode-line-faces nil "Faces for luk-mode-line" :group 'luk-mode-line)
+
+(when (require 'luk nil 'noerror)
+  (luk-add-group 'luk-mode-line)
+  (luk-add-face-group 'luk-mode-line-faces))
 
 (defcustom luk-mode-line-show-major-mode
   nil
@@ -34,14 +37,17 @@
   :group 'luk-mode-line)
 
 (defface luk-mode-line-read-only '((t))
-  "Face for read-only indication in mode line")
+  "Face for read-only indication in mode line"
+  :group 'luk-mode-line-faces)
 
 (defface luk-mode-line-modified '((t))
-  "Face for modified indication in mode line")
+  "Face for modified indication in mode line"
+  :group 'luk-mode-line-faces)
 
 (defface luk-mode-line-unmodified
   '((t :family "segoe ui symbol"))
-  "Face for not-modified indication in mode line")
+  "Face for not-modified indication in mode line"
+  :group 'luk-mode-line-faces)
 
 (defvar luk--mode-line-anzu nil "Whether anzu is available")
 
