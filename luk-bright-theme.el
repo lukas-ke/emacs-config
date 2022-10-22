@@ -65,6 +65,9 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(secondary-selection ((,class ,match))) ; used by org-mode for highlighting matched entries and keywords.
    `(nobreak-space ((,class (:background "#CCE8F6"))))
 
+   ;; icomplete
+   `(icomplete-selected-match ((,class (:foreground "black" :background "#CCE8FF")))) ;; (For `fido-vertical-mode')
+
    ;; isearch
    `(isearch ((,class (:underline "black" :foreground "white" :background "#5974AB"))))
    `(isearch-fail ((,class (:weight bold :foreground "black" :background "#FFCCCC"))))
@@ -320,7 +323,7 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(highlight-changes-delete ((,class (:strike-through nil :foreground nil :underline t))))
 
    ;; hl-line (built-in, highlight current line)
-   `(hl-line ((,class :background "#CCE8FF"))) ; Highlight current line.
+   `(hl-line ((,class :background "#CCE8FF")))
    `(hl-tags-face ((,class (:background "#E8E8FF"))))
    `(holiday-face ((,class (:foreground "#777777" :background "#E4EBFE"))))
    `(html-helper-bold-face ((,class (:weight bold :foreground "black"))))

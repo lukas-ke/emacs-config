@@ -194,8 +194,8 @@
   (define-key ido-common-completion-map (kbd "<tab>") #'ido-complete)
   (add-to-list 'ido-ignore-files "\\`__pycache__/"))
 
-(require 'ido)
-(ido-everywhere)
+(fido-mode)
+(fido-vertical-mode)
 
 ;; Set syntax for `re-builder' to `read', which requires
 ;; double-escaping, to build regexps compatible with elisp-code e.g.:
@@ -446,4 +446,28 @@ way?)."
 (luk-make-built-in-read-only)
 
 
+;; find-file equivalent for recent files on C-x C-r
+;; Uses the enabled completion (ido, ivy, icomplete or fido)
+;;
+;; As described here:
+;; https://www.masteringemacs.org/article/find-files-faster-recent-files-package
+(require 'recentf)
+(recentf-mode t)
+(setq recentf-max-saved-items 50)
+
+(defun luk-recentf-open ()
+  "Use a completing-read function to select and open a recent file.
+
+This function checks for some enabled completion-framework
+modes (like `ido-mode') or falls back on `completing-read'
+(possibly with `fido-mode' which is pretty nice)."
+  (interactive)
+  (let ((completer (cond ((bound-and-true-p ido-mode) #'ido-completing-read)
+                         ((bound-and-true-p ivy-mode) #'ivy-completing-read)
+                         (t #'completing-read))))
+    (find-file (funcall completer "Find recent file: " recentf-list))))
+
+(global-set-key (kbd "C-x C-r") #'luk-recentf-open)
+
+
 (provide 'luk-init)

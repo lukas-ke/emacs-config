@@ -136,14 +136,14 @@ luk-hydra was started directly"
                            :pre (setq hydra-amaranth-warn-message "Invalid key.")
                            :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
-%s^^^^^^^^^^^^     │ %s^^^^^          │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
-^─^────────────────┼─^─^──────────────┼─^───^────────────┼─^─^───────────────────┼─^───^───────────────┼─────────────────────
-_t_: treemacs      │ _l_: find files  │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
-_e_: explorer here │ _f_: .. in files │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
-_R_: rename        │ ^ ^              │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
-_D_: delete        │ ^ ^              │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
-_C_: copy path     │ ^ ^              │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
-^ ^                │ ^ ^              │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
+%s^^^^^^^^^^^^     │ %s^^^^^             │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
+^─^────────────────┼─^─^─────────────────┼─^───^────────────┼─^─^───────────────────┼─^───^───────────────┼─────────────────────
+_t_: treemacs      │ _l_: find files     │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
+_e_: explorer here │ _f_: .. in files    │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
+_R_: rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
+_D_: delete        │ _C-x f_ in git repo │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
+_C_: copy path     │ ^ ^                 │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
+^ ^                │ ^ ^                 │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
           (luk-caption "Current File")
           (luk-caption "Files")
@@ -194,7 +194,8 @@ _q_: %s"
   ("c m" (org-capture nil "m") :exit t)
   ("c w" (org-capture nil "w") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
-
+  ("C-x C-r" #'luk-recentf-open :exit t)
+  ("C-x f" #'find-file-in-git-repo :exit t)
   ("q" luk-hydra-pop :exit t))
 
 (defun luk-hydra-summon ()
