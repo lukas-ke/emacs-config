@@ -4,5 +4,17 @@ Explicit line break
 Extra whitespace  
 
 
-## Subheading  
+## Subheading
 Whatever.
+
+Heading with two trailing spaces on each line
+---------------------------------------------
+Text
+
+Heading with more than two trailing spaces
+------------------------------------------
+Text
+
+Heading with no trailing spaces
+-------------------------------
+Text
