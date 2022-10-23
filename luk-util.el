@@ -4,11 +4,17 @@
 
 (defun -up (&optional path n)
   "Get the N-th parent folder of PATH or `buffer-file-name'."
-  (or path (setq path (buffer-file-name)))
-  (or n (setq n 1))
-  (dotimes (_num n)
-    (setq path (file-name-directory (directory-file-name path))))
-  path)
+  (unless path (setq path (buffer-file-name)))
+  (unless n (setq n 1))
+  (if (= n 0) path
+    (let ((new-path path)
+          (prev-path nil))
+      (cl-dotimes (_num n new-path)
+        (setq prev-path new-path)
+        (setq new-path (file-name-directory (directory-file-name new-path)))
+        (when (string= new-path prev-path)
+          (setq new-path nil)
+          (cl-return))))))
 
 
 (defun luk-in-comment ()

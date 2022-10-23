@@ -127,15 +127,10 @@
 (require 'luk-menu-bar)
 (global-set-key (kbd "<f10>") 'luk-menu-toggle-and-select)
 
-;; Add find-file-in-git-repo on [C-x f] as an alternative to
-;; `find-file' (note on [C-x C-f]).
-;; http://github.com/re5et/find-file-in-git-repo
-;;
-;; This finds file names in the entire repository, and allows
-;; selecting among multiple-matches with [left], [right] using
-;; ‘ido.el’.
-(require 'find-file-in-git-repo) ; http://github.com/re5et/find-file-in-git-repo
-(global-set-key (kbd "C-x f") 'find-file-in-git-repo)
+;; Add luk-find-file-in-git-repo on C-x f as an alternative to
+;; `find-file' (note on C-x C-f).
+(require 'luk-find-file-in-git-repo)
+(global-set-key (kbd "C-x f") 'luk-find-file-in-git-repo)
 
 ;; Smart space removal with cycled restore on M-<space>
 (global-set-key (kbd "M-SPC") #'cycle-spacing)
