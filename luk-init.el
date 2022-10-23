@@ -467,7 +467,13 @@ modes (like `ido-mode') or falls back on `completing-read'
                          (t #'completing-read))))
     (find-file (funcall completer "Find recent file: " recentf-list))))
 
+(global-set-key (kbd "C-x k") #'kill-current-buffer)
 (global-set-key (kbd "C-x C-r") #'luk-recentf-open)
 
+
+
+(require 'luk-restore-killed-buffer)
+(luk-restore-killed-buffer-setup)
+(global-set-key (kbd "C-S-t") (lambda () (interactive) (luk-restore-killed-buffer-file)))
 
 (provide 'luk-init)
