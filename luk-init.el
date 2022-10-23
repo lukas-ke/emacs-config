@@ -137,6 +137,9 @@
 (require 'find-file-in-git-repo) ; http://github.com/re5et/find-file-in-git-repo
 (global-set-key (kbd "C-x f") 'find-file-in-git-repo)
 
+;; Smart space removal with cycled restore on M-<space>
+(global-set-key (kbd "M-SPC") #'cycle-spacing)
+
 (global-set-key [(meta return)] 'toggle-frame-fullscreen)
 
 (require 'luk-dired) (luk-dired-setup)
@@ -258,7 +261,6 @@
 (require 'luk-theming) ;; TODO: Needed for luk-hydra to find theme-hydra
 (global-set-key (kbd "M-.") 'luk-hydra-summon)
 (global-set-key (kbd "M-,") 'luk-hydra-window/body)
-
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
@@ -471,9 +473,10 @@ modes (like `ido-mode') or falls back on `completing-read'
 (global-set-key (kbd "C-x C-r") #'luk-recentf-open)
 
 
-
+;; Restore killed buffers on C-s-t
 (require 'luk-restore-killed-buffer)
 (luk-restore-killed-buffer-setup)
 (global-set-key (kbd "C-S-t") (lambda () (interactive) (luk-restore-killed-buffer-file)))
 
+
 (provide 'luk-init)
