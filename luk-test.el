@@ -286,3 +286,45 @@
         (setq appt-time-msg-list original-appt-time-msg-list)
         (setq luk-appt-ignored original-luk-appt-ignored)
         (setq luk-appt-manually-added original-luk-appt-manually-added))))))
+
+
+(ert-deftest luk-insert-closing-delimiter ()
+  (should (string= (luk--opposite-delimiter "(") ")"))
+  (should (string= (luk--opposite-string-delimiter ?\")"\""))
+
+  (cl-flet* ((check-next (expected)
+                ;; insert one closing delimiter and verify that
+                ;; line matches expected
+                (luk-insert-closing-delimiter)
+                (let ((result (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+                  (should (string= result expected))))
+             (check (unfinished expected)
+                ;; Forward to check-next once if expected is a string,
+                ;; otherwise call check-next for each specified item.
+                (insert unfinished)
+                (if (stringp expected)
+                    (check-next expected)
+                  (dolist (e expected)
+                    (check-next e)))
+                (insert "\n")))
+
+    (with-current-buffer (luk-test-buffer "luk-insert-closing-delimiter" nil "-python")
+      (erase-buffer)
+      (python-mode)
+      (check "\"hello\"" "\"hello\"")
+      (check "\"\"\"hello" "\"\"\"hello\"\"\"")
+      (check "[someFunc({\"1\": \"word"
+             '("[someFunc({\"1\": \"word\""
+               "[someFunc({\"1\": \"word\"}"
+               "[someFunc({\"1\": \"word\"})"
+               "[someFunc({\"1\": \"word\"})]")))
+
+    (with-current-buffer (luk-test-buffer "luk-insert-closing-delimiter" nil "-lua")
+      (erase-buffer)
+      (lua-mode)
+      (check "\"hello\"" "\"hello\"")
+      (check "[[test" "[[test]]")
+      (check "someFunc({1=\"word"
+             '("someFunc({1=\"word\""
+               "someFunc({1=\"word\"}"
+               "someFunc({1=\"word\"})"))))
