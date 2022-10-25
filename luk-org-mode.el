@@ -29,12 +29,6 @@
   :type 'string
   :group 'luk-org)
 
-(defcustom luk-org-image-editor
-  nil
-  "External image editor for image attachments in `org-mode'."
-  :type 'file
-  :group 'luk-org)
-
 
 ;; Additional faces (e.g. for TODO-keywords)
 (defface luk-org-todo-started '((t :inherit org-todo))
@@ -391,21 +385,19 @@ return 'overview."
 
 (defun luk-org-open-in-image-editor ()
   "Open linked image at point in external editor."
-  (when (not luk-org-image-editor)
-    (user-error "Error: luk-org-image-editor not set!"))
+  (when (or (not luk-image-editor) (= 1 (length luk-image-editor)))
+    (user-error "Error: luk-image-editor not set!"))
   (let ((path
          (if (string= (luk-org--context-key :type) "attachment")
              (concat (org-attach-dir) "/" (luk-org--context-key :path))
            (luk-org--context-key :path))))
-    (start-process "image-editor" nil luk-org-image-editor path)))
+    (start-process "image-editor" nil luk-image-editor path)))
 
 (defun luk-org-set-image-width ()
   "Insert a width-attribute for an image."
   (let ((width (read-number "Width: ")))
     (goto-char (luk-org--context-key :begin))
     (let ((indent (- (point) (line-beginning-position))))
-
-
       (forward-line -1)
       (goto-char (line-beginning-position))
       (if (re-search-forward "^[ ]*\\(#\\+attr_org: :width.*\\)$" (line-end-position) t)

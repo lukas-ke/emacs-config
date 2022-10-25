@@ -276,8 +276,32 @@
 (add-to-list 'perfect-margin-ignore-modes 'image-mode)
 (perfect-margin-mode 1)
 
+(defun luk-edit-image (path)
+  (when (or (not luk-image-editor) (= 1 (length luk-image-editor)))
+    (user-error "Error: luk-image-editor not set"))
+  (interactive "fEdit image file: ")
+  (start-process "image-editor" nil luk-image-editor path))
+
+(defun luk-edit-buffer-image ()
+  (interactive)
+  (unless (buffer-file-name)
+    (user-error "Buffer not associated with a file."))
+  (luk-edit-image (buffer-file-name)))
+
+(with-eval-after-load 'image-mode
+  ;; Bind e and E to edit (e is more convenient, E matches my org-mode
+  ;; image context hydra)
+  (define-key image-mode-map (kbd "e") #'luk-edit-buffer-image)
+  (define-key image-mode-map (kbd "E") #'luk-edit-buffer-image))
+
+(defcustom luk-image-editor
+  ""
+  "External image editor"
+  :type 'file
+  :group 'luk)
+
 (defun luk-select-window-at-mouse-position()
-  "Select the window my 'luk-init.el'-script in a buffer"
+  "Select the window the mouse pointer is over"
   (interactive)
   (let ((pos (mouse-position)))
     (select-window (window-at (cadr pos)
