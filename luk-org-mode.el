@@ -19,7 +19,8 @@
   (luk-add-face-group 'luk-org-faces))
 
 (defvar luk-org--clipboard-to-file
-  (concat (file-name-directory (or load-file-name buffer-file-name)) "clipboard-to-file")
+  (concat (file-name-directory (or load-file-name buffer-file-name))
+          "clipboard-to-file/clipboard_to_file.py")
   "Path to the script used for writing images from clipboard as files for org-attachments.")
 
 (defcustom luk-org-python-command
@@ -165,7 +166,7 @@ excluded."
                    nil
                    (current-buffer)
                    nil
-                   (concat luk-org--clipboard-to-file-dir "/clipboard_to_file.py")
+                   luk-org--clipboard-to-file
                    DIR)))
       ;; Signal errors, if any
       (cond
