@@ -92,11 +92,12 @@ theme-symbol, with prefix \"luk-post\", for example
   (luk-custom-set-faces
    ;; TODO: Better code-face (e.g. for org-keywords, verbatim)
    ;;       (Maybe I should customize some specific font instead though?)
-
    ;; Ensure no surrounding font-effects spill over on the
    ;; org-ellipsis
+   ;; Also set the font explicitly to avoid it getting a font from
+   ;; e.g. a neighbouring source-element with verbatim font
    `(org-ellipsis
-     ((t (:underline nil :slant normal :background ,(face-background 'default)))))
+     ((t (:underline nil :slant normal :background ,(face-background 'default) :font ,(face-font 'default) :height 1.0))))
 
    ;; Remove box around checkboxes, since I use prettify-symbols
    `(org-checkbox ((t (:box nil :background ,(face-background 'default)))))
