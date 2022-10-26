@@ -42,8 +42,8 @@ insert \"}\", and for successive invocations \"]\" then \")\"."
         (insert (luk--opposite-string-delimiter in-string))
       (if open-paren-indexes
           (let ((delim (buffer-substring (car (last open-paren-indexes)) (+ 1 (car (last open-paren-indexes))))))
-            ;; TODO: This doesn't say e.g. Matches: like when inserting a parenthesis normally.
-            (insert (luk--opposite-delimiter delim)))
+            (insert (luk--opposite-delimiter delim))
+            (blink-matching-open))
         (message "Everything closed.")))))
 
 (provide 'luk-insert-closing-delimiter)
