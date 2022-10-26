@@ -23,6 +23,12 @@
           "clipboard-to-file/clipboard_to_file.py")
   "Path to the script used for writing images from clipboard as files for org-attachments.")
 
+(defvar luk-org--file-to-clipboard
+  (concat (file-name-directory (or load-file-name buffer-file-name))
+          "clipboard-to-file/file_to_clipboard.py")
+  "Path to the script used for copying org-attachment images to the clipboard.")
+
+
 (defcustom luk-org-python-command
   nil
   "Python executable path (for `org-mode' python utility functions)."
@@ -172,6 +178,35 @@ excluded."
        ((= RESULT 2) (error "Folder \"%s\" does not exist" DIR))
        ((= RESULT 3) (user-error "No image in clipboard"))
        (t (error "Unknown error %d from clipboard_to_file.py" RESULT))))))
+
+(defun luk-org-copy-image-to-clipboard ()
+  (interactive)
+  (let ((luk-org--context-element (org-element-context)))
+    (when (not (and (eq (car luk-org--context-element) 'link) (luk-org-image-link?)))
+      (user-error "Point not in an image link"))
+    (let* ((link-target (luk-org--context-key :raw-link))
+           (file-name
+            (if (and (string-prefix-p "attachment:" link-target) (org-attach-dir))
+                (concat (org-attach-dir)
+                        "/"
+                        (string-remove-prefix "attachment:" link-target))
+              (user-error "Point not in an image attachment"))))
+      (with-temp-buffer
+        (let ((RESULT (call-process
+                       luk-org-python-command
+                       nil
+                       (current-buffer)
+                       nil
+                       luk-org--file-to-clipboard
+                       file-name)))
+          ;; Signal errors, if any
+          (cond
+           ((= RESULT 0) ;; Success
+            (message "Image copied to clipboard."))
+           ((= RESULT 10) (error "No file argument passed to file_to_clipboard.py"))
+           ((= RESULT 20) (error "File not found (%s)" file-name))
+           ((= RESULT 30) (user-error "PIL error"))
+           (t (error "Unknown error %d from clipboard_to_file.py" RESULT))))))))
 
 (defun luk-org-paste-image ()
   "Add an image from the clipboard as an org attachment and insert a link to it.
@@ -522,6 +557,7 @@ _w_: Set width
 _W_: wrap in drawer
 _d_: delete
 _m_: copy markdown
+_c_: copy to clipboard
 _q_: quit"
           (luk-caption "Org Image"))
   ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
@@ -531,6 +567,7 @@ _q_: quit"
   ("W" (luk-org-wrap-image-in-drawer) :exit t) ;; TODO: Not if :parent is drawer
   ("E" (luk-org-open-in-image-editor) :exit t)
   ("m" (luk-org-link-element-copy-markdown) :exit t) ;; TODO: Only if non-local
+  ("c" (luk-org-copy-image-to-clipboard) :exit t)
   ("q" nil :exit t))
 
 (defhydra luk-org-table-hydra (:hint nil
