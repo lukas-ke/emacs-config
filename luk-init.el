@@ -200,6 +200,7 @@
 
 (fido-mode)
 (fido-vertical-mode)
+(define-key icomplete-fido-mode-map (kbd "C-<return>") #'icomplete-fido-exit)
 
 ;; Set syntax for `re-builder' to `read', which requires
 ;; double-escaping, to build regexps compatible with elisp-code e.g.:
