@@ -1,8 +1,8 @@
-# Helper script for luk-org-paste-image
-#
-# Uses pillow to read an image from the clipboard and saves it to the
-# given path
+"""Helper script for luk-org-paste-image.
 
+Uses pillow to read an image from the clipboard and saves it to the
+given path.
+"""
 from PIL import ImageGrab
 import sys
 from pathlib import Path
@@ -13,18 +13,21 @@ ERROR_FOLDER_NOT_SPECIFIED = 1
 ERROR_FOLDER_DOES_NOT_EXIST = 2
 ERROR_NO_IMAGE_ON_CLIPBOARD = 3
 
+
 def get_available_filename(folder):
+    """Find an available paste name."""
     files = {f.name for f in folder.iterdir()}
     for i in range(len(files) + 1):
         name = "paste.png" if i == 0 else f"paste-{i}.png"
-        if not name in files:
+        if name not in files:
             return folder / name
 
-def clipboard_image_to_file(folder):
-    """Save a PNG-image from clipboard named "paste.png" to the given
-    folder.
 
-    Returns IMAGE_WRITTEN_OK if successful.
+def clipboard_image_to_file(folder):
+    """Save PNG-image from clipboard to the given folder.
+
+    Returns IMAGE_WRITTEN_OK if successful and writes the image name
+    to stdout.
 
     """
     if not folder.exists():
@@ -40,13 +43,16 @@ def clipboard_image_to_file(folder):
     print(target_path.name)
     return IMAGE_WRITTEN_OK
 
+
 def run():
+    """Entry point."""
     if len(sys.argv) != 2:
         return ERROR_FOLDER_NOT_SPECIFIED
 
     folder_path = Path(sys.argv[1])
     return clipboard_image_to_file(folder_path)
 
+
 if __name__ == '__main__':
     result = run()
-    exit(result)
+    sys.exit(result)
