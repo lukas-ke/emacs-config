@@ -340,10 +340,11 @@ Set to `org-element-context' on hydra start.")
     (line-beginning-position)))
 
 (defun luk-org-delete-image ()
-  "Delete the image link and related attributes and maybe its file.
+  "Delete the image link at point, its related attributes and maybe its file.
 
 If it is an attachment, ask if it should be deleted. If the
-attachment folder is empty, delete it."
+attachment folder is empty after deleting an image, delete the
+folder."
   (interactive)
   (luk-org-set-context-element)
   (when (not (and (eq (car luk-org--context-element) 'link) (luk-org-image-link?)))
@@ -357,9 +358,10 @@ attachment folder is empty, delete it."
 
     ;; If the image is an attachment, ask if the file should be deleted
     (if (and (string-prefix-p "attachment:" link-target) (org-attach-dir))
-        (let ((filename (concat (org-attach-dir)
-                                "/"
-                                (string-remove-prefix "attachment:" link-target))))
+        (let ((filename
+               (concat (org-attach-dir)
+                       "/"
+                       (string-remove-prefix "attachment:" link-target))))
           (when (and
                  (file-exists-p filename)
                  (yes-or-no-p "Delete file from disk? "))
@@ -375,6 +377,37 @@ attachment folder is empty, delete it."
                 ;; the ELSE.
                 (org-attach-delete-all t)
               (message "Image deleted.")))))))
+
+(defun luk-org-inside-drawer (context-element)
+  "Return the drawer start pos if inside a drawer, else nil."
+  (interactive)
+  (let ((parent (plist-get (cadr context-element) :parent)))
+    (if (not parent)
+        nil
+      (if (eq (car parent) 'drawer)
+          (plist-get (cadr parent) :begin)
+        (luk-org-inside-drawer parent)))))
+
+(defun luk-org-wrap-image-in-drawer ()
+  "Wrap the image at point (and its attributes) in an org-drawer."
+  (interactive)
+  (let ((luk-org--context-element (org-element-context)))
+    (when (not (and (eq (car luk-org--context-element) 'link) (luk-org-image-link?)))
+      (user-error "Point not in an image link."))
+    (let ((current-drawer-pos (luk-org-inside-drawer luk-org--context-element)))
+      (when current-drawer-pos
+        (goto-char current-drawer-pos)
+        (user-error "Image is already inside a drawer.")))
+    (let* ((begin (luk-org--context-key :begin))
+           (end (luk-org--context-key :end))
+           (attribute-start (luk-org-find-attributes-before begin)))
+      (save-mark-and-excursion
+        (set-mark end)
+        (goto-char attribute-start)
+        (insert ":image:\n")
+        (goto-char (mark))
+        (insert "\n:end:")
+        (org-redisplay-inline-images)))))
 
 (defun luk-org-link-element-edit ()
   "Edit the link currently described by `luk-org--context-element'."
@@ -486,6 +519,7 @@ Main ➤ %s      _._: up
 _e_: edit link
 _E_: edit image in external editor
 _w_: Set width
+_W_: wrap in drawer
 _d_: delete
 _m_: copy markdown
 _q_: quit"
@@ -494,8 +528,9 @@ _q_: quit"
   ("d" (luk-org-delete-image) :exit t)
   ("e" (luk-org-link-element-edit) :exit t)
   ("w" (luk-org-set-image-width) :exit t)
+  ("W" (luk-org-wrap-image-in-drawer) :exit t) ;; TODO: Not if :parent is drawer
   ("E" (luk-org-open-in-image-editor) :exit t)
-  ("m" (luk-org-link-element-copy-markdown) :exit t)
+  ("m" (luk-org-link-element-copy-markdown) :exit t) ;; TODO: Only if non-local
   ("q" nil :exit t))
 
 (defhydra luk-org-table-hydra (:hint nil
