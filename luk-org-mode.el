@@ -316,6 +316,10 @@ _q_: Quit"
 
 Set to `org-element-context' on hydra start.")
 
+(defun luk-org-set-context-element ()
+  (setq luk-org--context-element (org-element-context))
+  (setq luk-org--temp-end (luk-org--context-key :end)))
+
 (defun luk-org--context-key (key)
   "Extract value of KEY from `luk-org--context-element'."
   (plist-get (cadr luk-org--context-element) key))
@@ -325,6 +329,52 @@ Set to `org-element-context' on hydra start.")
   (let ((begin (luk-org--context-key :begin))
         (end (luk-org--context-key :end)))
     (kill-region begin end)))
+
+(defun luk-org-find-attributes-before (pos)
+  (save-excursion
+    (goto-char pos)
+    (forward-line -1)
+    (while (string-match-p "[[:blank:]]*#\\+attr_" (buffer-substring (line-beginning-position) (line-end-position)))
+      (forward-line -1))
+    (forward-line 1)
+    (line-beginning-position)))
+
+(defun luk-org-delete-image ()
+  "Delete the image link and related attributes and maybe its file.
+
+If it is an attachment, ask if it should be deleted. If the
+attachment folder is empty, delete it."
+  (interactive)
+  (luk-org-set-context-element)
+  (when (not (and (eq (car luk-org--context-element) 'link) (luk-org-image-link?)))
+    (user-error "Point not in an image link."))
+  (let* ((begin (luk-org--context-key :begin))
+         (end (luk-org--context-key :end))
+         (attribute-start (luk-org-find-attributes-before begin))
+         (link-target (luk-org--context-key :raw-link)))
+    ;; Delete the image-link and any attributes
+    (delete-region attribute-start end)
+
+    ;; If the image is an attachment, ask if the file should be deleted
+    (if (and (string-prefix-p "attachment:" link-target) (org-attach-dir))
+        (let ((filename (concat (org-attach-dir)
+                                "/"
+                                (string-remove-prefix "attachment:" link-target))))
+          (when (and
+                 (file-exists-p filename)
+                 (yes-or-no-p "Delete file from disk? "))
+            ;; Use `delete-file' instead of `org-attach-delete-one' to respect
+            ;; `delete-by-moving-to-trash'
+            (delete-file filename t)
+
+            ;; Delete the attachment directory if this was the last
+            ;; file
+            (if (and (directory-empty-p (org-attach-dir)))
+                ;; This will output "Attachment directory deleted.",
+                ;; therefore the "Image deleted."-message is only in
+                ;; the ELSE.
+                (org-attach-delete-all t)
+              (message "Image deleted.")))))))
 
 (defun luk-org-link-element-edit ()
   "Edit the link currently described by `luk-org--context-element'."
@@ -441,7 +491,7 @@ _m_: copy markdown
 _q_: quit"
           (luk-caption "Org Image"))
   ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
-  ("d" (luk-org-delete-context-element) :exit t)
+  ("d" (luk-org-delete-image) :exit t)
   ("e" (luk-org-link-element-edit) :exit t)
   ("w" (luk-org-set-image-width) :exit t)
   ("E" (luk-org-open-in-image-editor) :exit t)
@@ -663,13 +713,13 @@ point, retrieved using `org-element-context' which gets stored in
 `luk-org--context-element' so that hydra functions can use the
 information."
   (interactive)
-  (setq luk-org--context-element (org-element-context))
-  (setq luk-org--temp-end (luk-org--context-key :end))
+  (luk-org-set-context-element)
   (let ((el (car luk-org--context-element)))
     (cond ((eq el 'link)
 
            ;; Link
-           (if (luk-org-image-link?) (luk-org-image-link-hydra/body)
+           (if (luk-org-image-link?)
+               (luk-org-image-link-hydra/body)
              (luk-org-link-hydra/body)))
 
           ;; Timestamp
