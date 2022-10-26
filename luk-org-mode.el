@@ -824,6 +824,12 @@ information."
   (interactive)
   (message (substitute-command-keys "Abort instead with \\<org-capture-mode-map>\\[org-capture-kill].")))
 
+(defun luk-org--say-commit-instead ()
+  "\\<org-capture-mode-map>Suggest to user to use \\[org-capture-finalize] instead."
+  (interactive)
+  (message (substitute-command-keys "Finalize capture instead with \\<org-capture-mode-map>\\[org-capture-finalize].")))
+
+
 (defun luk-org--capture-return ()
   "In capture buffers, move past property drawers on return at heading"
   (interactive)
@@ -852,6 +858,8 @@ information."
   ;; Prevent killing a capture buffer with C-x k (possibly leaving a
   ;; half-written-capture in the target file)
   (define-key org-capture-mode-map (kbd "C-x k") #'luk-org--say-abort-instead)
+
+  (define-key org-capture-mode-map (kbd "C-x C-s") #'luk-org--say-commit-instead)
 
   (define-key org-capture-mode-map (kbd "<return>") #'luk-org--capture-return)
 
