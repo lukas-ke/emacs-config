@@ -531,5 +531,7 @@ modes (like `ido-mode') or falls back on `completing-read'
 ;; remap C-a to `smarter-move-beginning-of-line'
 (global-set-key (kbd "C-a") 'smarter-move-beginning-of-line)
 
+(setq delete-by-moving-to-trash t)
+
 
 (provide 'luk-init)
