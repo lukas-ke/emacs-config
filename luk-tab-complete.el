@@ -26,6 +26,13 @@
                  t)
              nil)))))))
 
+(defvar luk-tab-complete-custom nil
+  "Function for specializing tab-handling in certain buffers.
+
+When this function is non-nil and returns t,
+luk-tab-complete-smart-tab will do no further processing")
+
+(make-variable-buffer-local 'luk-tab-complete-custom)
 
 (defun luk-tab-complete-smart-tab ()
   "Minibuffer compliant smart tab
@@ -41,55 +48,56 @@ due to forwarding to org-cycle and org-cycle falling back to the
 TAB-bind. See the documentation for `org-cycle' and
 ‘org-cycle-emulate-tab’."
   (interactive)
-  (cond
-   ;; TODO: hack. Can I instead make magit override my otherwise
-   ;; global key?
-   ((string-prefix-p "magit" (symbol-name major-mode))
-    (magit-section-toggle (magit-current-section)))
+  (unless (and (fboundp luk-tab-complete-custom) (funcall luk-tab-complete-custom))
+    (cond
+     ;; TODO: hack. Can I instead make magit override my otherwise
+     ;; global key?
+     ((string-prefix-p "magit" (symbol-name major-mode))
+      (magit-section-toggle (magit-current-section)))
 
-   ((minibufferp)
-    (minibuffer-complete))
+     ((minibufferp)
+      (minibuffer-complete))
 
-   (mark-active
-    (indent-region
-     (region-beginning)
-     (region-end)))
+     (mark-active
+      (indent-region
+       (region-beginning)
+       (region-end)))
 
-   ;; At end of word, so *maybe* expand the word
-   ;; TODO: "\\_>" can give some issues because dabbrev-expand can
-   ;; insert symbols that prevent \\_> from matching (like .)
-   ;; and then further presses of <tab> no longer expands.
-   ;; maybe find a different way to check if at end of word, e.g.
-   ;; (point) is on space or \n and preceding is not space or \n.
-   ((looking-at "\\_>")
-    (if (and (eq major-mode 'org-mode) (= ?* (char-before)))
-        ;; Don't expand after * in org, it gets weird. Instead let
-        ;; org-cycle do its thing.
-        ;;
-        ;; TODO: Not perfect, if dabbrev expands "word" to "word*",
-        ;; tab will instead start cycling which is surprising.
-        (org-cycle)
+     ;; At end of word, so *maybe* expand the word
+     ;; TODO: "\\_>" can give some issues because dabbrev-expand can
+     ;; insert symbols that prevent \\_> from matching (like .)
+     ;; and then further presses of <tab> no longer expands.
+     ;; maybe find a different way to check if at end of word, e.g.
+     ;; (point) is on space or \n and preceding is not space or \n.
+     ((looking-at "\\_>")
+      (if (and (eq major-mode 'org-mode) (= ?* (char-before)))
+          ;; Don't expand after * in org, it gets weird. Instead let
+          ;; org-cycle do its thing.
+          ;;
+          ;; TODO: Not perfect, if dabbrev expands "word" to "word*",
+          ;; tab will instead start cycling which is surprising.
+          (org-cycle)
 
-      ;; Try to yas-expand
-      (when (not (luk-try-yas-expand))
-        ;; Not a snippet, try company or dabbrev
-        (message "not a snippet")
-        (if (bound-and-true-p company-mode)
-            (company-complete)
-          (dabbrev-expand nil)))))
+        ;; Try to yas-expand
+        (when (not (luk-try-yas-expand))
+          ;; Not a snippet, try company or dabbrev
+          (message "not a snippet")
+          (if (bound-and-true-p company-mode)
+              (company-complete)
+            (dabbrev-expand nil)))))
 
-   ((eq major-mode 'org-mode)
-    ;; Not at end of word in org-mode -> org cycle
-    ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
-    ;; is bound to TAB instead of <tab>.
-    (org-cycle))
+     ((eq major-mode 'org-mode)
+      ;; Not at end of word in org-mode -> org cycle
+      ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
+      ;; is bound to TAB instead of <tab>.
+      (org-cycle))
 
-   ((and (bound-and-true-p company-mode)
-         (/= (point) (line-beginning-position))
-         (= (point) (line-end-position)))
-    (company-complete))
+     ((and (bound-and-true-p company-mode)
+           (/= (point) (line-beginning-position))
+           (= (point) (line-end-position)))
+      (company-complete))
 
 
-   (t
-    ;; Not at end of word, just indent-for-tab
-    (indent-for-tab-command))))
+     (t
+      ;; Not at end of word, just indent-for-tab
+      (indent-for-tab-command)))))
