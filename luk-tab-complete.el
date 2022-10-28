@@ -63,36 +63,22 @@ TAB-bind. See the documentation for `org-cycle' and
      ;; maybe find a different way to check if at end of word, e.g.
      ;; (point) is on space or \n and preceding is not space or \n.
      ((looking-at "\\_>")
-      (if (and (eq major-mode 'org-mode) (= ?* (char-before)))
-          ;; Don't expand after * in org, it gets weird. Instead let
-          ;; org-cycle do its thing.
-          ;;
-          ;; TODO: Not perfect, if dabbrev expands "word" to "word*",
-          ;; tab will instead start cycling which is surprising.
-          (org-cycle)
+      ;; Try to yas-expand
+      (when (not (luk-try-yas-expand))
+        ;; Not a snippet, try company or dabbrev
+        (if (bound-and-true-p company-mode)
+            (company-complete)
+          (dabbrev-expand nil))))
 
-        ;; Try to yas-expand
-        (when (not (luk-try-yas-expand))
-          ;; Not a snippet, try company or dabbrev
-          (message "not a snippet")
-          (if (bound-and-true-p company-mode)
-              (company-complete)
-            (dabbrev-expand nil)))))
+      ((and (bound-and-true-p company-mode)
+            ;; At end of non completely-empty-line in company-mode,
+            ;; run company-completion
+            (/= (point) (line-beginning-position))
+            (= (point) (line-end-position)))
+       (company-complete))
 
-     ((eq major-mode 'org-mode)
-      ;; Not at end of word in org-mode -> org cycle
-      ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
-      ;; is bound to TAB instead of <tab>.
-      (org-cycle))
+      (t
+       ;; Not at end of word, just indent-for-tab
+       (indent-for-tab-command)))))
 
-     ((and (bound-and-true-p company-mode)
-           (/= (point) (line-beginning-position))
-           (= (point) (line-end-position)))
-      (company-complete))
-
-
-     (t
-      ;; Not at end of word, just indent-for-tab
-      (indent-for-tab-command)))))
-
-(provide 'luk-tab-complete)
+  (provide 'luk-tab-complete)

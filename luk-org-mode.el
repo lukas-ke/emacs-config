@@ -259,6 +259,25 @@ find the Python interpreter for running the script."
           (goto-char START)
           (insert (concat "[[attachment:" NEW-NAME "]]"))
           (org-redisplay-inline-images))))))
+
+(defun luk-org-tab-maybe-cycle ()
+  (interactive)
+  (if mark-active
+      nil
+    (if (looking-at "\\_>")
+        (if (= ?* (char-before))
+            ;; Don't expand after * in org, it gets weird. Instead let
+            ;; org-cycle do its thing.
+            ;;
+            ;; TODO: Not perfect, if dabbrev expands "word" to "word*",
+            ;; tab will instead start cycling which is surprising.
+            (progn (org-cycle) t)
+          nil)
+      ;; Not at end of word in org-mode -> org cycle
+      ;; Warning: Can recurse infinitely if `luk-tab-complete-smart-tab'
+      ;; is bound to TAB instead of <tab>.
+      (org-cycle) t)))
+
 
 (defun luk-org--mode-hook ()
   "Hook for `org-mode'."
@@ -278,6 +297,8 @@ find the Python interpreter for running the script."
   (push '("#+RESULTS:" . "⟶") prettify-symbols-alist)
 
   (prettify-symbols-mode)
+
+  (setq luk-tab-complete-custom #'luk-org-tab-maybe-cycle)
 
   ;; unicode bullets for org-titles instead of asterisks
   (org-bullets-mode 1)
