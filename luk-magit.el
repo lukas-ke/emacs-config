@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
-(provide 'luk-magit)
+(require 'luk-tab-complete)
 
 (defun luk-magit-status-set-key (key)
   "Globally bind a key to start magit and run magit-status
@@ -19,3 +19,15 @@ initializing magit takes some time."
   (setq header-line-format "Magit rebase (oldest commit first)"))
 
 (add-hook 'git-rebase-mode-hook #'luk-magit-rebase-show-rebase-heading)
+
+(defun luk-magit-tab-cycle-heading ()
+  (interactive)
+  (call-interactively #'magit-section-toggle)
+  t)
+
+(defun luk--on-magit-mode ()
+  (setq luk-tab-complete-custom #'luk-magit-tab-cycle-heading))
+
+(add-hook 'magit-mode-hook #'luk--on-magit-mode)
+
+(provide 'luk-magit)

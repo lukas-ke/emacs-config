@@ -2,8 +2,6 @@
 
 ;; Modified from http://www.emacsblog.org/2007/03/12/tab-completion-everywhere/
 
-(provide 'luk-tab-complete)
-
 (defun luk-active-snippet-keys ()
   (mapcar (lambda (item) (yas--template-key item))
           (yas--all-templates (yas--get-snippet-tables))))
@@ -50,11 +48,6 @@ TAB-bind. See the documentation for `org-cycle' and
   (interactive)
   (unless (and (fboundp luk-tab-complete-custom) (funcall luk-tab-complete-custom))
     (cond
-     ;; TODO: hack. Can I instead make magit override my otherwise
-     ;; global key?
-     ((string-prefix-p "magit" (symbol-name major-mode))
-      (magit-section-toggle (magit-current-section)))
-
      ((minibufferp)
       (minibuffer-complete))
 
@@ -101,3 +94,5 @@ TAB-bind. See the documentation for `org-cycle' and
      (t
       ;; Not at end of word, just indent-for-tab
       (indent-for-tab-command)))))
+
+(provide 'luk-tab-complete)
