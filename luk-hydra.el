@@ -180,7 +180,7 @@ _q_: %s"
   ("a" luk-appt-hydra/body :exit t)
 
   ;; View
-  ("g" magit-status :exit t)
+  ("g" luk-magit-status :exit t)
   ("r" luk-hydra-region/body :exit t)
   ("v c" (luk-show-calendar) :exit t)
   ("v a" (org-agenda-list 'a))

@@ -2,18 +2,19 @@
 
 (require 'luk-tab-complete)
 
-(defun luk-magit-status-set-key (key)
-  "Globally bind a key to start magit and run magit-status
+(defvar luk-magit-started nil "True if magit has been started via luk-magit-status")
+
+(defun luk-magit-status ()
+  "Forwards to magit-status, but may also show an init message.
 
 Shows a message the first time it calls magit-status, since
 initializing magit takes some time."
-  (global-set-key
-   key
-   (lambda()
-     (interactive)
-     (message "Starting magit...")
-     (magit-status)
-     (global-set-key key 'magit-status))))
+  (interactive)
+  (when (not luk-magit-started)
+    (message "Starting magit..."))
+  (setq luk-magit-started t)
+  (magit-status)
+  (message nil))
 
 (defun luk-magit-rebase-show-rebase-heading ()
   (setq header-line-format "Magit rebase (oldest commit first)"))

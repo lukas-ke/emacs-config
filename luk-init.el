@@ -141,7 +141,8 @@
 
 (require 'luk-org-mode) (luk-org-mode-setup)
 
-(require 'luk-magit) (luk-magit-status-set-key [f12])
+(require 'luk-magit)
+(global-set-key (kbd "<f12>") #'luk-magit-status)
 
 ;;; Mode for editing .gitignore-files
 (require 'gitignore-mode) ; https://github.com/magit/git-modes
