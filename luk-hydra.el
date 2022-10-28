@@ -183,9 +183,9 @@ _q_: %s"
   ("g" luk-magit-status :exit t)
   ("r" luk-hydra-region/body :exit t)
   ("v c" (luk-show-calendar) :exit t)
-  ("v a" (org-agenda-list 'a))
-  ("v t" (org-todo-list 'a))
-  ("v A" (org-agenda 'a))
+  ("v a" (org-agenda-list 'a) :exit t)
+  ("v t" (org-todo-list 'a) :exit t)
+  ("v A" (org-agenda 'a) :exit t)
 
   ;; Capture
   ("c c" (org-capture) :exit t)
