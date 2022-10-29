@@ -11,6 +11,9 @@
 (defun luk-font-available-p (font-name)
   (find-font (font-spec :name font-name)))
 
+(when (not (luk-font-available-p "Symbola"))
+  (message "Note: Symbola-font missing, and it is a good font to have."))
+
 (cond
  ((luk-font-available-p "DejaVu Sans Mono")
   (set-face-attribute
