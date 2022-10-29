@@ -51,9 +51,6 @@
 (customize-set-variable 'auto-revert-use-notify nil)
 (customize-set-variable 'auto-revert-verbose nil)
 
-;; Display column number in mode-line
-(customize-set-variable 'column-number-mode t)
-
 ;; Don't ask about unsaved files when compiling
 (customize-set-variable 'compilation-ask-about-save nil)
 
