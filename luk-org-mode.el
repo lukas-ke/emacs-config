@@ -888,20 +888,32 @@ information."
   (interactive)
   (message (substitute-command-keys "Finalize capture instead with \\<org-capture-mode-map>\\[org-capture-finalize].")))
 
-
 (defun luk-org--capture-return ()
   "In capture buffers, move past property drawers on return at heading"
   (interactive)
-  (let ((start (point)))
-    (if (not (org-at-heading-p))
-        (org-return-and-maybe-indent)
-      (if (= (forward-line) 1)
-          ;; Could not move forward, insert new line
-          (org-return-and-maybe-indent)
-        (if (org-at-drawer-p)
-            (progn
-              (org-forward-element)
-              (org-return-and-maybe-indent)))))))
+  (cond ((not (org-at-heading-p))
+         (org-return-and-maybe-indent))
+
+        ((and org-return-follows-link
+              (eq (car (org-element-context)) 'link)
+
+              ;; Hacky: org-element-context gives link even after the link
+              ;; when at end of line or after moving out of it from the left,
+              ;; but org-open-at-point fails, so if at a space
+              ;; allow enter to go to next line, or if at the end of the line
+              (not (string= (buffer-substring-no-properties (point) (+ 1 (point))) " "))
+              (not (= (point) (line-end-position))))
+         (org-open-at-point))
+        ((= (forward-line) 1)
+         ;; Could not move forward, so at the end. Insert new line
+         (org-return-and-maybe-indent))
+        ((org-at-drawer-p)
+         (progn
+           (org-forward-element)
+           (when (org-at-drawer-p)
+             (forward-line)
+             (when (org-at-drawer-p)
+               (org-return-and-maybe-indent)))))))
 
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."
