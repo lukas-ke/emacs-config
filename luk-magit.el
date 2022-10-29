@@ -17,7 +17,15 @@ initializing magit takes some time."
   (message nil))
 
 (defun luk-magit-rebase-show-rebase-heading ()
-  (setq header-line-format "Magit rebase (oldest commit first)"))
+  "Indicate the reversed commit-order in header in rebase-todo.
+
+This can get a little confusing with magit, as you get to the rebase
+file after picking the end commit in the normal log-order."
+  (setq header-line-format
+        ;; Adjust for margins (e.g. with perfect-margin-mode)
+        '((:eval
+           (let ((pad (car (window-margins))))
+             (concat (if pad (make-string pad ? ) "") " Magit rebase (oldest commit first)"))))))
 
 (add-hook 'git-rebase-mode-hook #'luk-magit-rebase-show-rebase-heading)
 
@@ -30,5 +38,9 @@ initializing magit takes some time."
   (setq luk-tab-complete-custom #'luk-magit-tab-cycle-heading))
 
 (add-hook 'magit-mode-hook #'luk--on-magit-mode)
+
+(with-eval-after-load 'magit
+  ;; Alternative to q
+  (define-key magit-blob-mode-map (kbd "k") #'magit-kill-this-buffer))
 
 (provide 'luk-magit)

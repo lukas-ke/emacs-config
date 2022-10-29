@@ -377,7 +377,14 @@ URL `https://github.com/fniessen/emacs-leuven-theme'")
    `(magit-diff-file-heading ((,class (:weight bold :foreground "#4183C4"))))
    `(magit-diff-hunk-heading ((,class ,diff-hunk-header)))
    `(magit-diff-context ((,class ,diff-none)))
-   `(magit-header-line ((,class (:foreground "white" :background "#335EA8"))))
+
+   ;; Some magit header-lines indicate possible key-presses (e.g. for
+   ;; the interactive rebase log selection) and the
+   ;; "help-keybinding"-face looks bad on many types of backgrounds,
+   ;; so just use a boring gray for the header.
+   `(magit-header-line ((,class (:foreground "black" :background "#F0F0F0"))))
+   `(magit-header-line-log-select ((,class (:weight bold :foreground "black" :background "#F0F0F0"))))
+
    `(magit-item-mark ((,class ,marked-line)))
    `(magit-section-highlight ((,class (:background  "#F6FECD"))))
    `(magit-section-heading ((,class (:height 1.1 :foreground "black" :background "white"))))
