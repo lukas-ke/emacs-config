@@ -915,6 +915,11 @@ information."
              (when (org-at-drawer-p)
                (org-return-and-maybe-indent)))))))
 
+(defun luk-org--capture-block-rank-change ()
+  (interactive)
+  ;; TODO: Improve this to allow moving captured subheadings
+  (message "Probably not a good idea"))
+
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."
   ;;; Keys
@@ -933,6 +938,9 @@ information."
   (define-key org-capture-mode-map (kbd "C-x C-s") #'luk-org--say-commit-instead)
 
   (define-key org-capture-mode-map (kbd "<return>") #'luk-org--capture-return)
+
+  (define-key org-capture-mode-map (kbd "M-<left>") #'luk-org--capture-block-rank-change)
+  (define-key org-capture-mode-map (kbd "M-<right>") #'luk-org--capture-block-rank-change)
 
   ;; Prevent killing the window holding the capture buffer
   ;; causing me to forget to complete the capture.
