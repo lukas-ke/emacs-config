@@ -93,12 +93,8 @@
  ;; https://emacs.stackexchange.com/questions/766/add-operating-system-clipboard-to-kill-ring
  save-interprogram-paste-before-kill t)
 
-(setq
- ;; The compacting of font-caches made "unicode.txt" slow to navigate.
- ;;
- ;; Note: See discussion for why this shouldn't normally be set:
- ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27350
- inhibit-compacting-font-caches t)
+
+;; Fonts
 
 ;; Default font
 ;;
