@@ -78,6 +78,9 @@
 ;; Disable backup-files
 (setq make-backup-files nil)
 
+;; Make flycheck for emacs-lisp find files on my load path
+(setq flycheck-emacs-lisp-load-path 'inherit)
+
 ;; No start-up logo screen
 (customize-set-variable 'inhibit-startup-message t)
 (customize-set-variable 'inhibit-startup-screen t)
