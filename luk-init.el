@@ -524,4 +524,25 @@ modes (like `ido-mode') or falls back on `completing-read'
 (luk-ediff-setup)
 
 
+;; Allow toggling if certain operations target current or other window
+
+(defvar luk-other nil "When t some operations will target other-window")
+
+(defun toggle-luk-other ()
+  (interactive)
+  (setq luk-other (not luk-other))
+  (if luk-other
+      (message "Some operatiokns will target other window")
+    (message "Some operation will target current window")))
+
+(defun luk-find-file ()
+  (interactive)
+  (if luk-other
+      (call-interactively #'find-file-other-window)
+    (call-interactively #'find-file)))
+
+(global-set-key (kbd "C-x o") #'toggle-luk-other)
+(global-set-key (kbd "C-x C-f") #'luk-find-file)
+
+
 (provide 'luk-init)
