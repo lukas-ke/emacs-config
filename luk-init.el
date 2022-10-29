@@ -99,7 +99,8 @@
 ;; this is caused by my stuff (seems likely).
 (setq suggest-key-bindings nil)
 
-;; I never manage to commit these to memory anyway.
+;; Do not suggest shorter M-x invocations. I never manage to commit
+;; these to memory anyway.
 (setq extended-command-suggest-shorter nil)
 
 (require 'luk-menu-bar)
@@ -159,7 +160,7 @@
 
 (with-eval-after-load 'help-mode
   ;; Restore tab-navigation in help.
-  ;; luk-tab-complete eats it, due to hel-mode.el only defining TAB,
+  ;; luk-tab-complete eats it, due to help-mode.el only defining TAB,
   ;; not <tab>.
   (define-key help-mode-map (kbd "<tab>") 'forward-button))
 
