@@ -93,24 +93,6 @@
  ;; https://emacs.stackexchange.com/questions/766/add-operating-system-clipboard-to-kill-ring
  save-interprogram-paste-before-kill t)
 
-
-;; Fonts
-
-;; Default font
-;;
-;; TODO: For some reason I get some unreadable symbol font if DejaVu
-;; Sans Mono is not installed. Did I configure a weird fallback font
-;; somewhere?
-(set-face-attribute
- 'default
- nil
- :family "DejaVu Sans Mono" ; https://dejavu-fonts.github.io/
- :foundry "outline"
- :slant 'normal
- :weight 'normal
- :height 102
- :width 'normal)
-
 ;; For some reason this message takes a while to appear and delays
 ;; command execution.
 ;; TODO: I should test with -q (without my config) to figure out if
