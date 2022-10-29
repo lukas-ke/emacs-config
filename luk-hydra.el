@@ -93,7 +93,7 @@ luk-hydra was started directly"
       (message "Visited file does not exist:  \"%s\"" FILE-NAME))
      (t
       (when (yes-or-no-p (format "Delete \"%s\"?" FILE-NAME))
-        (delete-file FILE-NAME)
+        (delete-file FILE-NAME 'trash-if-enabled)
         (set-buffer-modified-p t)
         (message "File deleted: \"%s\"." FILE-NAME))))))
 
