@@ -84,7 +84,10 @@ luk-hydra was started directly"
         (rename-buffer NEW-BUFFER-NAME t))))))
 
 (defun luk-delete-file ()
-  "Delete the visited file, if any"
+  "Delete the visited file respecting `delete-by-moving-to-trash'.
+
+If `delete-by-moving-to-trash' is true, the buffer is also
+killed, so to rename a file, use `luk-rename-buffer-and-file' instead."
   (interactive)
   (let ((FILE-NAME (buffer-file-name)))
     (cond
@@ -95,8 +98,13 @@ luk-hydra was started directly"
      (t
       (when (yes-or-no-p (format "Delete \"%s\"?" FILE-NAME))
         (delete-file FILE-NAME 'trash-if-enabled)
-        (set-buffer-modified-p t)
-        (message "File deleted: \"%s\"." FILE-NAME))))))
+        (if delete-by-moving-to-trash
+            (progn
+              (when (not (kill-buffer (current-buffer)))
+                (set-buffer-modified-p t))
+              (message "File put in the trash."))
+          (set-buffer-modified-p t)
+          (message "File deleted.")))))))
 
 (defun luk-copy-file-path ()
   "Add path to current file to kill-ring"
