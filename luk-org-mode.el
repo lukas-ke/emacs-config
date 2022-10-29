@@ -565,6 +565,42 @@ _q_: quit"
   ("m" (luk-org-link-element-copy-markdown) :exit t)
   ("q" nil :exit t))
 
+
+;; luk-org-image-link-hydra and friends
+
+(defvar luk--pre-image-window-configuration nil
+  "Window configuration before viewing image in full")
+
+(define-derived-mode luk-org-image-mode image-mode
+  "luk-org-image-mode"
+  "Major mode for viewing images from org in full screen")
+
+(defun luk--org-image-kill-restore ()
+  (interactive)
+  (kill-buffer)
+  (set-window-configuration luk--pre-image-window-configuration))
+
+(define-key luk-org-image-mode-map (kbd "q") #'luk--org-image-kill-restore)
+
+(defun luk-org-view-image ()
+  "View an image in a full window, go back with q"
+  (interactive)
+  (let ((luk-org--context-element (org-element-context)))
+    (when (not (and (eq (car luk-org--context-element) 'link) (luk-org-image-link?)))
+      (user-error "Point not in an image link"))
+    (let* ((link-target (luk-org--context-key :raw-link))
+           (file-name
+            (if (and (string-prefix-p "attachment:" link-target) (org-attach-dir))
+                (concat (org-attach-dir)
+                        "/"
+                        (string-remove-prefix "attachment:" link-target))
+              link-target)))
+      (setq luk--pre-image-window-configuration (current-window-configuration))
+      (find-file file-name)
+      (luk-org-image-mode)
+      (delete-other-windows)
+      (message "Use q to go back"))))
+
 (defhydra luk-org-image-link-hydra (:hint nil
                                           :foreign-keys warn
                                           :pre (setq hydra-amaranth-warn-message "Invalid key.")
@@ -576,6 +612,7 @@ _e_: edit link
 _E_: edit image in external editor
 _w_: Set width
 _W_: wrap in drawer
+_v_: View
 _d_: delete
 _m_: copy markdown
 _c_: copy to clipboard
@@ -586,6 +623,7 @@ _q_: quit"
   ("e" (luk-org-link-element-edit) :exit t)
   ("w" (luk-org-set-image-width) :exit t)
   ("W" (luk-org-wrap-image-in-drawer) :exit t) ;; TODO: Not if :parent is drawer
+  ("v" (luk-org-view-image) :exit t)
   ("E" (luk-org-open-in-image-editor) :exit t)
   ("m" (luk-org-link-element-copy-markdown) :exit t) ;; TODO: Only if non-local
   ("c" (luk-org-copy-image-to-clipboard) :exit t)
