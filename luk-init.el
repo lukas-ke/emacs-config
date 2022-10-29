@@ -331,9 +331,6 @@
 (global-set-key (kbd "S-<left>") 'windmove-left)
 (global-set-key (kbd "S-<right>") 'windmove-right)
 
-;; More convenient bind M-o (than C-x o) for cycling windows
-(global-set-key (kbd "M-o") 'other-window)
-
 ;; Unset C-x o, to retrain me to use M-o
 (global-unset-key (kbd "C-x o"))
 
@@ -534,6 +531,15 @@ modes (like `ido-mode') or falls back on `completing-read'
 (global-set-key (kbd "C-a") 'smarter-move-beginning-of-line)
 
 (setq delete-by-moving-to-trash t)
+
+(if (require 'crux nil 'noerror)
+    (progn
+      (global-set-key (kbd "C-x 4 t") #'crux-transpose-windows)
+      (global-set-key (kbd "M-o") #'crux-other-window-or-switch-buffer))
+
+  ;; More convenient bind M-o (than C-x o) for cycling windows
+  (global-set-key (kbd "M-o") 'other-window))
+
 
 
 (provide 'luk-init)
