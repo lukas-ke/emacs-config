@@ -81,11 +81,57 @@ _q_ Close menu
   ("q" nil :exit t))
 
 
+;; SMerge hydra
+
+;; Stolen from Adam Porter (and modified).
+;; https://github.com/alphapapa/unpackaged.el/blob/master/unpackaged.el
+(defhydra luk-smerge-hydra
+  (:hint nil
+         :foreign-keys warn
+         :pre (setq hydra-amaranth-warn-message "Invalid key.")
+         :post (smerge-auto-leave))
+    "
+^Move^       ^Keep^               ^Diff^                 ^Other^
+^^-----------^^-------------------^^---------------------^^-------
+_n_ext       _b_ase               _<_: upper/base        _C_ombine
+_p_rev       _u_pper              _=_: upper/lower       _r_esolve
+^^           _l_ower              _>_: base/lower        _k_ill current
+^^           _a_ll                _R_efine
+^^           _RET_: current       _E_diff
+"
+    ("n" smerge-next)
+    ("p" smerge-prev)
+    ("b" smerge-keep-base)
+    ("u" smerge-keep-upper)
+    ("l" smerge-keep-lower)
+    ("a" smerge-keep-all)
+    ("RET" smerge-keep-current)
+    ("\C-m" smerge-keep-current)
+    ("<" smerge-diff-base-upper)
+    ("=" smerge-diff-upper-lower)
+    (">" smerge-diff-base-lower)
+    ("R" smerge-refine)
+    ("E" smerge-ediff)
+    ("C" smerge-combine-with-next)
+    ("r" smerge-resolve)
+    ("k" smerge-kill-current)
+    ("ZZ" (lambda ()
+            (interactive)
+            (save-buffer)
+            (bury-buffer))
+     "Save and bury buffer" :exit t)
+    ("." (luk-hydra-push 'luk-smerge-hydra/body "smerge") "Up" :exit t)
+    ("q" nil "cancel" :exit t))
+
+
 (with-eval-after-load 'magit
   ;; Alternative to q for revision buffers (blobs)
   (define-key magit-blob-mode-map (kbd "k") #'magit-kill-this-buffer)
 
   ;; Hydra for commit messages
   (define-key git-commit-mode-map (kbd "M-.") #'luk-git-commit-hydra/body))
+
+(with-eval-after-load 'smerge-mode
+  (define-key smerge-mode-map (kbd "M-.") #'luk-smerge-hydra/body))
 
 (provide 'luk-magit)
