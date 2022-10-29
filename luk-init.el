@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
-;; My emacs config, last tested with Emacs 26.3 in Windows 10
+;; My emacs config, last tested with Emacs 28.1 in Windows 10
 
 (require 'cus-edit) ; For customize-set-variable
 
