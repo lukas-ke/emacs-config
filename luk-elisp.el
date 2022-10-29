@@ -28,29 +28,6 @@
     (forward-line)
     (forward-line)))
 
-(defun luk-elisp-smart-tab ()
-  "Complete or indent at point in emacs-lisp-mode.
-
-Like ‘luk-tab-complete-smart-tab’ this either indents or
-completes. It uses company-mode for completion if enabled
-and not inside a comment.
-
-Another change from ‘luk-tab-complete-smart-tab’ is that this
-function only supports emacs-lisp, while it does not try to
-handle minibuffer or other modes."
-  (interactive)
-  (cond
-   (mark-active
-    (indent-region
-     (region-beginning)
-     (region-end)))
-   ;; At end of word, so *maybe* expand the word
-   ((looking-at "\\_>")
-    (if (luk-in-comment)
-        (dabbrev-expand nil)
-      (if company-mode (company-complete) (dabbrev-expand nil))))
-   (t (indent-for-tab-command))))
-
 
 
 (defhydra luk-elisp-function-hydra (:hint nil :foreign-keys warn)
@@ -78,5 +55,5 @@ _d_: describe function"
 (defun luk-elisp-setup ()
   (add-hook 'emacs-lisp-mode-hook 'luk-elisp--hook)
   (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
-  (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-elisp-smart-tab)
+  (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
   (define-key emacs-lisp-mode-map (kbd "M-.") 'luk-elisp-context-hydra))
