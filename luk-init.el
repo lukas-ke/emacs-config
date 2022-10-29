@@ -459,7 +459,7 @@ way?)."
 ;; https://www.masteringemacs.org/article/find-files-faster-recent-files-package
 (require 'recentf)
 (recentf-mode t)
-(setq recentf-max-saved-items 50)
+(setq recentf-max-saved-items 100)
 
 (defun luk-recentf-open ()
   "Use a completing-read function to select and open a recent file.
