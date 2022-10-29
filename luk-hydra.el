@@ -8,6 +8,7 @@
 (require 'hydra)
 (require 'cl-lib)
 (require 'luk-util)
+(require 'luk-diff) ;; for luk-view-changes
 
 (defgroup luk-hydra-faces nil "Faces for my hydra menus")
 
@@ -143,7 +144,7 @@ _e_: explorer here │ _f_: .. in files    │ _b l_ list       │ _m_ menu bar
 _R_: rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
 _D_: delete        │ _C-x f_ in git repo │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
 _C_: copy path     │ ^ ^                 │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
-^ ^                │ ^ ^                 │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
+_d_: view changes  │ ^ ^                 │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
 _q_: %s"
           (luk-caption "Current File")
           (luk-caption "Files")
@@ -160,6 +161,7 @@ _q_: %s"
   ("R" luk-rename-buffer-and-file :exit t)
   ("D" luk-delete-file :exit t)
   ("C" luk-copy-file-path :exit t)
+  ("d" luk-view-changes :exit t)
 
   ;; Files
   ("l" luk-list-files :exit t)

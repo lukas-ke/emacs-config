@@ -535,7 +535,9 @@ modes (like `ido-mode') or falls back on `completing-read'
 
   ;; More convenient bind M-o (than C-x o) for cycling windows
   (global-set-key (kbd "M-o") 'other-window))
-
+
+(require 'luk-diff)
+(luk-ediff-setup)
 
 
 (provide 'luk-init)
