@@ -127,18 +127,19 @@
 (require 'gitignore-mode) ; https://github.com/magit/git-modes
 (add-to-list 'auto-mode-alist '("\\.gitignore$" . gitignore-mode))
 
-(defun luk-explore ()
-  "Open Windows file-browser with current file selected"
-  (interactive)
-  (if (buffer-file-name)
-      (w32-shell-execute
-       "open"
-       "explorer"
-       (concat "/select,\""
-               (replace-regexp-in-string "/" "\\" (buffer-file-name) nil t) "\""))
-    (w32-shell-execute "open" "explorer" ".")))
+(when (eq system-type 'windows-nt)
+  (defun luk-explore ()
+    "Open Windows file-browser with current file selected"
+    (interactive)
+    (if (buffer-file-name)
+        (w32-shell-execute
+         "open"
+         "explorer"
+         (concat "/select,\""
+                 (replace-regexp-in-string "/" "\\" (buffer-file-name) nil t) "\""))
+      (w32-shell-execute "open" "explorer" ".")))
 
-(global-set-key [(control .)] 'luk-explore)
+  (global-set-key [(control .)] 'luk-explore))
 
 ;; Tab-complete everywhere
 ;; TODO: Might interfere with e.g. autocomplete or company mode
