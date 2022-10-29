@@ -204,31 +204,35 @@ _q_: %s"
   (luk-hydra-pop)
   (luk-hydra/body))
 
+(defvar luk-navigate-start-buffer nil "Initial buffer when luk-hydra-window was opened")
+
+(defun luk-switch-to-start ()
+  (interactive)
+  (message "Switching to %s" luk-navigate-start-buffer))
+
 (defhydra luk-hydra-window (:hint nil :exit nil
                                   :foreign-keys warn
                                   :pre (setq hydra-amaranth-warn-message "Invalid key.")
                                   :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
-Windows Navigate with arrows. _q_ to quit              ^^│ In Window:
-Delete _0_: current window, _1_: other windows           │ _8_: Backward page
-Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
-"
+Window select: arrows                            ^^^^^^│ In Window, Page _8_: Backward _9_: Forward    _q_ to quit
+       delete: _0_/_d_: current,_1_: others            │            Buffer  _a_:previous _b_: next
+       split:  _2_:  below, _3_: right (or S-arrow)  ^^│"
   ("<up>" windmove-up)
-  ("w" windmove-up)
   ("<right>" windmove-right)
-  ("d" windmove-right)
   ("<down>" windmove-down)
-  ("s" windmove-down)
   ("<left>" windmove-left)
-  ("a" windmove-left)
-
   ("0" delete-window)
+  ("d" delete-window)
   ("1" delete-other-windows)
   ("2" split-window-below)
   ("3" split-window-right)
   ("<S-down>" (progn (split-window-below) (windmove-down))) ("S" (progn (split-window-below) (windmove-down)))
   ("<S-right>" (progn (split-window-right) (windmove-right))) ("D" (progn (split-window-right) (windmove-right)))
   ("b" switch-to-buffer)
+  ("f" find-file)
+  ("k" kill-current-buffer)
+  ("B" balance-windows)
   ("o" other-window)
   ("O" (other-window -1))
   ("i" (other-window -1))
@@ -236,6 +240,15 @@ Split  _2_: below, _3_: to the right (or shift-arrow)    │ _9_: Forward page
   ("9" (forward-page))
   ("[" (backward-page))
   ("8" (backward-page))
+  ("v" (switch-to-buffer luk-navigate-start-buffer))
+  ("a" (previous-buffer))
+  ("s" (next-buffer))
+  ("<return>" nil :exit t)
   ("q" nil :exit t))
+
+(defun luk-show-window-hydra ()
+  (interactive)
+  (setq luk-navigate-start-buffer (current-buffer))
+  (luk-hydra-window/body))
 
 (provide 'luk-hydra)

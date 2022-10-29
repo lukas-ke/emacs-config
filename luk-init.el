@@ -263,7 +263,7 @@
 (require 'luk-hydra)
 (require 'luk-theming) ;; TODO: Needed for luk-hydra to find theme-hydra
 (global-set-key (kbd "M-.") 'luk-hydra-summon)
-(global-set-key (kbd "M-,") 'luk-hydra-window/body)
+(global-set-key (kbd "M-,") #'luk-show-window-hydra)
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
