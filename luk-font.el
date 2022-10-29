@@ -65,6 +65,11 @@
 (set-fontset-font t #x1F914 "Segoe UI Emoji")
 ;; (set-fontset-font t #x+1FAE1 "Segoe UI Emoji")
 
+
+;; Not sure which group this is in
+(set-fontset-font "fontset-default" #x1f60f "segoe ui emoji") ;; 😏 Smirking face
+
+
 (set-fontset-font t #x1F44D "Segoe UI Emoji") ;; Thumbs up 👍
 (set-fontset-font t #x1F44E "Segoe UI Emoji") ;; Thumbs down 👎
 
