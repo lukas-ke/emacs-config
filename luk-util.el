@@ -2,7 +2,7 @@
 
 (require 'image-file)
 
-(defun -up (&optional path n)
+(defun 📂-up (&optional path n)
   "Get the N-th parent folder of PATH or `buffer-file-name'."
   (unless path (setq path (buffer-file-name)))
   (unless n (setq n 1))

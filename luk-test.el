@@ -67,15 +67,15 @@
     (should (= (match-beginning 0) 25)) ;; Restored?
     (should (= (point) 28)))) ;; Restored?
 
-(ert-deftest luk--up () ;; Prefix with luk- to make selector easy
-  "Test for function `-up'."
-  (should (string= (-up "c:/plopp/plupp") "c:/plopp/"))
-  (should (string= (-up "c:/plopp/plupp/") "c:/plopp/"))
-  (should (string= (-up "c:/plopp/plupp" 0) "c:/plopp/plupp"))
-  (should (string= (-up "c:/plopp/plupp" 1) "c:/plopp/"))
-  (should (string= (-up "c:/plopp/plupp" 2) "c:/"))
-  (should (eq (-up "c:/plopp/plupp" 3) nil))
-  (should (string= (-up "c:/plopp/plupp.txt") "c:/plopp/")))
+(ert-deftest luk-📂-up () ;; Prefix with luk- to make selector easy
+  "Test for function `-up'."
+  (should (string= (📂-up "c:/plopp/plupp") "c:/plopp/"))
+  (should (string= (📂-up "c:/plopp/plupp/") "c:/plopp/"))
+  (should (string= (📂-up "c:/plopp/plupp" 0) "c:/plopp/plupp"))
+  (should (string= (📂-up "c:/plopp/plupp" 1) "c:/plopp/"))
+  (should (string= (📂-up "c:/plopp/plupp" 2) "c:/"))
+  (should (eq (📂-up "c:/plopp/plupp" 3) nil))
+  (should (string= (📂-up "c:/plopp/plupp.txt") "c:/plopp/")))
 
 (ert-deftest luk-capitalize-first-word ()
   (should (string= (luk-capitalize-first-word "hello world") "Hello world"))
@@ -327,4 +327,4 @@
       (check "someFunc({1=\"word"
              '("someFunc({1=\"word\""
                "someFunc({1=\"word\"}"
-               "someFunc({1=\"word\"})"))))
+               "someFunc({1=\"word\"})")))))
