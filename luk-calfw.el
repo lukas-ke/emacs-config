@@ -34,19 +34,29 @@ The refresh makes the calendar fit its resized window."
     (with-current-buffer calendar-buffer
       (cfw:refresh-calendar-buffer nil))))
 
-(defvar luk-cfw-new-date nil "Date for new captured event.")
-
 (defcustom luk-cfw-date-file-name ""
   "The file name (Note: not full path) of the file for events added via calfw."
   :type 'string)
 
-(defun luk-calfw-upcoming-template ()
-  "Template for capture of an event via the calendar."
-  (let ((date luk-cfw-new-date))
-    (setq luk-cfw-new-date nil)
-    "* %(cfw:org-capture-day) %?"))
+(defvar luk-is-cfw-capture nil "Set to t when capture is initiated by luk-cfw-capture.
 
-(defun luk-calfw-before-org-capture-finalize ()
+Used to determine if the luk-cfw-upcoming-template needs to
+figure out a date on its own or if the date is provided by cfw.
+")
+
+(defun luk-cfw-capture ()
+  (interactive)
+  (setq luk-is-cfw-capture t)
+  (cfw:org-capture))
+
+(defun luk-cfw-upcoming-template ()
+  "Template for capture of an event via the calendar."
+  (if luk-is-cfw-capture
+      (progn (setq luk-is-cfw-capture nil) "* %(cfw:org-capture-day) %?")
+    (let ((date (org-read-date)))
+      (concat "* <" date "> %?"))))
+
+(defun luk-cfw-before-org-capture-finalize ()
   "Refresh calendar when calendar-related capture completes."
   (interactive)
   (when (and luk-cfw-date-file-name
@@ -58,14 +68,16 @@ The refresh makes the calendar fit its resized window."
             (with-current-buffer cb
               (cfw:refresh-calendar-buffer nil)))))))
 
-(add-hook 'org-capture-before-finalize-hook #'luk-calfw-before-org-capture-finalize)
+(add-hook 'org-capture-before-finalize-hook #'luk-cfw-before-org-capture-finalize)
 
 (with-eval-after-load 'calfw-org
   (define-key cfw:org-schedule-map (kbd "<return>") #'luk-cfw-open-agenda)
   (define-key cfw:org-schedule-map (kbd "SPC") #'luk-cfw-open-agenda)
   (define-key cfw:org-schedule-map (kbd "<tab>") #'cfw:navi-next-item-command)
   (define-key cfw:org-text-keymap (kbd "<return>") #'cfw:org-onclick)
-  (define-key cfw:calendar-mode-map (kbd "a") #'cfw:org-capture))
+  (define-key cfw:calendar-mode-map (kbd "a") #'luk-cfw-capture)
+  (define-key cfw:calendar-mode-map (kbd "c") #'luk-cfw-capture)
+  (define-key cfw:calendar-mode-map (kbd "c") #'luk-cfw-capture))
 
 (defun luk-cfw-show-calendar ()
   (interactive)
