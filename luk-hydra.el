@@ -108,11 +108,25 @@ killed, so to rename a file, use `luk-rename-buffer-and-file' instead."
           (message "File deleted.")))))))
 
 (defun luk-copy-file-path ()
-  "Add path to current file to kill-ring"
+  "Add path to current file to kill-ring (or marked files in `dired-mode').
+
+This function adds the full path to the file visited in the
+current buffer to the `kill-ring'.
+
+When in dired-mode, instead copy the path to the marked-files (or
+file at point), separated by endlines. When no files are marked
+and point is not at a file, fall-back to the
+`default-directory' (the current dired-directory)."
   (interactive)
-  (let ((FILE-NAME (buffer-file-name)))
-    (when FILE-NAME
-      (kill-new FILE-NAME))))
+  (let ((file-name (or (buffer-file-name)
+                       (when (derived-mode-p 'dired-mode)
+                           (let ((files (dired-get-marked-files)))
+                             (if files
+                                 (string-join files "\n")
+                               default-directory))))))
+    (if file-name
+        (kill-new file-name)
+      (user-error "Buffer not associated with a file — no path copied"))))
 
 (defun luk-caption (STR)
   (propertize STR 'face 'luk-hydra-caption-face))
