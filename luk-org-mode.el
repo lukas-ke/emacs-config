@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
-(require 'org-bullets) ; https://github.com/sabof/org-bullets
+(require 'org-superstar)
 (require 'org)
 (require 'org-attach)
 (require 'org-id)
@@ -301,7 +301,7 @@ find the Python interpreter for running the script."
   (setq luk-tab-complete-custom #'luk-org-tab-maybe-cycle)
 
   ;; unicode bullets for org-titles instead of asterisks
-  (org-bullets-mode 1)
+  (org-superstar-mode)
 
   ;; Use readable links initially
   (luk-org--descriptive-links nil)

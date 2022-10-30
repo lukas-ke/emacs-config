@@ -23,8 +23,7 @@ mainly for my own benefit, so YMMV.
   navigation, diagnostics)
 - [[https://magit.vc/][magit]] nice git user interface for emacs
 - [[https://jblevins.org/projects/markdown-mode/][markdown-mode]] for editing markdown
-- [[https://github.com/sabof/org-bullets][org-bullets]] for bullet-points in org-mode (Though I should maybe
-  update to org-superstar)
+- [[https://github.com/integral-dw/org-superstar-mode][org-superstar-mode]] for fancy bullet-points in org-mode
 - [[https://github.com/mpwang/perfect-margin][perfect-margin]] for centering lone-buffer content for better ergonomy
 - [[https://github.com/joaotavora/yasnippet][yasnippet]] for inserting code snippets and as a dependency of lsp-mode
 
