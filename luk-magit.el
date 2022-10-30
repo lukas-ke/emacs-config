@@ -134,4 +134,18 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 (with-eval-after-load 'smerge-mode
   (define-key smerge-mode-map (kbd "M-.") #'luk-smerge-hydra/body))
 
+(with-eval-after-load 'vc-git
+  ;; For `vc-log-outgoing' and related. This is faster for skimming
+  ;; the log than the magit-log which takes some time to reveal each
+  ;; entry.
+
+  ;; Use tab to cycle an entry, like how magit cycles sections
+  (define-key vc-git-log-view-mode-map (kbd "<tab>") #'log-view-toggle-entry-display)
+  (define-key vc-git-log-view-mode-map (kbd "TAB") #'log-view-toggle-entry-display)
+
+  ;; This was scroll-up otherwise, maybe I'll miss it, but in magit
+  ;; <space> shows the log without changing focus, so this seems more
+  ;; consistent
+  (define-key vc-git-log-view-mode-map (kbd "<space>") #'log-view-toggle-entry-display))
+
 (provide 'luk-magit)
