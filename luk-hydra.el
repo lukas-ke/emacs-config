@@ -9,6 +9,7 @@
 (require 'cl-lib)
 (require 'luk-util)
 (require 'luk-diff) ;; for luk-view-changes
+(require 'luk-calfw)
 
 (defgroup luk-hydra-faces nil "Faces for my hydra menus")
 
@@ -135,10 +136,8 @@ killed, so to rename a file, use `luk-rename-buffer-and-file' instead."
 ;; Display a big calendar with the calfw-package + org if available,
 ;; otherwise just use the built-in calendar.
 (defalias 'luk-show-calendar
-  (if (require 'calfw-org nil 'noerror)
-      #'cfw:open-org-calendar
+  (if (require 'calfw-org nil 'noerror) #'luk-cfw-show-calendar
     #'calendar))
-
 
 (defhydra luk-hydra (:hint nil
                            :foreign-keys warn
