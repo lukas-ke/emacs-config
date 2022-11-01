@@ -921,14 +921,14 @@ information."
   (message "Probably not a good idea"))
 
 (defun luk-org--capture-note-template ()
-  (concat "* %t %?\n"
-          ":properties:\n"
+  (concat "* %U %?\n"
+          ":PROPERTIES:\n"
           ;; TODO: Make these actual properties? Or other drawer name?
           ;; Or just make them part of a readable header?
-          "Filed: %U\n"
-          "At: " (format "%%F::%d\n" (line-number-at-pos (point)))
+          ":filed: %U\n"
+          ":at:     " (format "%%F::%d\n" (line-number-at-pos (point)))
           ;; TODO: Add repo info
-          ":end:\n"
+          ":END:\n"
 
           ;; Add region content if active
           (if (region-active-p)
@@ -937,12 +937,12 @@ information."
                  ;; TODO: More robust to do a search link?
                  ;; Maybe add temporary bookmarks too
                  (format "\n[[%%F::%d][%%f]]" (line-number-at-pos (point)))
-                 ;; TODO: Wrap in correct code tags based on source file
-                 "\n#+begin_example\n"
-                 ;; TODO: Deindent content
-                 (buffer-substring (region-beginning) (region-end))
-                 "\n#+end_example"))
-            "")))
+                 (format "\n#+begin_src %s\n" (string-remove-suffix "-mode" (symbol-name major-mode)))
+                 ;; TODO: Extend multiline region to beginning of line at both beginning, end
+                 ;; (For correct indentation)
+                 (luk/dedent-string (buffer-substring (region-beginning) (region-end)))
+                 "\n#+end_src"))
+            (format "\n[[%%F::%d][%%f]]\n" (line-number-at-pos (point))))))
 
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."

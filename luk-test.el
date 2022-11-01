@@ -334,7 +334,7 @@
              '("someFunc({1=\"word\""
                "someFunc({1=\"word\"}"
                "someFunc({1=\"word\"})")))))
-
+
 (ert-deftest luk-buffer-vc-status ()
   (let* ((test-repo-dir (concat (luk-test-get-out-dir) "luk-buffer-vc-status"))
          (file-1 (concat test-repo-dir "/file-1"))
@@ -363,3 +363,23 @@
       (should (equal (test-vc-status file-1) '(unmodified up-to-date)))
       (should (equal (test-vc-status file-2) '(unmodified added)))
       (should (equal (test-vc-status file-3) '(unmodified new))))))
+
+(ert-deftest luk-dedent-string ()
+  (cl-flet ((indent-should-be (s expected)
+                              (should (= (luk/common-indent s)
+                                         expected)))
+            (should-dedent-to
+             (input expected)
+             (should
+              (string=
+               (luk/dedent-string
+                input)
+               expected))))
+
+    (indent-should-be "abc" 0)
+    (indent-should-be " abc" 1)
+    (indent-should-be "aaa\n bbb" 0)
+
+    (should-dedent-to "abc" "abc")
+    (should-dedent-to "  aaa\nbbb\n" "  aaa\nbbb\n")
+    (should-dedent-to "   aa\n  bb\n    cc" " aa\nbb\n  cc")))
