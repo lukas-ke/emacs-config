@@ -503,8 +503,8 @@ modes (like `ido-mode') or falls back on `completing-read'
   (interactive)
   (setq luk-other (not luk-other))
   (if luk-other
-      (message "Some operatiokns will target other window")
-    (message "Some operation will target current window")))
+      (message "Some operations will target other window")
+    (message "Some operations will target current window")))
 
 (defun luk-find-file ()
   (interactive)
@@ -512,8 +512,19 @@ modes (like `ido-mode') or falls back on `completing-read'
       (call-interactively #'find-file-other-window)
     (call-interactively #'find-file)))
 
+(defun luk-switch-to-buffer ()
+  "Switch buffer, respecting luk-other and some extra things"
+  (interactive)
+  (if (or luk-other
+          (window-dedicated-p)
+          (string-prefix-p (buffer-name) "CAPTURE-"))
+      (call-interactively #'switch-to-buffer-other-window)
+
+    (call-interactively #'switch-to-buffer)))
+
 (global-set-key (kbd "C-x o") #'toggle-luk-other)
 (global-set-key (kbd "C-x C-f") #'luk-find-file)
+(global-set-key (kbd "C-x b") #'luk-switch-to-buffer)
 
 
 (provide 'luk-init)
