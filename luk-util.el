@@ -2,6 +2,9 @@
 
 (require 'image-file)
 
+
+;; Miscellaneous functions
+
 (defun 📂-up (&optional path n)
   "Get the N-th parent folder of PATH or `buffer-file-name'."
   (unless path (setq path (buffer-file-name)))
@@ -42,16 +45,48 @@ to, say, insert suitable boilerplate for that filetype."
 (defun luk/image-filename-p (filename)
   (-any (lambda (ext) (string-suffix-p (concat "." ext) filename)) image-file-name-extensions))
 
+(defun luk-find-git-repo (dir &optional noerror)
+  (cond ((not dir)
+         (if noerror
+             nil
+           (user-error "Not in a git repository")))
+        ((and (file-exists-p (expand-file-name ".git/" dir))) dir)
+        (t (luk-find-git-repo (📂-up dir) noerror))))
+
+(defun luk/buffer-vc-status ()
+  (interactive)
+  (let* ((file-name (buffer-file-name))
+         (exists (if file-name (file-exists-p file-name)))
+         (vc-dir (luk-find-git-repo default-directory 'noerror))
+         (state (if (and file-name vc-dir)
+                    (vc-state file-name)
+                  nil)))
+    (cond
+     ((not file-name) '(non-file not-versioned))
+     ((not vc-dir)
+      (cond ((not exists) '(missing not-versioned))
+            ((buffer-modified-p) '(modified not-versioned))
+            (t '(unmodified not-versioned))))
+     (state
+      (cond ((and (not exists) (eq state 'up-to-date))
+             '(missing deleted))
+            ;; TODO: Transform all states to a shorter set
+            (t (list (if (buffer-modified-p) 'modified 'unmodified) state))))
+     ((and file-name vc-dir exists) (list (if (buffer-modified-p) 'modified 'unmodified) 'new))
+     ((and file-name vc-dir) 'new-unsaved))))
+
+
+
 
 ;; luk-save macro
 
 (defun luk--get-save-symbol (other)
   (cond
-    ((eq other 'excursion) 'save-excursion)
-    ((eq other 'match-data) 'save-match-data)
-    ((eq other 'org-outline-visibility) 'org-save-outline-visibility)
-    ((eq other 'window-excursion) 'save-window-excursion)
-    (t (error "Unknown symbol"))))
+   ((eq other 'excursion) 'save-excursion)
+   ((eq other 'match-data) 'save-match-data)
+   ((eq other 'org-outline-visibility) 'org-save-outline-visibility)
+   ((eq other 'window-excursion) 'save-window-excursion)
+   (t (error "Unknown symbol"))))
 
 (defmacro luk-save (states &rest body)
   "Save each of the STATES; execute body; restore the STATES.

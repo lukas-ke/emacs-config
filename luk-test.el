@@ -23,6 +23,12 @@
 (defun luk-key-file (filename)
   (concat luk-test-data-dir "key-" filename))
 
+(defun luk-test-git (dir command &rest args)
+  (let ((default-directory dir))
+    (let ((result (apply #'call-process "git" nil "*luk-test-git*" nil command args)))
+      (when (/= result 0)
+        (error (format "Git error code %d" result))))))
+
 (defun luk-run-tests()
   (interactive)
   (ert "luk-"))
@@ -328,3 +334,25 @@
              '("someFunc({1=\"word\""
                "someFunc({1=\"word\"}"
                "someFunc({1=\"word\"})")))))
+
+(ert-deftest luk-buffer-vc-status ()
+  (let* ((test-repo-dir (concat (luk-test-get-out-dir) "luk-buffer-vc-status"))
+         (file-1 (concat test-repo-dir "/file-1"))
+         (file-2 (concat test-repo-dir "/file-2")))
+    ;; Initialize a git repository
+    (when(file-directory-p test-repo-dir)
+      (delete-directory test-repo-dir t nil))
+    (make-directory test-repo-dir)
+    (luk-test-git test-repo-dir "init")
+    (with-temp-buffer (insert "file-1\n") (write-file file-1))
+    (luk-test-git test-repo-dir "add" file-1)
+    (luk-test-git test-repo-dir "commit" "-m" "commit 1")
+
+    (with-temp-buffer (insert "file-2\n") (write-file file-2))
+
+    (with-current-buffer (find-file-noselect file-1)
+      (unwind-protect
+          (progn
+            (message "%s" (luk/buffer-vc-status))
+            (should (equal (luk/buffer-vc-status) '(unmodified up-to-date))))
+        (kill-current-buffer)))))
