@@ -26,7 +26,26 @@ the major mode, if known."
      (t (error "Generic string delimiter for %s unknown" major-mode))))
    (t (error "Unexpected delimiter type for %s" delimiter))))
 
-(defun luk-insert-closing-delimiter ()
+(defun luk--insert-one-delimiter ()
+  (let* ((ppss (syntax-ppss))
+         (open-paren-indexes (nth 9 ppss))
+         (in-string (nth 3 ppss)))
+    (cond (in-string
+           (insert (luk--opposite-string-delimiter in-string))
+           'closed-string)
+
+          (open-paren-indexes
+           (let ((delim (buffer-substring (car (last open-paren-indexes)) (+ 1 (car (last open-paren-indexes))))))
+             (insert (luk--opposite-delimiter delim))
+             'closed-paren))
+
+          (t 'already-closed))))
+
+(defun luk-insert-until-closed ()
+  (interactive)
+  (while (not (eq (luk--insert-one-delimiter) 'already-closed))))
+
+(defun luk-insert-closing-delimiter (arg)
   "Insert the closing delimiter for the last open delimiter at point.
 
 The delimiter may match {, (, [, \" and \\=' depending on which
@@ -34,16 +53,11 @@ syntax table is active (see `syntax-ppss').
 
 For example, in Python, when at the end of \"([{\", this would
 insert \"}\", and for successive invocations \"]\" then \")\"."
-  (interactive)
-  (let* ((ppss (syntax-ppss))
-         (open-paren-indexes (nth 9 ppss))
-         (in-string (nth 3 ppss)))
-    (if in-string
-        (insert (luk--opposite-string-delimiter in-string))
-      (if open-paren-indexes
-          (let ((delim (buffer-substring (car (last open-paren-indexes)) (+ 1 (car (last open-paren-indexes))))))
-            (insert (luk--opposite-delimiter delim))
-            (blink-matching-open))
-        (message "Everything closed.")))))
+  (interactive "P")
+  (if arg
+      (luk-insert-until-closed)
+    (cl-case (luk--insert-one-delimiter)
+      ('already-closed (message "Everything closed"))
+      ('closed-paren (blink-matching-open)))))
 
 (provide 'luk-insert-closing-delimiter)
