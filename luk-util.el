@@ -75,8 +75,6 @@ to, say, insert suitable boilerplate for that filetype."
      ((and file-name vc-dir exists) (list (if (buffer-modified-p) 'modified 'unmodified) 'new))
      ((and file-name vc-dir) 'new-unsaved))))
 
-
-
 
 ;; luk-save macro
 
@@ -193,4 +191,26 @@ VALUE should be a valid value for the specified enum."
     (nth (% (+ 1 (cl-position value values)) (length values))
          values)))
 
+
+;; luk/with-git
+(defun luk/git-command (command &rest args)
+  (let ((result (apply #'call-process "git" nil " *luk/git-command*" nil command args)))
+    (when (/= result 0)
+      (error (format "Git error code %d" result)))))
+
+
+(defmacro luk/with-git (repo-dir &rest body)
+  "Execute BODY in an environment with git-functions that target REPO-DIR.
+
+This macro enables the use of the functions init, add and commit,
+which operate in the folder REPO-DIR and call the corresponding
+commands in the git-executable."
+  '(declare (indent defun))
+  `(let ((default-directory ,repo-dir))
+     (cl-flet ((init () (luk/git-command "init"))
+               (add (&rest files) (apply #'luk/git-command "add" files))
+               (commit (message) (luk/git-command "commit" "-m" message)))
+       ,@body)))
+
+
 (provide 'luk-util)

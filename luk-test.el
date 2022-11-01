@@ -338,21 +338,28 @@
 (ert-deftest luk-buffer-vc-status ()
   (let* ((test-repo-dir (concat (luk-test-get-out-dir) "luk-buffer-vc-status"))
          (file-1 (concat test-repo-dir "/file-1"))
-         (file-2 (concat test-repo-dir "/file-2")))
-    ;; Initialize a git repository
-    (when(file-directory-p test-repo-dir)
-      (delete-directory test-repo-dir t nil))
-    (make-directory test-repo-dir)
-    (luk-test-git test-repo-dir "init")
-    (with-temp-buffer (insert "file-1\n") (write-file file-1))
-    (luk-test-git test-repo-dir "add" file-1)
-    (luk-test-git test-repo-dir "commit" "-m" "commit 1")
+         (file-2 (concat test-repo-dir "/file-2"))
+         (file-3 (concat test-repo-dir "/file-3")))
+    (cl-flet ((test-vc-status (path)
+                              (with-current-buffer (find-file-noselect path)
+                                (let ((result (luk/buffer-vc-status)))
+                                  (kill-current-buffer)
+                                  result))))
 
-    (with-temp-buffer (insert "file-2\n") (write-file file-2))
+      ;; Recreate folder for test repository
+      (when(file-directory-p test-repo-dir)
+        (delete-directory test-repo-dir t nil))
+      (make-directory test-repo-dir)
 
-    (with-current-buffer (find-file-noselect file-1)
-      (unwind-protect
-          (progn
-            (message "%s" (luk/buffer-vc-status))
-            (should (equal (luk/buffer-vc-status) '(unmodified up-to-date))))
-        (kill-current-buffer)))))
+      (luk/with-git test-repo-dir
+                    (init)
+                    (with-temp-buffer (insert "file-1\n") (write-file file-1))
+                    (add file-1)
+                    (commit "commit 1")
+                    (with-temp-buffer (insert "file-2\n") (write-file file-2))
+                    (add file-2)
+                    (with-temp-buffer (insert "file-3\n") (write-file file-3)))
+
+      (should (equal (test-vc-status file-1) '(unmodified up-to-date)))
+      (should (equal (test-vc-status file-2) '(unmodified added)))
+      (should (equal (test-vc-status file-3) '(unmodified new))))))

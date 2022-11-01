@@ -149,11 +149,12 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   (define-key vc-git-log-view-mode-map (kbd "<space>") #'log-view-toggle-entry-display))
 
 
-;; Commit mode: Tweaks for commit-message editing
+;; Tweaks for commit-message editing
 
 (with-eval-after-load 'git-commit
   (when (require 'orgalist nil 'noerror)
     (add-hook 'git-commit-setup-hook 'orgalist-mode)))
+
 
 
 (provide 'luk-magit)
