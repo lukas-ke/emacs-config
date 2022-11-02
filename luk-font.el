@@ -108,3 +108,34 @@
   (set-fontset-font t #xe2bc "Material Icons") ;; Attachment 
   )
 
+;; Font-selection function
+
+(defvar luk-font-candidates
+  (list
+   "Comic Sans Ms"
+   "Consolas"
+   "DejaVu Sans Mono"
+   "Lucida Calligraphy"
+   "Papyrus"
+   "Courier New"))
+
+(defun luk-select-default-font ()
+  (interactive)
+  (let ((font-candidates
+         (mapcar
+          (lambda (font-name) (propertize font-name 'face `(:family ,font-name)))
+          (-filter #'luk-font-available-p luk-font-candidates)
+          )))
+
+    (let ((selected-font
+           (completing-read
+            "Default font: "
+            font-candidates
+            nil
+            t)))
+      (set-text-properties 0 (length selected-font) nil selected-font)
+
+      (set-face-attribute
+       'default
+       nil
+       :family selected-font))))
