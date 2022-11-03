@@ -215,19 +215,13 @@ commands in the git-executable."
 (defun luk/common-indent (s)
   (let ((strings (split-string s "\n"))
         (min-spaces -1))
-    (message "Item: [%s]" s)
     (mapc
      (lambda (s)
-       (if (not (string-match "^[ ]+" s))
-           (progn
-             (message "No match in %s" s)
-             (setq min-spaces 0))
-         (if (or (= min-spaces -1)
-                 (< (match-end 0) min-spaces))
-             (progn
-               (message "Setting %s" (match-end 0))
-               (setq min-spaces (match-end 0)))
-           (message "Eh"))))
+       (when (not (string-match-p "^[[:blank:]]*$" s)) ;; Ignore blank lines
+         (if (not (string-match "^[ ]+" s))
+             (setq min-spaces 0)
+           (if (or (= min-spaces -1) (< (match-end 0) min-spaces))
+               (setq min-spaces (match-end 0))))))
      strings)
     (max min-spaces 0)))
 
@@ -239,14 +233,14 @@ that the relative indentation of each line is preserved, while
 shifting it so that the first non-whitespace characters on the
 least indented lines go in column 0"
   (let ((common-indent (luk/common-indent input)))
-    (message "[%s] common-indent: %d" input common-indent)
-
-
     (if (> common-indent 0)
         (string-join
          (let ((lines (split-string input "\n")))
            (mapcar
-            (lambda (s) (substring s common-indent))
+            (lambda (s)
+              (if (<= (length s) common-indent)
+                  s
+                (substring s common-indent)))
             lines))
          "\n")
       input)))

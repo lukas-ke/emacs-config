@@ -379,7 +379,9 @@
     (indent-should-be "abc" 0)
     (indent-should-be " abc" 1)
     (indent-should-be "aaa\n bbb" 0)
+    (indent-should-be "\n aaa\n bbb\n\n" 1)
 
     (should-dedent-to "abc" "abc")
     (should-dedent-to "  aaa\nbbb\n" "  aaa\nbbb\n")
-    (should-dedent-to "   aa\n  bb\n    cc" " aa\nbb\n  cc")))
+    (should-dedent-to "   aa\n  bb\n    cc" " aa\nbb\n  cc")
+    (should-dedent-to "\n aaa\n bbb\n\n" "\naaa\nbbb\n\n"))
