@@ -251,13 +251,10 @@ _q_: Quit"
 
 
 (defun luk-hydra-re-setup-shortcut ()
-  (define-key reb-mode-map (kbd "M-.") 'luk-hydra-re-builder/body)
   (define-key reb-mode-map (kbd "C-1") 'luk-hydra-re-builder-insert/body)
   (define-key reb-mode-map (kbd "C-2") 'luk-hydra-re-builder-char-class/body)
-  (define-key reb-mode-map (kbd "C-3") 'luk-hydra-re-boundary/body)
+  (define-key reb-mode-map (kbd "C-3") 'luk-hydra-re-boundary/body))
 
-  ;; The `reb-lisp-mode-map' is used instead of the `reb-mode-map'
-  ;; when using the rx-syntax
-  (define-key reb-lisp-mode-map (kbd "M-.") 'luk-hydra-re-builder/body))
+(add-hook 'reb-mode-hook (lambda () (setq luk-mode-hydra #'luk-hydra-re-builder/body)))
 
 (provide 'luk-re-builder-hydra)

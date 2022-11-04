@@ -58,8 +58,8 @@ _q_: Exit"
 
 (defun luk-lsp-hook ()
   'yas-minor-mode
-  (define-key lsp-mode-map (kbd "M-.") 'luk-lsp-file-hydra/body)
-  (define-key lsp-mode-map (kbd "M-,") 'luk-lsp-context-hydra/body) ;; WIP
+  (setq luk-mode-hydra #'luk-lsp-file-hydra/body)
+  (setq luk-context-hydra #'luk-lsp-context-hydra/body) ;; WIP: Need a function for context
   ;; TODO: Consider if region active etc., e.g. comment/uncomment region
   )
 

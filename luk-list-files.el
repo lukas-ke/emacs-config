@@ -29,7 +29,7 @@
   (setq buffer-read-only nil)
   (erase-buffer)
 
-  (insert "Recursive search results. Use M-. for menu\n")
+  (insert "Recursive search results. Use M-, for menu\n")
   (insert "Root: " LFD "\n")
   (when (not (= (length LFP) 0))
     (insert "RE:  " LFP "\n"))
@@ -65,7 +65,7 @@
                 (switch-to-buffer target-buffer nil t)
               (switch-to-buffer-other-window target-buffer))
             (luk-list-files-mode)
-
+            (setq luk-mode-hydra #'luk-list-files-hydra/body)
             (goto-char START)
             (message nil)))))))
 
@@ -154,7 +154,7 @@ C-RET:^^ Open and focus
 _q_:     Quit"
           (luk-caption "List files")
           (luk-caption "[.] for main menu"))
-  ("." (luk-hydra-push 'luk-list-files-summon-hydra "list-files") :exit t)
+  ("." (luk-hydra-push #'luk-list-files-hydra/body "list-files") :exit t)
   ("n" forward-line)
   ("<return>" luk--list-files-open-file-other-window-no-focus)
   ("<C-return>" luk--list-files-open-file-other-window :exit t)
@@ -162,13 +162,8 @@ _q_:     Quit"
   ("g" luk-list-files-repeat-search :exit t)
   ("q" nil :exit t))
 
-(defun luk-list-files-summon-hydra ()
-  (interactive)
-  (luk-list-files-hydra/body))
-
 (define-key luk-list-files-mode-map (kbd "n") #'forward-line)
 (define-key luk-list-files-mode-map (kbd "r") #'luk-list-files-rename)
 (define-key luk-list-files-mode-map (kbd "g") #'luk-list-files-repeat-search)
 (define-key luk-list-files-mode-map (kbd "q") #'kill-current-buffer)
 (define-key luk-list-files-mode-map (kbd "<C-return>") #'luk--list-files-open-file-other-window-no-focus)
-(define-key luk-list-files-mode-map (kbd "M-.") #'luk-list-files-summon-hydra)

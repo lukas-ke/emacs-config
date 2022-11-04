@@ -12,8 +12,19 @@
     (goto-char (point-min))
     (insert ";;; -*- coding: utf-8; lexical-binding: t -*-\n\n")))
 
+
+;; Context hydra
+(defun luk-elisp-show-context-hydra ()
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (if (functionp sym)
+        (luk-elisp-function-hydra/body)
+      (user-error (format "Context hydra: Not implemented for the %s's type" sym)))))
+
 (defun luk-elisp--hook()
   "Run luk-elisp-insert-boilerplate for new Emacs-lisp files."
+
+  (setq luk-context-hydra #'luk-elisp-show-context-hydra)
 
   (when (require 'company nil 'noerror)
     (company-mode))
@@ -43,17 +54,9 @@ _d_: describe function"
   ("d" (describe-function (symbol-at-point)) :exit t)
   ("q" nil :exit t))
 
-;; Context hydra
-(defun luk-elisp-context-hydra ()
-  (interactive)
-  (let ((sym (symbol-at-point)))
-    (cond ((functionp sym) (luk-elisp-function-hydra/body))
-           (t (luk-hydra/body)))))
-
 
 ;; Setup function
 (defun luk-elisp-setup ()
   (add-hook 'emacs-lisp-mode-hook 'luk-elisp--hook)
   (define-key emacs-lisp-mode-map (kbd "C-c g") 'xref-find-definitions-other-window)
-  (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
-  (define-key emacs-lisp-mode-map (kbd "M-.") 'luk-elisp-context-hydra))
+  (define-key emacs-lisp-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab))

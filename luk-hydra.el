@@ -153,6 +153,23 @@ and point is not at a file, fall-back to the
   (if (require 'calfw-org nil 'noerror) #'luk-cfw-show-calendar
     #'calendar))
 
+(defvar-local luk-context-hydra nil "Function to call from `luk-show-context-hydra'")
+
+(defun luk-show-context-hydra ()
+  (interactive)
+  (if (fboundp luk-context-hydra)
+      (funcall luk-context-hydra)
+    (message "No context hydra available")))
+
+(defvar-local luk-mode-hydra nil "Function to call from `luk-show-mode-hydra'")
+
+
+(defun luk-show-mode-hydra ()
+  (interactive)
+  (if (fboundp luk-mode-hydra)
+      (funcall luk-mode-hydra)
+    (message "No mode hydra available")))
+
 (defhydra luk-hydra (:hint nil
                            :foreign-keys warn
                            :pre (setq hydra-amaranth-warn-message "Invalid key.")

@@ -327,6 +327,9 @@ find the Python interpreter for running the script."
   (setq luk-should-trim-whitespace nil)
   (add-hook 'before-save-hook 'luk-org-delete-trailing-whitespace nil 'make-local)
 
+  (setq luk-mode-hydra #'luk-org-hydra/body)
+  (setq luk-context-hydra #'luk-org-context-hydra)
+
   (when (luk-new-file-buffer-p)
     (luk-org-insert-boilerplate)))
 
@@ -963,13 +966,15 @@ information."
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."
   ;;; Keys
+
   (define-key org-mode-map (kbd "C-c g") 'org-open-at-point)
   (define-key org-mode-map (kbd "C-c a") 'org-agenda)
   (define-key org-mode-map (kbd "<f6>") 'luk-org-toggle-display)
-  (define-key org-mode-map (kbd "M-.") #'luk-org-hydra/body)
   (define-key org-mode-map (kbd "C-c l") 'org-store-link)
   (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
-  (define-key org-mode-map (kbd "M-,") 'luk-org-context-hydra)
+
+  ;; Unset cycle agenda files (I use this key for mode hydra menus instead)
+  (define-key org-mode-map (kbd "C-,") nil)
 
   (when luk-org-calfw-available
     (define-key org-agenda-mode-map (kbd "c") #'luk-org-agenda-goto-cfw-calendar))

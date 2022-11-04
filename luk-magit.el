@@ -126,13 +126,9 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 (with-eval-after-load 'magit
   ;; Alternative to q for revision buffers (blobs)
-  (define-key magit-blob-mode-map (kbd "k") #'magit-kill-this-buffer)
+  (define-key magit-blob-mode-map (kbd "k") #'magit-kill-this-buffer))
 
-  ;; Hydra for commit messages
-  (define-key git-commit-mode-map (kbd "M-.") #'luk-git-commit-hydra/body))
-
-(with-eval-after-load 'smerge-mode
-  (define-key smerge-mode-map (kbd "M-.") #'luk-smerge-hydra/body))
+(add-hook 'smerge-mode-hook (lambda () (setq luk-mode-hydra #'luk-smerge-hydra/body)))
 
 (with-eval-after-load 'vc-git
   ;; For `vc-log-outgoing' and related. This is faster for skimming
@@ -150,10 +146,13 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 
 ;; Tweaks for commit-message editing
+(defun luk-commit-setup ()
+  (setq luk-mode-hydra #'luk-git-commit-hydra/body))
 
 (with-eval-after-load 'git-commit
+  (add-hook 'git-commit-setup-hook #'luk-commit-setup)
   (when (require 'orgalist nil 'noerror)
-    (add-hook 'git-commit-setup-hook 'orgalist-mode)))
+    (add-hook 'git-commit-setup-hook #'orgalist-mode)))
 
 
 
