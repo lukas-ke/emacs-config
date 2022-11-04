@@ -111,8 +111,23 @@
 (require 'luk-find-file-in-git-repo)
 (global-set-key (kbd "C-x f") 'luk-find-file-in-git-repo)
 
-;; Smart space removal with cycled restore on M-<space>
-(global-set-key (kbd "M-SPC") #'cycle-spacing)
+(if (not (require 'expand-region nil 'noerror))
+    (global-set-key (kbd "M-SPC" #'cycle-spacing))
+
+  (defun luk-expand-region-or-cycle-spacing ()
+    "Cycle spacing if at space, expand region otherwise."
+    (interactive)
+    (if (equal last-command 'cycle-spacing)
+        (progn
+          (setq this-command 'cycle-spacing)
+          (cycle-spacing))
+      (if (string= " " (buffer-substring-no-properties (point) (+ 1 (point))))
+          (progn
+            (message "At space")
+            (setq this-command 'cycle-spacing)
+            (cycle-spacing))
+        (er/expand-region 1))))
+  (global-set-key (kbd "M-SPC") #'luk-expand-region-or-cycle-spacing))
 
 (global-set-key [(meta return)] 'toggle-frame-fullscreen)
 
