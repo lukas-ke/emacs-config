@@ -6,8 +6,13 @@
 (require 'org-id)
 (require 'luk-hydra)
 (require 'luk-util)
+(require 'luk-calfw)
 (require 'calendar)
 (require 'appt)
+(setq luk-org-calfw-available
+      (if (require 'calfw-org nil 'noerror)
+          t
+        nil))
 
 (defgroup luk-org nil "Variables for luk-org.")
 
@@ -98,6 +103,17 @@ call `org-entities-help for the org documentation."
 
 
 ;; Misc utils
+
+(defun luk-org-agenda-goto-cfw-calendar ()
+  "Open the calendar from the calfw package with an org-agenda-date."
+  (interactive)
+  (org-agenda-check-type t 'agenda)
+  (let* ((day (or (get-text-property (min (1- (point-max)) (point)) 'day)
+		  (user-error "Don't know which date to open in calendar")))
+	 (date (calendar-gregorian-from-absolute day)))
+    (cfw:open-org-calendar)
+    (with-current-buffer "*cfw-calendar*"
+      (cfw:navi-goto-date date))))
 
 (defun luk-org-refresh-appointments ()
   "Reinitialize `appt-time-msg-list' from agenda"
@@ -954,6 +970,9 @@ information."
   (define-key org-mode-map (kbd "C-c l") 'org-store-link)
   (define-key org-mode-map (kbd "<tab>") 'luk-tab-complete-smart-tab)
   (define-key org-mode-map (kbd "M-,") 'luk-org-context-hydra)
+
+  (when luk-org-calfw-available
+    (define-key org-agenda-mode-map (kbd "c") #'luk-org-agenda-goto-cfw-calendar))
 
   ;; Prevent killing a capture buffer with C-x k (possibly leaving a
   ;; half-written-capture in the target file)

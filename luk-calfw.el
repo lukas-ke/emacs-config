@@ -82,6 +82,7 @@ figure out a date on its own or if the date is provided by cfw.
 (defun luk-cfw-show-calendar ()
   (interactive)
   (when (not org-todo-keywords-for-agenda)
+    ;; Open the agenda to avoid a warning from cfw
     (save-excursion (org-agenda-list)))
   (cfw:open-org-calendar))
 
