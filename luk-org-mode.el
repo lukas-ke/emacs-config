@@ -235,7 +235,7 @@ find the Python interpreter for running the script."
   (interactive)
   (when (not luk-org-python-command)
     (user-error "Error: luk-org-python-command not set!"))
-  (when (not (eq major-mode 'org-mode))
+  (when (not (derived-mode-p 'org-mode))
     (user-error "Error: This function can only be used in org-mode!"))
 
   ;; Create an org-attachment folder for the current node

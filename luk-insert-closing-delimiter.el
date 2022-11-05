@@ -21,8 +21,8 @@ the major mode, if known."
    ((characterp delimiter) (make-string 1 delimiter))
    ((and (booleanp delimiter) delimiter)
     (cond
-     ((eq major-mode 'lua-mode) "]]")
-     ((eq major-mode 'python-mode) "\"\"\"")
+     ((derived-mode-p 'lua-mode) "]]")
+     ((derived-mode-p 'python-mode) "\"\"\"")
      (t (error "Generic string delimiter for %s unknown" major-mode))))
    (t (error "Unexpected delimiter type for %s" delimiter))))
 
