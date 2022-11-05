@@ -10,6 +10,7 @@
 (require 'luk-util)
 (require 'luk-diff) ;; for luk-view-changes
 (require 'luk-calfw)
+(require 'perfect-margin)
 (require 'hungry-delete)
 
 (defgroup luk-hydra-faces nil "Faces for my hydra menus")
@@ -172,7 +173,7 @@ and point is not at a file, fall-back to the
 
 (defhydra luk-hydra (:hint nil
                            :foreign-keys warn
-                           :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                           :pre (setq hydra-amaranth-warn-message "Invalid key (Main hydra)")
                            :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 %s^^^^^^^^^^^^     │ %s^^^^^             │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
@@ -252,7 +253,7 @@ _q_: %s"
 
 (defhydra luk-hydra-window (:hint nil :exit nil
                                   :foreign-keys warn
-                                  :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                  :pre (setq hydra-amaranth-warn-message "Invalid key (Window hydra)")
                                   :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
 Window select: arrows                            ^^^^^^│ In Window, Page _8_: Backward _9_: Forward    _q_ to quit
@@ -286,18 +287,26 @@ Window select: arrows                            ^^^^^^│ In Window, Page _8_: 
   ("<return>" nil :exit t)
   ("q" nil :exit t))
 
-(defhydra luk-settings-hydra (:hint nil)
+(defhydra luk-settings-hydra (:hint nil
+                                    :exit nil
+                                    :foreign-keys warn
+                                    :pre (setq hydra-amaranth-warn-message "Invalid key (Settings hydra)")
+                                    :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
-_e q_ Electric quote mode     %-3s`electric-quote-mode
-_e i_ Electric indent mode    %-3s`electric-indent-mode
-_e p_ Electric pair mode      %-3s`electric-pair-mode
-_h_   Hungry delete mode      %-3s`hungry-delete-mode
-_f_   Fido mode               %-3s`fido-mode"
+_e q_ Electric quote     %-3s`electric-quote-mode
+_e i_ Electric indent    %-3s`electric-indent-mode
+_e p_ Electric pair      %-3s`electric-pair-mode
+_h_   Hungry delete      %-3s`hungry-delete-mode
+_f_   Fido               %-3s`fido-mode
+_m_   Perfect margin     %-3s`perfect-margin-mode
+"
   ("e q" #'electric-quote-mode)
   ("e i" #'electric-indent-mode)
   ("e p" #'electric-pair-mode)
   ("h" #'hungry-delete-mode)
-  ("f" #'fido-mode))
+  ("f" #'fido-mode)
+  ("m" #'perfect-margin-mode)
+  ("q" nil :exit t))
 
 (defun luk-show-window-hydra ()
   (interactive)
