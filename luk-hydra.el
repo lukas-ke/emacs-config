@@ -10,6 +10,7 @@
 (require 'luk-util)
 (require 'luk-diff) ;; for luk-view-changes
 (require 'luk-calfw)
+(require 'hungry-delete)
 
 (defgroup luk-hydra-faces nil "Faces for my hydra menus")
 
@@ -163,7 +164,6 @@ and point is not at a file, fall-back to the
 
 (defvar-local luk-mode-hydra nil "Function to call from `luk-show-mode-hydra'")
 
-
 (defun luk-show-mode-hydra ()
   (interactive)
   (if (fboundp luk-mode-hydra)
@@ -285,6 +285,19 @@ Window select: arrows                            ^^^^^^│ In Window, Page _8_: 
   ("s" (next-buffer))
   ("<return>" nil :exit t)
   ("q" nil :exit t))
+
+(defhydra luk-settings-hydra (:hint nil)
+  "
+_e q_ Electric quote mode     %-3s`electric-quote-mode
+_e i_ Electric indent mode    %-3s`electric-indent-mode
+_e p_ Electric pair mode      %-3s`electric-pair-mode
+_h_   Hungry delete mode      %-3s`hungry-delete-mode
+_f_   Fido mode               %-3s`fido-mode"
+  ("e q" #'electric-quote-mode)
+  ("e i" #'electric-indent-mode)
+  ("e p" #'electric-pair-mode)
+  ("h" #'hungry-delete-mode)
+  ("f" #'fido-mode))
 
 (defun luk-show-window-hydra ()
   (interactive)

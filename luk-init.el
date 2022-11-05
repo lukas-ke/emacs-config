@@ -261,6 +261,7 @@
 (global-set-key (kbd "M-,") #'luk-show-mode-hydra)
 (global-set-key (kbd "M--") #'luk-show-context-hydra)
 (global-set-key (kbd "C-,") #'luk-show-window-hydra)
+(global-set-key (kbd "M-ö") #'luk-settings-hydra/body)
 
 (require 'luk-mode-line)
 (luk-mode-line-setup)
