@@ -14,7 +14,11 @@
 
 
 ;; Mode hydra
-(defhydra luk-elisp-mode-hydra (:hint nil :foreign-keys warn :exit nil)
+(defhydra luk-elisp-mode-hydra (:hint nil
+                                      :foreign-keys warn
+                                      :exit nil
+                                      :pre (setq hydra-amaranth-warn-message "Invalid key (Lisp hydra)")
+                                      :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
 _f_ Flycheck mode %-3s`flycheck-mode
 _e_ Flycheck errors
@@ -53,7 +57,10 @@ _q_ Quit"
     (forward-line)))
 
 
-(defhydra luk-elisp-function-hydra (:hint nil :foreign-keys warn)
+(defhydra luk-elisp-function-hydra (:hint nil
+                                          :foreign-keys warn
+                                          :pre (setq hydra-amaranth-warn-message "Invalid key (Elisp function hydra)")
+                                          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s %%-30(symbol-at-point)^^^^^^^^^^^^^^ _._: up
 ^─^───────────────────────────────────────────────────

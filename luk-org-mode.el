@@ -361,7 +361,7 @@ find the Python interpreter for running the script."
 
 (defhydra luk-org-hydra (:hint nil
                                :foreign-keys warn
-                               :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                               :pre (setq hydra-amaranth-warn-message "Invalid key (org hydra)")
                                :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -568,7 +568,7 @@ return 'overview."
 
 (defhydra luk-org-link-hydra (:hint nil
                                     :foreign-keys warn
-                                    :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                    :pre (setq hydra-amaranth-warn-message "Invalid key (org link hydra)")
                                     :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -622,7 +622,7 @@ _q_: quit"
 
 (defhydra luk-org-image-link-hydra (:hint nil
                                           :foreign-keys warn
-                                          :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                          :pre (setq hydra-amaranth-warn-message "Invalid key (Image link hydra)")
                                           :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -650,7 +650,7 @@ _q_: quit"
 
 (defhydra luk-org-table-hydra (:hint nil
                                      :foreign-keys warn
-                                     :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                     :pre (setq hydra-amaranth-warn-message "Invalid key (org table hydra)")
                                      :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -813,7 +813,7 @@ INSTANCE should be an unquoted enum-instance."
 
 (defhydra luk-org-startup-hydra (:hint nil
                                        :foreign-keys warn
-                                       :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                       :pre (setq hydra-amaranth-warn-message "Invalid key (org startup hydra)")
                                        :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -838,7 +838,7 @@ _o_: Ok  _c_: Cancel"
 
 (defhydra luk-org-timestamp-hydra (:hint nil
                                          :foreign-keys warn
-                                         :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                                         :pre (setq hydra-amaranth-warn-message "Invalid key (org timestamp hydra)")
                                          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up

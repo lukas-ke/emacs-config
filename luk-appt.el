@@ -295,7 +295,7 @@ sMinutes before the appointment to start warning: ")
 ;; like a menu option
 ;; TODO: Don't insert luk-appt-next-str line if blank
 (defhydra luk-appt-hydra (:hint nil :foreign-keys warn
-                                :pre (setq hydra-amaranth-warn-message "Invalid key for luk-appt-setup.")
+                                :pre (setq hydra-amaranth-warn-message "Invalid key (Appt hydra)")
                                 :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 %s

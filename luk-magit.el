@@ -60,7 +60,7 @@ for the ongoing commit."
 
 (defhydra luk-git-commit-hydra (:hint nil
                                :foreign-keys warn
-                               :pre (setq hydra-amaranth-warn-message "Invalid key.")
+                               :pre (setq hydra-amaranth-warn-message "Invalid key (git commit hydra)")
                                :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 Main ➤ %s      _._: up
@@ -88,7 +88,7 @@ _q_ Close menu
 (defhydra luk-smerge-hydra
   (:hint nil
          :foreign-keys warn
-         :pre (setq hydra-amaranth-warn-message "Invalid key.")
+         :pre (setq hydra-amaranth-warn-message "Invalid key (SMerge hydra)")
          :post (smerge-auto-leave))
     "
 ^Move^       ^Keep^               ^Diff^                 ^Other^

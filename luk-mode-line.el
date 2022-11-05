@@ -278,7 +278,7 @@ TODO: Work in progress."
 (defhydra luk-mode-line-hydra
   (:hint nil
          :foreign-keys warn
-         :pre (setq hydra-amaranth-warn-message "Invalid key (luk-mode-line hydra)")
+         :pre (setq hydra-amaranth-warn-message "Invalid key (Mode line hydra)")
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message)
          :exit nil)
   (format "%s

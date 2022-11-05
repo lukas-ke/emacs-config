@@ -121,7 +121,7 @@ theme-symbol, with prefix \"luk-post\", for example
 (defhydra luk-hydra-theme
   (:hint nil :exit nil
          :foreign-keys warn
-         :pre (setq hydra-amaranth-warn-message "Invalid key.")
+         :pre (setq hydra-amaranth-warn-message "Invalid key (theme hydra)")
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
 %s

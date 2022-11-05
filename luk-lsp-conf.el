@@ -6,7 +6,10 @@
     (lsp)))
 
 ;; WIP
-(defhydra luk-lsp-context-hydra (:hint nil :foreign-keys warn :exit nil)
+(defhydra luk-lsp-context-hydra (:hint nil
+                                       :foreign-keys warn :exit nil
+                                       :pre (setq hydra-amaranth-warn-message "Invalid key (lsp context hydra)")
+                                       :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
 _g_: Find definition
 _f_: Find references
@@ -28,7 +31,7 @@ _q_: Exit
   (:hint nil
          :foreign-keys warn
          :exit nil
-         :pre (setq hydra-amaranth-warn-message "Invalid key (luk-lsp-file-hydra)")
+         :pre (setq hydra-amaranth-warn-message "Invalid key (lsp file hydra)")
          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
 Show^^                   Toggle                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^Treemacs
