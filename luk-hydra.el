@@ -155,6 +155,18 @@ and point is not at a file, fall-back to the
   (if (require 'calfw-org nil 'noerror) #'luk-cfw-show-calendar
     #'calendar))
 
+(defmacro luk/def-context-hydra (name pretty-name &optional docstring &rest heads)
+  "Streamline creation of my Context-hydras"
+  (declare (indent defun) (doc-string 2))
+  `(defhydra ,name
+     (:hint nil
+            :pre (setq hydra-amaranth-warn-message ,(format "Invalid key (%s menu)" pretty-name))
+            :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message)
+            :exit nil
+            :foreign-keys warn)
+     ,docstring
+     ,@heads))
+
 (defvar-local luk-context-hydra nil "Function to call from `luk-show-context-hydra'")
 
 (defun luk-show-context-hydra ()

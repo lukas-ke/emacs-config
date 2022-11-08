@@ -57,17 +57,12 @@ _q_ Quit"
     (forward-line)))
 
 
-(defhydra luk-elisp-function-hydra (:hint nil
-                                          :foreign-keys warn
-                                          :pre (setq hydra-amaranth-warn-message "Invalid key (Elisp function hydra)")
-                                          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s %%-30(symbol-at-point)^^^^^^^^^^^^^^ _._: up
+(luk/def-context-hydra luk-elisp-function-hydra "Elisp function"
+  "
+Main ➤ %s(luk-caption \"function\") %-30(symbol-at-point)
 ^─^───────────────────────────────────────────────────
 _g_: find definitions _G_: other window
 _d_: describe function"
-          (luk-caption "function"))
-  ("." (luk-hydra-push 'luk-org-hydra/body "org") :exit t)
   ("g" xref-find-definitions :exit t)
   ("G" xref-find-definitions-other-window :exit t)
   ("d" (describe-function (symbol-at-point)) :exit t)

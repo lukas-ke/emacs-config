@@ -5,11 +5,7 @@
   (when (buffer-file-name)
     (lsp)))
 
-;; WIP
-(defhydra luk-lsp-context-hydra (:hint nil
-                                       :foreign-keys warn :exit nil
-                                       :pre (setq hydra-amaranth-warn-message "Invalid key (lsp context hydra)")
-                                       :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
+(luk/def-context-hydra luk-lsp-context-hydra "LSP"
   "
 _g_: Find definition
 _f_: Find references

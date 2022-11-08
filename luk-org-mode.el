@@ -566,19 +566,14 @@ return 'overview."
       (forward-line 1)
       (org-redisplay-inline-images))))
 
-(defhydra luk-org-link-hydra (:hint nil
-                                    :foreign-keys warn
-                                    :pre (setq hydra-amaranth-warn-message "Invalid key (org link hydra)")
-                                    :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s      _._: up
+(luk/def-context-hydra luk-org-link-hydra "Org Link"
+"
+Main ➤ %s(luk-caption \"Org Link\")
 ^─^──────────────────────────
-_e_: edit
-_d_: delete
-_m_: copy markdown
-_q_: quit"
-          (luk-caption "Org Link"))
-  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
+_e_ edit
+_d_ delete
+_m_ copy markdown
+_q_ quit"
   ("d" (luk-org-delete-context-element) :exit t)
   ("e" (luk-org-link-element-edit) :exit t)
   ("m" (luk-org-link-element-copy-markdown) :exit t)
@@ -620,24 +615,19 @@ _q_: quit"
       (delete-other-windows)
       (message "Use q to go back"))))
 
-(defhydra luk-org-image-link-hydra (:hint nil
-                                          :foreign-keys warn
-                                          :pre (setq hydra-amaranth-warn-message "Invalid key (Image link hydra)")
-                                          :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s      _._: up
+(luk/def-context-hydra luk-org-image-link-hydra "Org Image"
+  "
+Main ➤ %s(luk-caption \"Org Image\")
 ^─^──────────────────────────
-_e_: edit link
-_E_: edit image in external editor
-_w_: Set width
-_W_: wrap in drawer
-_v_: View
-_d_: delete
-_m_: copy markdown
-_c_: copy to clipboard
-_q_: quit"
-          (luk-caption "Org Image"))
-  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
+_e_ edit link
+_E_ open in external editor
+_w_ set width
+_W_ wrap in drawer
+_v_ view
+_d_ delete
+_m_ copy markdown
+_c_ copy to clipboard
+_q_ quit"
   ("d" (luk-org-delete-image) :exit t)
   ("e" (luk-org-link-element-edit) :exit t)
   ("w" (luk-org-set-image-width) :exit t)
@@ -648,20 +638,15 @@ _q_: quit"
   ("c" (luk-org-copy-image-to-clipboard) :exit t)
   ("q" nil :exit t))
 
-(defhydra luk-org-table-hydra (:hint nil
-                                     :foreign-keys warn
-                                     :pre (setq hydra-amaranth-warn-message "Invalid key (org table hydra)")
-                                     :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s      _._: up
+(luk/def-context-hydra luk-org-table-hydra "Org Table"
+"
+Main ➤ %s(luk-caption \"Org Table\")
 ^─^──────────────────────────
 _a_: align       _←_: Move column left   _k r_: kill row       _i r_: insert row
 _e_: edit field  _→_: Move column right  _k c_: delete column  _i c_: insert column
 _c_: convert     _↑_: Move row up        ^   ^                 _i l_: insert line
 ^ ^              _↓_: Move row down      ^   ^
 _q_: quit"
-          (luk-caption "Table"))
-  ("." (luk-hydra-push 'luk-org-link-hydra/body "org") :exit t)
   ("a" (org-table-align) :exit t)
   ("c" (org-table-convert) :exit t)
   ("e" (call-interactively #'org-table-edit-field) :exit t)
@@ -811,21 +796,16 @@ INSTANCE should be an unquoted enum-instance."
   "True if `luk-org--context-key' appears to be an image link."
   (luk/image-filename-p (luk-org--context-key :path)))
 
-(defhydra luk-org-startup-hydra (:hint nil
-                                       :foreign-keys warn
-                                       :pre (setq hydra-amaranth-warn-message "Invalid key (org startup hydra)")
-                                       :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s      _._: up
+(luk/def-context-hydra luk-org-startup-hydra "Org Startup"
+"
+Main ➤ %s(luk-caption \"Org Keyword: STARTUP\")
 ^─^──────────────────────────
-_i_: Indentation: %%s(luk-org-enum-string luk-org--indent)
-_v_: Visibility: %%s(luk-org-enum-string luk-org--visibility)
-_n_: Numeration: %%s(luk-org-enum-string luk-org--numeration)
-_R_: Restore startup visibility.
+_i_ Indentation: %s(luk-org-enum-string luk-org--indent)
+_v_ Visibility: %s(luk-org-enum-string luk-org--visibility)
+_n_ Numeration: %s(luk-org-enum-string luk-org--numeration)
+_R_ Restore startup visibility.
 
-_o_: Ok  _c_: Cancel"
-          (luk-caption "Org Keyword: STARTUP"))
-  ("." (luk-hydra-push 'luk-org-startup-hydra/body "org-startup") :exit t)
+_o_ Ok  _c_ Cancel"
   ("i" (luk-org--cycle-enum 'luk-org--indent luk-org--indent))
   ("v" (luk-org--cycle-enum 'luk-org--visibility luk-org--visibility))
   ("n" (luk-org--cycle-enum 'luk-org--numeration luk-org--numeration))
@@ -836,19 +816,14 @@ _o_: Ok  _c_: Cancel"
   ("<escape>" (luk-org--startup-cancel) :exit t)
   ("c" (luk-org--startup-cancel) :exit t))
 
-(defhydra luk-org-timestamp-hydra (:hint nil
-                                         :foreign-keys warn
-                                         :pre (setq hydra-amaranth-warn-message "Invalid key (org timestamp hydra)")
-                                         :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
-  (format "\
-Main ➤ %s      _._: up
+(luk/def-context-hydra luk-org-timestamp-hydra "Org Timestamp"
+  "
+Main ➤ %s(luk-caption \"Org Keyword: Timestamp\")
 ^─^──────────────────────────
-_t_: Type: %% -28`luk-org--timestamp-type
-_s_: Select in calendar
-_n_: Set to today
-_q_: Quit"
-          (luk-caption "Org Keyword: Timestamp"))
-  ("." (luk-hydra-push 'luk-org-timestamp-hydra/body "org") :exit t)
+_t_ Type: %-28`luk-org--timestamp-type
+_s_ Select in calendar
+_n_ Set to today
+_q_ Quit"
   ("t" (luk-org--timestamp-cycle-type))
   ("n" (luk-org--timestamp-set-today))
   ("s" (luk-org--timestamp-select-calendar) :exit t)
