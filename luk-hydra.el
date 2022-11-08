@@ -176,19 +176,19 @@ and point is not at a file, fall-back to the
                            :pre (setq hydra-amaranth-warn-message "Invalid key (Main hydra)")
                            :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   (format "\
-%s^^^^^^^^^^^^     │ %s^^^^^             │ %s^^^^^^^^^      │ %s^^^^^^              │ %s^^^^              │ %s
-^─^────────────────┼─^─^─────────────────┼─^───^────────────┼─^─^───────────────────┼─^───^───────────────┼─────────────────────
-_t_: treemacs      │ _l_: find files     │ _b a_ set        │ _M_ menu bar toggle   │ _v c_ Calendar      │ _c t_ Todo
-_e_: explorer here │ _f_: .. in files    │ _b l_ list       │ _m_ menu bar open     │ _v a_ Week agenda   │ _c b_ Bookmark
-_R_: rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _S_ scroll bar toggle │ _v t_ Todo list     │ _c m_ Memo
-_D_: delete        │ _C-x f_ in git repo │ _b J_ jump other │ _T_ select theme..    │ _v A_ Agenda choice │ _c w_ Waiting
-_C_: copy path     │ ^ ^                 │ ^   ^            │ _o_ Mode line..       │ _g_ magit status    │ _c l_ Goto last
-_d_: view changes  │ ^ ^                 │ ^   ^            │ _a_ Appointments..    │ _r_ region menu     │ _c c_ Pick template
-_q_: %s"
+%s^^^^^^^^^^^^    │ %s^^^^^             │ %s^^^^^^^^^      │ %s^^^^             │ %s^^^^              │ %s
+^─^───────────────┼─^─^─────────────────┼─^───^────────────┼─^─^────────────────┼─^───^───────────────┼─────────────────────
+_t_ treemacs      │ _l_ find files      │ _b a_ set        │ _g_ magit status   │ _v c_ Calendar      │ _c t_ Todo
+_e_ explorer here │ _f_ .. in files     │ _b l_ list       │ _r_ region menu…   │ _v a_ Week agenda   │ _c b_ Bookmark
+_R_ rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _m_ menu bar open… │ _v t_ Todo list     │ _c m_ Memo
+_D_ delete        │ _C-x f_ in git repo │ _b J_ jump other │ ^ ^                │ _v A_ Agenda choice │ _c w_ Waiting
+_C_ copy path     │ ^ ^                 │ ^   ^            │ ^ ^                │ _a_   Appointments… │ _c l_ Goto last
+_d_ view changes  │ ^ ^                 │ ^   ^            │ ^ ^                │ ^ ^                 │ _c c_ Pick template
+_q_ quit          │ ^ ^                 │ ^   ^            │ ^ ^                │ ^ ^                 │"
           (luk-caption "Current File")
           (luk-caption "Files")
           (luk-caption "Bookmarks")
-          (luk-caption "Window")
+          (luk-caption "More")
           (luk-caption "View")
           (luk-caption "Capture")
           "%s(luk-pop-hydra-str)")
@@ -213,11 +213,7 @@ _q_: %s"
   ("b J" bookmark-jump-other-window :exit t)
 
   ;; Window
-  ("M" menu-bar-mode :exit nil)
   ("m" menu-bar-open :exit t)
-  ("S" scroll-bar-mode :exit nil)
-  ("T" luk-hydra-theme/body :exit t)
-  ("o" luk-mode-line-hydra/body :exit t)
   ("a" luk-appt-hydra/body :exit t)
 
   ;; View
@@ -236,7 +232,7 @@ _q_: %s"
   ("c w" (org-capture nil "w") :exit t)
   ("c l" org-capture-goto-last-stored :exit t)
   ("C-x C-r" #'luk-recentf-open :exit t)
-  ("C-x f" #'find-file-in-git-repo :exit t)
+  ("C-x f" #'luk-find-file-in-git-repo :exit t)
   ("q" luk-hydra-pop :exit t))
 
 (defun luk-hydra-summon ()
@@ -287,18 +283,27 @@ Window select: arrows                            ^^^^^^│ In Window, Page _8_: 
   ("<return>" nil :exit t)
   ("q" nil :exit t))
 
+(defun luk-scroll-bar-mode ()
+  "scroll-bar-mode is nil, 'right or 'left.
+
+I don't care about 'left, so turn it into t or nil for the
+luk-settings-hydra's formatting"
+  (not (eq scroll-bar-mode nil)))
+
 (defhydra luk-settings-hydra (:hint nil
                                     :exit nil
                                     :foreign-keys warn
                                     :pre (setq hydra-amaranth-warn-message "Invalid key (Settings hydra)")
                                     :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
   "
-_e q_ Electric quote     %-3s`electric-quote-mode
-_e i_ Electric indent    %-3s`electric-indent-mode
-_e p_ Electric pair      %-3s`electric-pair-mode
-_h_   Hungry delete      %-3s`hungry-delete-mode
-_f_   Fido               %-3s`fido-mode
-_m_   Perfect margin     %-3s`perfect-margin-mode
+%s(luk-caption \"Editing\")                        %s(luk-caption \"UI\")                %s(luk-caption \"More\")
+_e q_ Electric quote       %-3s`electric-quote-mode^   _s_ Scrollbars %-3s(luk-scroll-bar-mode)  _t_ Theme…
+_e i_ Electric indent      %-3s`electric-indent-mode   _M_ Menu bar   %-3s`menu-bar-mode^^  _o_ Mode line…
+_e p_ Electric pair        %-3s`electric-pair-mode^^
+_h_   Hungry delete        %-3s`hungry-delete-mode^^
+_f_   Fido                 %-3s`fido-mode^^^^^^^^^^^
+_m_   Perfect margin       %-3s`perfect-margin-mode^
+_r_   Recursive minibuffer %-3s`enable-recursive-minibuffers
 "
   ("e q" #'electric-quote-mode)
   ("e i" #'electric-indent-mode)
@@ -306,6 +311,11 @@ _m_   Perfect margin     %-3s`perfect-margin-mode
   ("h" #'hungry-delete-mode)
   ("f" #'fido-mode)
   ("m" #'perfect-margin-mode)
+  ("r" (setq enable-recursive-minibuffers (not enable-recursive-minibuffers)))
+  ("s" #'scroll-bar-mode)
+  ("M" #'menu-bar-mode)
+  ("t" #'luk-hydra-theme/body :exit t)
+  ("o" #'luk-mode-line-hydra/body :exit t)
   ("q" nil :exit t))
 
 (defun luk-show-window-hydra ()
