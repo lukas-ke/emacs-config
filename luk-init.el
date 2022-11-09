@@ -544,5 +544,8 @@ modes (like `ido-mode') or falls back on `completing-read'
 (global-set-key (kbd "C-x C-f") #'luk-find-file)
 (global-set-key (kbd "C-x b") #'luk-switch-to-buffer)
 
+(require 'luk-help-mode)
+(luk-help-mode-setup)
+
 
 (provide 'luk-init)
