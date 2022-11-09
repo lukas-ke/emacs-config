@@ -219,7 +219,7 @@
 (global-set-key[(meta f4)] 'save-buffers-kill-emacs)
 
 (require 'luk-next-error-cycle)
-(global-set-key [(control +)] 'luk-next-error-cycle)
+(global-set-key (kbd "C-+") #'luk-next-error-cycle)
 
 (require 'luk-elisp) (luk-elisp-setup)
 
