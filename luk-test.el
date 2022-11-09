@@ -285,13 +285,13 @@
             (should (= (length luk-appt-ignored) 1)) ;; Unmodified
             (should (= (length appt-time-msg-list) 2)) ;; One meeting was filtered
             (should (match-meeting (nth 0 appt-time-msg-list) "Manually added"))
-            (should (match-meeting (nth 1 appt-time-msg-list) "Appointment in 1h 5m"))
+            (should (match-meeting (nth 1 appt-time-msg-list) "Appointment in 1h 5m")))
 
-            ;; Restore
-            (setq org-agenda-files original-org-agenda-files)
-            (setq appt-time-msg-list original-appt-time-msg-list)
-            (setq luk-appt-ignored original-luk-appt-ignored)
-            (setq luk-appt-manually-added original-luk-appt-manually-added))))))
+        ;; Restore
+        (setq org-agenda-files original-org-agenda-files)
+        (setq appt-time-msg-list original-appt-time-msg-list)
+        (setq luk-appt-ignored original-luk-appt-ignored)
+        (setq luk-appt-manually-added original-luk-appt-manually-added)))))
 
 
 (ert-deftest luk-insert-closing-delimiter ()
@@ -340,6 +340,7 @@
          (file-1 (concat test-repo-dir "/file-1"))
          (file-2 (concat test-repo-dir "/file-2"))
          (file-3 (concat test-repo-dir "/file-3")))
+
     (cl-flet ((test-vc-status (path)
                               (with-current-buffer (find-file-noselect path)
                                 (let ((result (luk/buffer-vc-status)))
@@ -384,4 +385,4 @@
     (should-dedent-to "abc" "abc")
     (should-dedent-to "  aaa\nbbb\n" "  aaa\nbbb\n")
     (should-dedent-to "   aa\n  bb\n    cc" " aa\nbb\n  cc")
-    (should-dedent-to "\n aaa\n bbb\n\n" "\naaa\nbbb\n\n"))
+    (should-dedent-to "\n aaa\n bbb\n\n" "\naaa\nbbb\n\n")))
