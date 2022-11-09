@@ -19,7 +19,6 @@
           (setq new-path nil)
           (cl-return))))))
 
-
 (defun luk-in-comment ()
   "Return t if point is inside a code comment."
   (if (nth 4 (syntax-ppss)) t nil))
@@ -74,6 +73,18 @@ to, say, insert suitable boilerplate for that filetype."
             (t (list (if (buffer-modified-p) 'modified 'unmodified) state))))
      ((and file-name vc-dir exists) (list (if (buffer-modified-p) 'modified 'unmodified) 'new))
      ((and file-name vc-dir) 'new-unsaved))))
+
+(defmacro ilambda (&rest body)
+  "Define interactive lambda with no arguments.
+
+This is useful for terse lambdas in keybinds. Though typing this,
+I realize define-key-lambda could be cleaner way to do this.
+
+BODY should just be the lambda function body. It will
+have an empty interactive-form and empty arg-list inserted automatically."
+  `(lambda ()
+     (interactive)
+     ,@body))
 
 
 ;; luk-save macro

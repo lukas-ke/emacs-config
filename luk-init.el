@@ -106,11 +106,6 @@
 (require 'luk-menu-bar)
 (global-set-key (kbd "<f10>") 'luk-menu-toggle-and-select)
 
-;; Add luk-find-file-in-git-repo on C-x f as an alternative to
-;; `find-file' (note on C-x C-f).
-(require 'luk-find-file-in-git-repo)
-(global-set-key (kbd "C-x f") 'luk-find-file-in-git-repo)
-
 (if (not (require 'expand-region nil 'noerror))
     (global-set-key (kbd "M-SPC" #'cycle-spacing))
 
@@ -441,26 +436,14 @@ way?)."
 (luk-make-built-in-read-only)
 
 
-;; find-file equivalent for recent files on C-x C-r
-;; Uses the enabled completion (ido, ivy, icomplete or fido)
-;;
-;; As described here:
-;; https://www.masteringemacs.org/article/find-files-faster-recent-files-package
 (require 'recentf)
+(require 'luk-find-x)
 (recentf-mode t)
 (setq recentf-max-saved-items 100)
 
-(defun luk-recentf-open ()
-  "Use a completing-read function to select and open a recent file.
-
-This function checks for some enabled completion-framework
-modes (like `ido-mode') or falls back on `completing-read'
-(possibly with `fido-mode' which is pretty nice)."
-  (interactive)
-  (let ((completer (cond ((bound-and-true-p ido-mode) #'ido-completing-read)
-                         ((bound-and-true-p ivy-mode) #'ivy-completing-read)
-                         (t #'completing-read))))
-    (find-file (funcall completer "Find recent file: " recentf-list))))
+;; Add luk-find-file-in-git-repo on C-x f as an alternative to
+;; `find-file' (note on C-x C-f).
+(global-set-key (kbd "C-x f") #'luk-find-file-in-git-repo)
 
 (global-set-key (kbd "C-x k") #'kill-current-buffer)
 (global-set-key (kbd "C-x C-r") #'luk-recentf-open)
@@ -469,7 +452,7 @@ modes (like `ido-mode') or falls back on `completing-read'
 ;; Restore killed buffers on C-s-t
 (require 'luk-restore-killed-buffer)
 (luk-restore-killed-buffer-setup)
-(global-set-key (kbd "C-S-t") (lambda () (interactive) (luk-restore-killed-buffer-file)))
+(global-set-key (kbd "C-S-t") #'luk-restore-killed-buffer-file)
 
 
 ;; https://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/
@@ -515,34 +498,10 @@ modes (like `ido-mode') or falls back on `completing-read'
 
 ;; Allow toggling if certain operations target current or other window
 
-(defvar luk-other nil "When t some operations will target other-window")
-
-(defun toggle-luk-other ()
-  (interactive)
-  (setq luk-other (not luk-other))
-  (if luk-other
-      (message "Some operations will target other window")
-    (message "Some operations will target current window")))
-
-(defun luk-find-file ()
-  (interactive)
-  (if luk-other
-      (call-interactively #'find-file-other-window)
-    (call-interactively #'find-file)))
-
-(defun luk-switch-to-buffer ()
-  "Switch buffer, respecting luk-other and some extra things"
-  (interactive)
-  (if (or luk-other
-          (window-dedicated-p)
-          (string-prefix-p (buffer-name) "CAPTURE-"))
-      (call-interactively #'switch-to-buffer-other-window)
-
-    (call-interactively #'switch-to-buffer)))
 
 (global-set-key (kbd "C-x o") #'toggle-luk-other)
 (global-set-key (kbd "C-x C-f") #'luk-find-file)
-(global-set-key (kbd "C-x b") #'luk-switch-to-buffer)
+(global-set-key (kbd "C-x b") #'luk/read-and-switch-to-buffer)
 
 (require 'luk-help-mode)
 (luk-help-mode-setup)
