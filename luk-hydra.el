@@ -12,6 +12,7 @@
 (require 'luk-calfw)
 (require 'perfect-margin)
 (require 'hungry-delete)
+(require 'rainbow-mode)
 
 (defgroup luk-hydra-faces nil "Faces for my hydra menus")
 
@@ -191,9 +192,9 @@ and point is not at a file, fall-back to the
 %s^^^^^^^^^^^^    │ %s^^^^^             │ %s^^^^^^^^^      │ %s^^^^             │ %s^^^^              │ %s
 ^─^───────────────┼─^─^─────────────────┼─^───^────────────┼─^─^────────────────┼─^───^───────────────┼─────────────────────
 _t_ treemacs      │ _l_ find files      │ _b a_ set        │ _g_ magit status   │ _v c_ Calendar      │ _c t_ Todo
-_e_ explorer here │ _f_ .. in files     │ _b l_ list       │ _r_ region menu…   │ _v a_ Week agenda   │ _c b_ Bookmark
-_R_ rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _m_ menu bar open… │ _v t_ Todo list     │ _c m_ Memo
-_D_ delete        │ _C-x f_ in git repo │ _b J_ jump other │ ^ ^                │ _v A_ Agenda choice │ _c w_ Waiting
+_e_ explorer here │ _f_ .. in files     │ _b l_ list       │ _G_ magit commands │ _v a_ Week agenda   │ _c b_ Bookmark
+_R_ rename        │ _C-x C-r_ recent    │ _b j_ jump       │ _r_ region menu…   │ _v t_ Todo list     │ _c m_ Memo
+_D_ delete        │ _C-x f_ in git repo │ _b J_ jump other │ _m_ menu bar open… │ _v A_ Agenda choice │ _c w_ Waiting
 _C_ copy path     │ ^ ^                 │ ^   ^            │ ^ ^                │ _a_   Appointments… │ _c l_ Goto last
 _d_ view changes  │ ^ ^                 │ ^   ^            │ ^ ^                │ ^ ^                 │ _c c_ Pick template
 _q_ quit          │ ^ ^                 │ ^   ^            │ ^ ^                │ ^ ^                 │"
@@ -230,6 +231,7 @@ _q_ quit          │ ^ ^                 │ ^   ^            │ ^ ^          
 
   ;; View
   ("g" luk-magit-status :exit t)
+  ("G" #'magit-file-dispatch :exit t)
   ("r" luk-hydra-region/body :exit t)
   ("v c" (luk-show-calendar) :exit t)
   ("v a" (org-agenda-list 'a) :exit t)
