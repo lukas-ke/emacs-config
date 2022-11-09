@@ -311,7 +311,7 @@ luk-settings-hydra's formatting"
 %s(luk-caption \"Editing\")                        %s(luk-caption \"UI\")                %s(luk-caption \"More\")
 _e q_ Electric quote       %-3s`electric-quote-mode^   _s_ Scrollbars %-3s(luk-scroll-bar-mode)  _t_ Theme…
 _e i_ Electric indent      %-3s`electric-indent-mode   _M_ Menu bar   %-3s`menu-bar-mode^^  _o_ Mode line…
-_e p_ Electric pair        %-3s`electric-pair-mode^^
+_e p_ Electric pair        %-3s`electric-pair-mode^^   ^ ^            ^^^^^^^^^^^^^^^^^     _R_ Rainbow mode %-3s`rainbow-mode
 _h_   Hungry delete        %-3s`hungry-delete-mode^^
 _f_   Fido                 %-3s`fido-mode^^^^^^^^^^^
 _m_   Perfect margin       %-3s`perfect-margin-mode^
@@ -328,6 +328,7 @@ _r_   Recursive minibuffer %-3s`enable-recursive-minibuffers
   ("M" #'menu-bar-mode)
   ("t" #'luk-hydra-theme/body :exit t)
   ("o" #'luk-mode-line-hydra/body :exit t)
+  ("R" #'rainbow-mode)
   ("q" nil :exit t))
 
 (defun luk-show-window-hydra ()
