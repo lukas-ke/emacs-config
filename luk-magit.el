@@ -13,7 +13,7 @@ initializing magit takes some time."
   (when (not luk-magit-started)
     (message "Starting magit..."))
   (setq luk-magit-started t)
-  (magit-status)
+  (call-interactively #'magit-status)
   (message nil))
 
 
