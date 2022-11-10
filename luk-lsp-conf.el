@@ -10,11 +10,13 @@
 _g_: Find definition
 _f_: Find references
 _h_: Display info/help
+_r_: Rename
 _q_: Exit
 "
   ("g" xref-find-definitions-other-window :exit t)
   ("f" lsp-find-references :exit t)
   ("h" lsp-describe-thing-at-point :exit t)
+  ("r" #'lsp-rename :exit t)
   ("q" nil :exit t))
 
 (defun luk-lsp-headerline-breadcrumb-mode ()
