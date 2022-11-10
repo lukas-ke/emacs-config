@@ -35,9 +35,12 @@ _q_ Quit"
   "Show context hydra for current position."
   (interactive)
   (let ((sym (symbol-at-point)))
-    (if (functionp sym)
-        (luk-elisp-function-hydra/body)
-      (user-error (format "Context hydra: Not implemented for the %s's type" sym)))))
+    (cond ((fboundp sym)
+           (luk-elisp-function-hydra/body))
+          ((boundp sym)
+           (luk-elisp-variable-hydra/body))
+
+          (t (user-error (format "Context hydra: Not implemented for the %s's type" sym))))))
 
 (defun luk-elisp--hook()
   "Run luk-elisp-insert-boilerplate for new Emacs-lisp files."
@@ -57,9 +60,15 @@ _q_ Quit"
     (forward-line)))
 
 
+(defun luk/elisp-function-type ()
+  (let ((ft (car-safe (symbol-function (symbol-at-point)))))
+    ;; TODO: Extend with more variants (see help-fns.el)
+    (cond ((eq ft 'macro) "macro")
+           (t "function"))))
+
 (luk/def-context-hydra luk-elisp-function-hydra "Elisp function"
   "
-Main ➤ %s(luk-caption \"function\") %-30(symbol-at-point)
+Main ➤ %s(luk-caption (luk/elisp-function-type)) %-30(symbol-at-point)
 ^─^───────────────────────────────────────────────────
 _g_: find definitions _G_: other window
 _d_: describe function"
@@ -67,6 +76,15 @@ _d_: describe function"
   ("G" xref-find-definitions-other-window :exit t)
   ("d" (describe-function (symbol-at-point)) :exit t)
   ("q" nil :exit t))
+
+(luk/def-context-hydra luk-elisp-variable-hydra "Elisp variable"
+  "
+Main ➤ %s(luk-caption \"variable\") %-30(symbol-at-point)
+^─^───────────────────────────────────────────────────
+_d_: describe variable"
+  ("d" (describe-variable (symbol-at-point)) :exit t)
+  ("q" nil :exit t))
+
 
 
 ;; Setup function
