@@ -105,6 +105,10 @@ the initial-input for the `completing-read'."
   (ilambda
    (luk/quit-and-run (luk-find-file))))
 
+(define-key luk/switch-buffer-map (kbd "C-b")
+  (ilambda
+   (luk/quit-and-run (luk-find-bookmark))))
+
 (defun luk/read-and-switch-to-buffer (&optional initial-input)
   "Read buffer to switch to, return buffer name as a string.
 
@@ -197,6 +201,32 @@ When INITIAL-INPUT is provided, it is entered initially for
             (butlast (split-string (shell-command-to-string "git ls-files") "\n"))
             nil nil initial-input))
         (quit (funcall exit-map))))))
+
+
+(defvar luk/find-bookmark-map (make-sparse-keymap))
+
+(define-key luk/find-bookmark-map (kbd "C-r")
+  (ilambda
+   (let ((old-content (minibuffer-contents)))
+     (luk/quit-and-run (luk-recentf-open old-content)))))
+
+(define-key luk/find-bookmark-map (kbd "C-f")
+  (ilambda
+   (luk/quit-and-run (luk-find-file))))
+
+(define-key luk/find-bookmark-map (kbd "C-b")
+  (ilambda
+   (let ((old-content (minibuffer-contents)))
+     (luk/quit-and-run (luk/read-and-switch-to-buffer old-content)))))
+
+(defun luk-find-bookmark (&optional initial-input)
+  (let ((exit-map (set-transient-map luk/find-bookmark-map (lambda () t))))
+    (condition-case nil
+        (let ((last-nonmenu-event -1)) ;; inhibit showing a "paned-menu"
+          ;; TODO: Consider bookmark-completing-read (and
+          ;; bookmark-jump), as it allows passing initial-input
+          (call-interactively #'bookmark-jump))
+      (quit (funcall exit-map)))))
 
 
 (provide 'luk-find-x)
