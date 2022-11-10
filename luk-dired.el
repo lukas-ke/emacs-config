@@ -21,4 +21,6 @@
   (add-hook 'dired-before-readin-hook 'dired-hide-details-mode)
 
   ;; Use M-<up> to go up one dir, like in Windows explorer.
-  (define-key dired-mode-map (kbd "M-<up>") 'dired-up-directory))
+  (define-key dired-mode-map (kbd "M-<up>") 'dired-up-directory)
+
+  (add-hook 'dired-mode-hook 'auto-revert-mode))
