@@ -116,7 +116,7 @@ This function is only for interactive use."
 
   (let ((exit-map (set-transient-map luk/switch-buffer-map (lambda () t))))
     (condition-case nil
-        (let ((buf (completing-read "Switch to buffer: " (internal-complete-buffer-except) nil t initial-input)))
+        (let ((buf (completing-read "Switch to buffer: " (internal-complete-buffer-except) nil nil initial-input)))
           (if (or luk-other
                   (window-dedicated-p)
                   (string-prefix-p (buffer-name) "CAPTURE-"))
