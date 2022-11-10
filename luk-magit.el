@@ -155,5 +155,8 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
     (add-hook 'git-commit-setup-hook #'orgalist-mode)))
 
 
+(defun luk-magit-setup ()
+  ;; Automatically save buffers for repository files
+  (setq magit-save-repository-buffers 'dontask))
 
 (provide 'luk-magit)

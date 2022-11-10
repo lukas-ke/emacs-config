@@ -131,6 +131,7 @@
 (require 'luk-org-mode) (luk-org-mode-setup)
 
 (require 'luk-magit)
+(luk-magit-setup)
 (global-set-key (kbd "<f12>") #'luk-magit-status)
 
 ;;; Mode for editing .gitignore-files
