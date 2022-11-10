@@ -188,7 +188,7 @@ This function is only for interactive use."
 When INITIAL-INPUT is provided, it is entered initially for
 `completing-read'."
   (interactive)
-  (let ((default-directory (luk-find-git-repo default-directory)))
+  (let ((default-directory (luk-find-git-repo-or-read default-directory)))
     (let ((exit-map (set-transient-map luk/find-in-repo-map (lambda () t))))
       (condition-case nil
           (find-file

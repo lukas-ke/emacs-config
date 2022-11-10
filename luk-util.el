@@ -44,6 +44,14 @@ to, say, insert suitable boilerplate for that filetype."
 (defun luk/image-filename-p (filename)
   (-any (lambda (ext) (string-suffix-p (concat "." ext) filename)) image-file-name-extensions))
 
+(defun luk-find-git-repo-or-read (dir)
+  (let ((repo-dir (luk-find-git-repo dir 'noerror)))
+    (if repo-dir
+        repo-dir
+      (if (require 'magit nil 'noerror)
+          (magit-read-repository)
+        (user-error "Not in a git repository")))))
+
 (defun luk-find-git-repo (dir &optional noerror)
   (cond ((not dir)
          (if noerror
