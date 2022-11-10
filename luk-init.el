@@ -507,5 +507,7 @@ way?)."
 (require 'luk-help-mode)
 (luk-help-mode-setup)
 
+(advice-add #'save-some-buffers :before #'luk/clear-buffers-modified-if-not)
+
 
 (provide 'luk-init)

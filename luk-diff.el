@@ -94,12 +94,31 @@ Requires that the diff program is available on the path."
   (let ((target-file (make-temp-file "luk-check-diff")))
     (let ((inhibit-message t))
       (write-region (point-min) (point-max) target-file))
-    (= 0 (call-process "diff"
-                       nil
-                       nil
-                       nil
-                       target-file
-                       (buffer-file-name)))))
+    (unwind-protect
+        (= 0 (call-process "diff"
+                           nil
+                           nil
+                           nil
+                           target-file
+                           (buffer-file-name)))
+      (delete-file target-file))))
+
+(defun luk/clear-buffers-modified-if-not (&optional arg pred)
+  "Clear `buffer-modified-p' for actually unmodified buffers.
+
+ARG and PRED are ignored."
+  (interactive)
+  (ignore arg)
+  (ignore pred)
+
+  (let ((modified-buffers (seq-filter #'buffer-modified-p (buffer-list))))
+    (when modified-buffers
+      (message "Checking if buffers are truly modified..")
+      (dolist (buffer modified-buffers)
+        (with-current-buffer buffer
+          (when (and (buffer-modified-p) (buffer-file-name) (luk-buffer-content-same-as-file))
+            (set-buffer-modified-p nil))))
+      (message nil))))
 
 (defun luk-view-changes ()
   "Show buffer modifications with `ediff-current-file' if buffer is modified.
