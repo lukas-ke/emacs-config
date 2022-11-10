@@ -11,6 +11,10 @@
 (when load-file-name (setq luk-init-path load-file-name))
 (add-to-list 'load-path (concat (file-name-directory luk-init-path) "/others"))
 
+(when (not (boundp 'luk-early-init-performed))
+  (message "Loading luk-early-init late :)")
+  (load "luk-early-init.el"))
+
 ;; Use specific fonts for some characters (e.g. 🔒, 😎)
 (load "luk-font.el")
 
@@ -18,9 +22,11 @@
   "Open my 'luk-init.el'-script in a buffer"
   (interactive) (find-file luk-init-path))
 
-(when (not (boundp 'luk-early-init-performed))
-  (message "Loading luk-early-init late :)")
-  (load "luk-early-init.el"))
+;; Save minibuffer history etc.
+(savehist-mode 1)
+
+;; Remember positions in visited files
+(save-place-mode 1)
 
 ;; Don't beep
 (customize-set-variable 'visible-bell t)
