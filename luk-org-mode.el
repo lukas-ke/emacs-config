@@ -938,6 +938,41 @@ information."
                  "\n#+end_src"))
             (format "\n[[%%F::%d][%%f]]\n" (line-number-at-pos (point))))))
 
+(defvar luk-org-insert-cycle 0)
+(defun luk-org-insert-cycle-heading ()
+  "Insert a heading or cycle its rank on repeat."
+  (interactive)
+  (if (eq last-command #'luk-org-insert-cycle-heading)
+      ;; A heading was inserted or cycled by the previous command.
+      ;; Cycle the heading.
+      (cond
+       ((= luk-org-insert-cycle 0)
+        (org-do-demote)
+        (setq luk-org-insert-cycle 1))
+       ((= luk-org-insert-cycle 1)
+        (org-do-promote)
+        (org-do-promote)
+        (setq luk-org-insert-cycle 2))
+       ((= luk-org-insert-cycle 2)
+        (org-do-demote)
+        (setq luk-org-insert-cycle 0)))
+
+    ;; The last command was not insertion or cycling, so insert a heading
+    (save-excursion
+      (setq luk-org-insert-cycle 0)
+      (beginning-of-line)
+      (org-insert-heading))
+
+    (when (not (org-at-heading-p))
+      ;; In some cases, org-insert-heading inserts it on the next line
+      (forward-line 1))
+
+    (when (= (char-after) ?*)
+      ;; On blank lines, the beginning-of-line + save-excursion places
+      ;; marker in the asterisks. That's inconvenient so move to the
+      ;; end of line (reasonable insertion point for heading content)
+      (end-of-line))))
+
 (defun luk-org-mode-setup ()
   "Setup `org-mode' keys, hooks et. al."
   ;;; Keys
@@ -978,6 +1013,8 @@ information."
 
   ;; Indent on newline
   (define-key org-mode-map (kbd "RET") 'org-return-and-maybe-indent)
+
+  (define-key org-mode-map (kbd "§") #'luk-org-insert-cycle-heading)
 
   ;; Allow following links with enter, not only C-x o
   (setq org-return-follows-link  t)
