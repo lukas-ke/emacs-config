@@ -451,9 +451,16 @@ way?)."
 ;; Add luk-find-file-in-git-repo on C-x f as an alternative to
 ;; `find-file' (note on C-x C-f).
 (global-set-key (kbd "C-x f") #'luk-find-file-in-git-repo)
+(global-set-key (kbd "C-x C-f") #'luk-find-file)
+
+(global-set-key (kbd "C-x b") #'luk/read-and-switch-to-buffer)
+
+(global-set-key (kbd "C-x C-r") #'luk-recentf-open)
+
+;; Allow toggling if certain operations target current or other window
+(global-set-key (kbd "C-x o") #'toggle-luk-other)
 
 (global-set-key (kbd "C-x k") #'kill-current-buffer)
-(global-set-key (kbd "C-x C-r") #'luk-recentf-open)
 
 
 ;; Restore killed buffers on C-s-t
@@ -503,17 +510,16 @@ way?)."
 (luk-ediff-setup)
 
 
-;; Allow toggling if certain operations target current or other window
-
-
-(global-set-key (kbd "C-x o") #'toggle-luk-other)
-(global-set-key (kbd "C-x C-f") #'luk-find-file)
-(global-set-key (kbd "C-x b") #'luk/read-and-switch-to-buffer)
-
 (require 'luk-help-mode)
 (luk-help-mode-setup)
 
 (advice-add #'save-some-buffers :before #'luk/clear-buffers-modified-if-not)
+
+
+;; Prevent customize from saving faces, to avoid my luk-theming
+;; post-theme changes getting saved
+(defun luk/no-face-saving () (message "custom-save-faces inhibited by luk/no-face-saving"))
+(advice-add #'custom-save-faces :override #'luk/no-face-saving)
 
 
 (provide 'luk-init)
