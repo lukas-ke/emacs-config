@@ -158,6 +158,12 @@ _q_ Quit"
   ("M" (luk/popup-menu markdown-mode-menu) :exit t)
   ("q" nil :exit t))
 
+(defun luk-markdown-enter-key ()
+  (interactive)
+  (if (markdown-link-p)
+      (markdown-follow-link-at-point)
+    (markdown-enter-key)))
+
 (defun luk-markdown-setup ()
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (setq markdown-asymmetric-header t) ;; Do not insert a closing # for atx-style headers
@@ -176,4 +182,4 @@ _q_ Quit"
     (define-key markdown-mode-map (kbd "C-<left>") #'luk-md-meta-left)
     (define-key markdown-mode-map (kbd "M-<right>") #'luk-md-meta-right)
     (define-key markdown-mode-map (kbd "C-<right>") #'luk-md-meta-right)
-    )))
+    (define-key markdown-mode-map (kbd "<return>") #'luk-markdown-enter-key)))
