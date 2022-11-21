@@ -55,10 +55,31 @@ Markdown uses two spaces for a hard linebreak so this command:
 
            (t (goto-char e))))))))
 
+(defun luk-markdown-tab-maybe-cycle ()
+  "Specialization of `luk-tab-complete-custom' for markdown.
+
+Forward to markdown-cycle when appropriate, otherwise allow
+luk-tab-complete to expand text.
+
+This function returns t when it took care of the tab, nil
+otherwise which means luk-tab-complete should do its thing."
+  (interactive)
+  (save-mark-and-excursion
+    (save-match-data
+      (cond
+       (mark-active nil)
+       ((looking-at "\\_>") nil)
+       ((thing-at-point-looking-at markdown-regex-header)
+        (message "At header")
+        (markdown-cycle) t)
+       (t t)))))
+
 (defun luk-markdown-hook-func ()
   ;; Markdown lines can get long (e.g. with tables), and having a
   ;; table row broken across multiple lines makes it unreadable.
   (setq truncate-lines t)
+
+  (setq luk-tab-complete-custom #'luk-markdown-tab-maybe-cycle)
 
   ;; Use trailing whitespace deletion on save that respects markdown
   (setq luk-should-trim-whitespace nil)
