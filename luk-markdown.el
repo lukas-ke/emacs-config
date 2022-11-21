@@ -1,6 +1,7 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
 (provide 'luk-markdown)
+(require 'org) ;; For org-ellipsis face
 
 (autoload 'markdown-mode ;; https://jblevins.org/projects/markdown-mode/
   "markdown-mode"
@@ -83,7 +84,19 @@ otherwise which means luk-tab-complete should do its thing."
 
   ;; Use trailing whitespace deletion on save that respects markdown
   (setq luk-should-trim-whitespace nil)
-  (add-hook 'before-save-hook 'luk-markdown-delete-trailing-whitespace nil 'make-local))
+  (add-hook 'before-save-hook 'luk-markdown-delete-trailing-whitespace nil 'make-local)
+
+  ;; Use "➤" instead of "..." as indication for collapsed text. I can't
+  ;; say I quite understand this, it is based on:
+  ;; https://emacs.stackexchange.com/a/17815
+  (let ((display-table (if buffer-display-table
+                           buffer-display-table
+                         (make-display-table))))
+    (unless buffer-display-table
+      (setq buffer-display-table display-table))
+    (set-display-table-slot display-table 4
+                            (vconcat (mapcar (lambda (c)
+                                               (make-glyph-code c 'org-ellipsis)) "➤")))))
 
 (defun luk-markdown-setup ()
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
