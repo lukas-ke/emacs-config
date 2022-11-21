@@ -182,4 +182,5 @@ _q_ Quit"
     (define-key markdown-mode-map (kbd "C-<left>") #'luk-md-meta-left)
     (define-key markdown-mode-map (kbd "M-<right>") #'luk-md-meta-right)
     (define-key markdown-mode-map (kbd "C-<right>") #'luk-md-meta-right)
-    (define-key markdown-mode-map (kbd "<return>") #'luk-markdown-enter-key)))
+    (define-key markdown-mode-map (kbd "<return>") #'luk-markdown-enter-key)
+    (define-key markdown-mode-map (kbd "C-c C-,") #'markdown-insert-gfm-code-block)))
