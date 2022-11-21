@@ -12,6 +12,28 @@
 (defconst luk-markdown-sloppy-regex-header
   "^\\(?:\\(?1:[^\r\n\t -].*\\)\n\\(?:\\(?2:=+\\)\\|\\(?3:-+\\)\\)\\|\\(?4:#+[ \t]+\\)\\(?5:.*?\\)\\(?6:[ \t]*#*\\)\\)[ ]*$")
 
+(defun luk-markdown-header-level ()
+  "Returns the level of the current markdown header"
+  (interactive)
+  (save-match-data
+    (if (not (thing-at-point-looking-at markdown-regex-header))
+        nil
+      (cond
+       ((match-string 2)
+        ;; This style is level 1
+        ;; =====================
+        1)
+       ((match-string 3)
+        ;; This style is level 2
+        ;; ---------------------
+        2)
+       ((match-string 4)
+        ;; ## The level for this style is the #-count
+        (length (string-remove-suffix " " (match-string 4))))
+       (t
+        ;; Unknown header style
+        nil)))))
+
 (defun luk-markdown-delete-trailing-whitespace ()
   "Delete trailing respecting markdown hard line breaks.
 
@@ -98,11 +120,33 @@ otherwise which means luk-tab-complete should do its thing."
                             (vconcat (mapcar (lambda (c)
                                                (make-glyph-code c 'org-ellipsis)) "➤")))))
 
+(defun luk-md-meta-left ()
+  (interactive)
+  (save-match-data
+    (if (thing-at-point-looking-at markdown-regex-header)
+        (when (> (luk-markdown-header-level) 1)
+          (markdown-promote))
+      (left-word))))
+
+(defun luk-md-meta-right ()
+  (interactive)
+  (save-match-data
+    (if (thing-at-point-looking-at markdown-regex-header)
+        (when (< (luk-markdown-header-level) 5)
+          (markdown-demote))
+      (right-word))))
+
 (defun luk-markdown-setup ()
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
+  (setq markdown-asymmetric-header t) ;; Do not insert a closing # for atx-style headers
+  (setq markdown-fontify-code-blocks-natively t)
   ;; Lines can get long (e.g. tables)
   (add-hook 'markdown-mode-hook #'luk-markdown-hook-func)
 
   (with-eval-after-load "markdown-mode"
-    (define-key markdown-mode-map (kbd "C-c g") #'markdown-follow-thing-at-point)))
+    (define-key markdown-mode-map (kbd "C-c g") #'markdown-follow-thing-at-point)
+    (define-key markdown-mode-map (kbd "M-<left>") #'luk-md-meta-left)
+    (define-key markdown-mode-map (kbd "C-<left>") #'luk-md-meta-left)
+    (define-key markdown-mode-map (kbd "M-<right>") #'luk-md-meta-right)
+    (define-key markdown-mode-map (kbd "C-<right>") #'luk-md-meta-right)
+    )))
