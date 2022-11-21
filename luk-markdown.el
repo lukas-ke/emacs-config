@@ -1,6 +1,8 @@
 ;;; -*- coding: utf-8; lexical-binding: t -*-
 
 (provide 'luk-markdown)
+(require 'luk-hydra)
+(require 'cus-edit) ; For customize-set-variable
 (require 'org) ;; For org-ellipsis face
 
 (autoload 'markdown-mode ;; https://jblevins.org/projects/markdown-mode/
@@ -108,6 +110,8 @@ otherwise which means luk-tab-complete should do its thing."
   (setq luk-should-trim-whitespace nil)
   (add-hook 'before-save-hook 'luk-markdown-delete-trailing-whitespace nil 'make-local)
 
+  (setq luk-mode-hydra #'luk-markdown-mode-hydra/body)
+
   ;; Use "➤" instead of "..." as indication for collapsed text. I can't
   ;; say I quite understand this, it is based on:
   ;; https://emacs.stackexchange.com/a/17815
@@ -136,6 +140,33 @@ otherwise which means luk-tab-complete should do its thing."
           (markdown-demote))
       (right-word))))
 
+
+(defun luk-markdown-popup-menu ()
+  (interactive)
+    (let ((keys (x-popup-menu (list (list 10 10) (get-buffer-window)) markdown-mode-menu)))
+      (let ((resolved (nth 3 markdown-mode-menu)))
+        (dolist (item (butlast keys))
+          (setq resolved (nth 3 (assoc item markdown-mode-menu)))
+          (message "Current: %s" resolved))
+        (call-interactively (nth 3 (assoc (car (last keys)) resolved))))))
+
+(defhydra luk-markdown-mode-hydra (:hint nil
+                                      :foreign-keys warn
+                                      :exit nil
+                                      :pre (setq hydra-amaranth-warn-message "Invalid key (Markdown hydra)")
+                                      :post (setq hydra-amaranth-warn-message luk-hydra-amaranth-original-message))
+  "
+_m_ Visible markup %s(luk-hydra-checkbox (not markdown-hide-markup))
+_i_ Inline images  %s(luk-hydra-checkbox markdown-inline-image-overlays)
+_t_ Insert table
+_M_ Popup menu
+_q_ Quit"
+  ("m" #'markdown-toggle-markup-hiding)
+  ("i" #'markdown-toggle-inline-images)
+  ("t" #'markdown-insert-table :exit t)
+  ("M" #'luk-markdown-popup-menu :exit t)
+  ("q" nil :exit t))
+
 (defun luk-markdown-setup ()
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (setq markdown-asymmetric-header t) ;; Do not insert a closing # for atx-style headers
@@ -143,7 +174,12 @@ otherwise which means luk-tab-complete should do its thing."
   ;; Lines can get long (e.g. tables)
   (add-hook 'markdown-mode-hook #'luk-markdown-hook-func)
 
-  (with-eval-after-load "markdown-mode"
+  (with-eval-after-load 'markdown-mode
+
+    (customize-set-variable
+     ;; Using customize-set-variable to run the :set-function that
+     ;; updates header faces.
+     'markdown-header-scaling t)
     (define-key markdown-mode-map (kbd "C-c g") #'markdown-follow-thing-at-point)
     (define-key markdown-mode-map (kbd "M-<left>") #'luk-md-meta-left)
     (define-key markdown-mode-map (kbd "C-<left>") #'luk-md-meta-left)
