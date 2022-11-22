@@ -75,7 +75,7 @@ _q_ Close menu
           (luk-caption "Commit"))
   ("." (luk-hydra-push 'luk-git-commit-hydra/body "git-commit") :exit t)
   ("s" (git-commit-save-message) :exit t)
-  ("p" (git-commit-next-message 1) :exit nil)
+  ("p" (git-commit-prev-message 1) :exit nil)
   ("n" (git-commit-next-message 1) :exit nil)
   ("d" (luk-diff-while-committing) :exit t)
   ("q" nil :exit t))
