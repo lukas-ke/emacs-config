@@ -94,6 +94,31 @@ have an empty interactive-form and empty arg-list inserted automatically."
      (interactive)
      ,@body))
 
+(defun luk/window-relative-pixel-position-list (&optional position window)
+  "Return a list with the window-relative pixel position of a buffer POSITION.
+
+The returned list is on the form '(x y).
+
+This function is a little like the built-in
+`window-absolute-pixel-position', but it returns the window
+relative position instead, and it returns a list, not a cons, to
+allow passing the value directly as the list for x-popup-menu."
+  (let ((abs-pos (window-absolute-pixel-position position window)))
+    (list (- (car abs-pos) (window-pixel-left window)) (- (cdr abs-pos) (window-pixel-top window)))))
+
+(defun luk/popup-menu (menu)
+  "Popup MENU and run the selected command."
+  (let  ((keys (x-popup-menu
+                (list
+                 (luk/window-relative-pixel-position-list)
+                 (get-buffer-window))
+                menu)))
+    ;; Find the selected command in the menu, then call it
+    (let ((resolved menu))
+      (dolist (item keys)
+        (setq resolved (nth 3 (assoc item resolved))))
+      (call-interactively resolved))))
+
 
 ;; luk-save macro
 

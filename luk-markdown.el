@@ -2,6 +2,7 @@
 
 (provide 'luk-markdown)
 (require 'luk-hydra)
+(require 'luk-util)
 (require 'cus-edit) ; For customize-set-variable
 (require 'org) ;; For org-ellipsis face
 
@@ -140,16 +141,6 @@ otherwise which means luk-tab-complete should do its thing."
           (markdown-demote))
       (right-word))))
 
-
-(defun luk-markdown-popup-menu ()
-  (interactive)
-    (let ((keys (x-popup-menu (list (list 10 10) (get-buffer-window)) markdown-mode-menu)))
-      (let ((resolved (nth 3 markdown-mode-menu)))
-        (dolist (item (butlast keys))
-          (setq resolved (nth 3 (assoc item markdown-mode-menu)))
-          (message "Current: %s" resolved))
-        (call-interactively (nth 3 (assoc (car (last keys)) resolved))))))
-
 (defhydra luk-markdown-mode-hydra (:hint nil
                                       :foreign-keys warn
                                       :exit nil
@@ -164,7 +155,7 @@ _q_ Quit"
   ("m" #'markdown-toggle-markup-hiding)
   ("i" #'markdown-toggle-inline-images)
   ("t" #'markdown-insert-table :exit t)
-  ("M" #'luk-markdown-popup-menu :exit t)
+  ("M" (luk/popup-menu markdown-mode-menu) :exit t)
   ("q" nil :exit t))
 
 (defun luk-markdown-setup ()
