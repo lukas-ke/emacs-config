@@ -70,6 +70,24 @@
    (let ((old-content (minibuffer-contents)))
      (luk/quit-and-run (luk/read-and-switch-to-buffer old-content)))))
 
+(defun luk-forget-recent-file (&optional initial-input)
+  "Interactively remove a path from recent files list
+
+Uses a `completing-read' function to select and remove the
+selected file path from the recent files list.
+
+This is useful when for example an output file which has a
+similar name to a source file gets on the recent files list, so
+that the wrong file tends to get opened."
+  (interactive)
+      (condition-case nil
+        (let ((completer (cond ((bound-and-true-p ido-mode) #'ido-completing-read)
+                               ((bound-and-true-p ivy-mode) #'ivy-completing-read)
+                               (t #'completing-read))))
+
+          (let ((file-name (funcall completer "Forget recent file: " recentf-list nil nil initial-input)))
+            (delete file-name recentf-list)))))
+
 (declare-function ivy-completing-read nil)
 
 (defun luk-recentf-open (&optional initial-input)
